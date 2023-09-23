@@ -1,5 +1,5 @@
 
-# Trabalho realizado nas Semanas #2 e #3
+# ENLBufferPwn
 
 ## Identification
 
@@ -7,7 +7,7 @@
 - It exploits a C++ class in the network library, which could trigger a buffer overflow.
 - The consequences of this attack are game dependent, ranging from altering the game's memory to taking control of the victim's console.
 
-## Catalogação
+## Cataloguing
 
 - item1
 - item2
@@ -21,7 +21,7 @@
 - item3
 - item4
 
-## Ataques
+## Attacks
 
 - item1
 - item2
