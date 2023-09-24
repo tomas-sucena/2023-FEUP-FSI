@@ -3,23 +3,24 @@
 
 ## Identification
 
-- ENLBufferPwn ([CVE-2022-47949](https://nvd.nist.gov/vuln/detail/CVE-2022-47949)) is a formerly present vulnerability in the shared network code of many Nintendo games.
+- ENLBufferPwn ([CVE-2022-47949](https://nvd.nist.gov/vuln/detail/CVE-2022-47949)) is a vulnerability that used to be present in the shared network code of many Nintendo games.
 - It exploits a C++ class previously within their network library, whose functions could cause a buffer overflow.
-- This vulnerability allowed an exploiter to execute code on the victim's console simply by playing an online game with them.
+- This vulnerability allowed attackers to execute code on the victim's console simply by playing an online game with them.
 
 
 ## Tabulation
 
-- This vulnerability was discovered by a multitude of users, who chose to keep the information private.
+- This vulnerability was discovered by a multitude of users, who opted to keep the information private.
 - It was disclosed safely to Nintendo by ["PabloMK7"](https://github.com/PabloMK7), ["Rambo6Glaz"](https://github.com/EpicUsername12) and ["Fishguy6564"](https://github.com/fishguy6564) in 2021.
 - The vulnerability has a CVSS score of 9.8/10, thus classifying as critical.
 
 
 ## Exploit 
 
-- The class `NetworkBuffer` is used as a generic container to share data between the players of an online game using it.
-- Two of its methods, `Set` and `Add`, do not check whether their provided data fits in the buffer size.
-- This allows an exploiter to freely send payloads to the victim.
+- The class `NetworkBuffer` represents a buffer which stores data exchanged with the player during an online game.
+- Two of its methods, `Set` and `Add`, update the network buffer, filling it with data coming from other players.
+- However, neither of these methods reallocate the buffer when the data exceeds its current capacity.
+- As such, this programming oversight allows an attacker to freely send payloads to the victim.
 
 ```cpp
 class NetworkBuffer
