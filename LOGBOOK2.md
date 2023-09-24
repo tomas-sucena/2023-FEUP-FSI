@@ -3,7 +3,7 @@
 
 ## Identification
 
-- ENLBufferPwn (CVE-2022-47949) is a formerly present vulnerability in the shared network code of many Nintendo games.
+- ENLBufferPwn ([CVE-2022-47949](https://nvd.nist.gov/vuln/detail/CVE-2022-47949)) is a formerly present vulnerability in the shared network code of many Nintendo games.
 - It exploits a C++ class previously within their network library, whose functions could cause a buffer overflow.
 - This vulnerability allowed an exploiter to execute code on the victim's console simply by playing an online game with them.
 
