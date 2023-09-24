@@ -21,6 +21,31 @@
 - Two of its methods, `Set` and `Add`, do not check whether their provided data fits in the buffer size.
 - This allows an exploiter to freely send payloads to the victim.
 
+```cpp
+class NetworkBuffer
+{
+public:
+    u8	bufferType;
+    u8* dataPtr;
+    u32 dataSize;
+    u32 currentSize;
+
+    void Set(u8* newData, u32 newDataSize);
+    void Add(u8* newData, u32 newDataSize);
+}
+
+void NetworkBuffer::Set(u8* newData, u32 newDataSize)
+{
+    memcpy(this->dataPtr, newData, newDataSize);
+    this->currentSize = newDataSize;
+}
+
+void NetworkBuffer::Add(u8* newData, u32 newDataSize)
+{
+    memcpy(this->dataPtr + this->currentSize, newData, newDataSize);
+    this->currentSize += newDataSize;
+}
+```
 
 ## Attacks
 
