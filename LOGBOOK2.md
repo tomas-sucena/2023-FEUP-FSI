@@ -17,9 +17,9 @@
 
 ## Exploit 
 
-- The class `NetworkBuffer` represents a buffer which stores data exchanged with the player during an online game.
+- The class `NetworkBuffer` represents a buffer which stores data exchanged between players during an online game.
 - Two of its methods, `Set` and `Add`, update the network buffer, filling it with data coming from other players.
-- However, neither of these methods reallocate the buffer when the data exceeds its capacity.
+- However, neither of these methods check whether or not the input data fits within the network buffer. 
 - As such, due to this oversight, attackers could freely exploit buffer overflows to send payloads to the victim.
 
 ```cpp
