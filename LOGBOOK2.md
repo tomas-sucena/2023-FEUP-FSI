@@ -1,4 +1,3 @@
-
 # ENLBufferPwn
 
 ## Identification
@@ -10,7 +9,7 @@
 
 ## Cataloguing
 
-- This vulnerability was discovered by a multitude of users, who opted to keep the information private.
+- ENLBufferPwn was discovered by a multitude of users, who opted to keep the information private.
 - It was disclosed safely to Nintendo by ["PabloMK7"](https://github.com/PabloMK7), ["Rambo6Glaz"](https://github.com/EpicUsername12) and ["Fishguy6564"](https://github.com/fishguy6564) in 2021.
 - The vulnerability has a CVSS score of 9.8/10, thus classifying it as critical.
 
