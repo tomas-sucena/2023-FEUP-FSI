@@ -1,9 +1,8 @@
-
 Breve descrição do grupo
 
-* Turno: [L]XX
-* Grupo: YY
+* Turno: [L]11
+* Grupo: 04
 * Alunos:
-    - Aluno1 upZZZZZ 
-    - Aluno2 upZZZZZ
-    - Aluno3 upZZZZZ
+    - João Afonso Viveiros (up202108691@up.pt)
+    - Pedro da Cunha Teixeira e Faro Beirão (up202108718@up.pt)
+    - Tomás de Campos Sucena de Sequeiros Lopes (up202108701@up.pt)
