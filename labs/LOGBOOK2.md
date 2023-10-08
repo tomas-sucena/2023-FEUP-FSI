@@ -1,4 +1,3 @@
-
 # ENLBufferPwn
 
 ## Identification
@@ -8,18 +7,18 @@
 - This vulnerability allowed attackers to execute code on the victim's console simply by playing an online game with them.
 
 
-## Tabulation
+## Cataloguing
 
-- This vulnerability was discovered by a multitude of users, who opted to keep the information private.
+- ENLBufferPwn was discovered by a multitude of users, who opted to keep the information private.
 - It was disclosed safely to Nintendo by ["PabloMK7"](https://github.com/PabloMK7), ["Rambo6Glaz"](https://github.com/EpicUsername12) and ["Fishguy6564"](https://github.com/fishguy6564) in 2021.
-- The vulnerability has a CVSS score of 9.8/10, thus classifying as critical.
+- The vulnerability has a CVSS score of 9.8/10, thus classifying it as critical.
 
 
 ## Exploit 
 
-- The class `NetworkBuffer` represents a buffer which stores data exchanged with the player during an online game.
+- The class `NetworkBuffer` represents a buffer which stores data exchanged between players during an online game.
 - Two of its methods, `Set` and `Add`, update the network buffer, filling it with data coming from other players.
-- However, neither of these methods reallocate the buffer when the data exceeds its capacity.
+- However, neither of these methods check whether the input data actually fits within the network buffer or not. 
 - As such, due to this oversight, attackers could freely exploit buffer overflows to send payloads to the victim.
 
 ```cpp
