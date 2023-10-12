@@ -27,7 +27,7 @@ As such, we concluded that child processes inherit the environment variables of 
 
 ## Task 3: Environment Variables and execve()
 
-The guide lets us know that `execve()` is a function that allows us to load and execute a new command, all the while the process's data is completely replaced by the process of the command ran.
+> `execve()` is a function that allows us to load and execute a new command, all the while the process's data is completely replaced by the process of the command ran.
 
 To test the behaviour of this command, we compiled and ran myenv.c twice.
 
@@ -41,7 +41,7 @@ Through this experiment, we found out that the third parameter of `execve()` (na
 
 ## Task 4: Environment Variables and system()
 
-The guide informs us that `system()`, unlike `execve()`, does not directly execute a command. Instead, it requests the shell to do it.
+> `system()`, unlike `execve()`, does not directly execute a command. Instead, it requests the shell to do it.
 
 The behaviour of `system()` can be summarized like this:
 
@@ -56,4 +56,16 @@ To verify this hypothesis, we copied the code present in this section of the gui
 
 Predictably, the environment variables were printed, thus validating our conclusion.
 
+## Task 5: Environment Variables and Set-UID
 
+> `Set-UID` is a security mechanism in Unix which makes a program assume the permissions of its owner, independently of the user that runs it.
+
+To understand the relation between `Set-UID` and environment variables, we set the following variables:
+
+![Alt text](images/images-7.png)
+
+Next, we created a simple script which prints the environment variables of the current process. 
+
+Upon executing it, we noticed that the `PATH` and `HOLA` variables we had created were present, as expected, but `LD_LIBRARY_PATH` was nowhere to be found.
+
+After further research, we learned that `LD_LIBRARY_PATH` is a special environment variable which specifies the path of dynamic and shared libraries that can be made available during execution. As such, typically this variable is not inherited by `Set-UID` programs, because an attacker could potentially manipulate it to point to malicious or modified libraries.
