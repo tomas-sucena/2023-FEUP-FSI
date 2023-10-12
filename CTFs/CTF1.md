@@ -6,12 +6,12 @@ Upon accessing http://ctf-fsi.fe.up.pt:5001, which redirects to a website hosted
 Since the platform appeared to be a virtual store, we decided to check out the services for sale. 
 That is when we stumbled across the following user-review:
 
-![img.png](../images/review.png)
+![img.png](images/review.png)
 
 This led us to believe that we could exploit vulnerabilities in the plugins to hack the server.
 By clicking on a tab beside the review, we discovered all the plugins and respective versions:
 
-![img.png](../images/wordpress_plugins.png)
+![img.png](images/wordpress_plugins.png)
 
 With the newly acquired information, we opened [CVEdetails.com](https://www.cvedetails.com/) to discover the CVEs associated with each plugin.
 Considering our objective, we focused on vulnerabilities that allowed authentication bypassing.
