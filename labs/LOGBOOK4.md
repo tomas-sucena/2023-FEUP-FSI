@@ -27,19 +27,33 @@ As such, we concluded that child processes inherit the environment variables of 
 
 ## Task 3: Environment Variables and execve()
 
-The guide lets us know that `execve` is a function that allows us to load and execute a new command, all the while the process's data is completely replaced by the process of the command ran.
+The guide lets us know that `execve()` is a function that allows us to load and execute a new command, all the while the process's data is completely replaced by the process of the command ran.
 
 To test the behaviour of this command, we compiled and ran myenv.c twice.
 
-* Firstly, we ran the script without modifying it, which meant the third parameter of `execve` was set to `NULL`. To our surprise, nothing was output.
+* Firstly, we ran the script without modifying it, which meant the third parameter of `execve()` was set to `NULL`. To our surprise, nothing was output.
 
 ![Alt text](image-5.png)
 
-* Next, we changed the script so that the third parameter of `execve` was now `environ`. This time, running the program printed the environment variables.
+* Next, we changed the script so that the third parameter of `execve()` was now `environ`. This time, running the program printed the environment variables.
 
-Through this experiment, we found out that the third parameter of `execve` (named `envp` in the Linux manual) is a pointer to the execution environment we want to pass to the new program. Since `envp` is `NULL` by default, we can conclude that `execve` does NOT automatically inherit the environment variables of the calling process.
+Through this experiment, we found out that the third parameter of `execve()` (named `envp` in the Linux manual) is a pointer to the execution environment we want to pass to the new program. Since `envp` is `NULL` by default, we can conclude that `execve()` does NOT automatically inherit the environment variables of the calling process.
 
 ## Task 4: Environment Variables and system()
 
-Similarly to `execve`, `system` also executes a new command, however, by requesting the shell to do it.
-Through the provided program, we verified that the environment variables of the calling process are passed to the new process, as predicted by the guide. 
+The guide informs us that `system()`, unlike `execve()`, does not directly execute a command. Instead, it requests the shell to do it.
+
+The behaviour of `system()` can be summarized like this:
+
+* `system()` calls `execl()` to execute `/bin/sh`.
+* `execl()` calls `execve()` and passes it the `environ` variable, which, as we discovered in the previous task, is an array containing the environment variables of the calling process.
+
+In simple terms, `system()` wraps a call to `execve()`, ensuring the environment variables are inherited by the latter. So, any command executed with `system()` should retain the execution environment of the calling process.
+
+To verify this hypothesis, we copied the code present in this section of the guide into a script called "task4.c" and executed it. 
+
+![Alt text](image-6.png)
+
+Predictably, the environment variables were printed, thus validating our conclusion.
+
+
