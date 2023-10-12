@@ -6,11 +6,11 @@ As described in the task, by using the `env` command, the console printed out al
 
 Then, using `export`, we created a new environment variable, COLOR, whose value we set to "blue".
 
-![Alt text](image-1.png)
+![Alt text](images/image-1.png)
 
 After ensuring that COLOR had been correctly set, we proceeded to remove it using `unset`. To confirm that it had been successfully deleted, we used `printenv` again and verified that it did not print "blue" anymore.
 
-![Alt text](image-2.png)
+![Alt text](images/image-2.png)
 
 ## Task 2: Passing Environment Variables from Parent Process to Child Process
 
@@ -21,7 +21,7 @@ As requested in the guide, we compiled and ran myprintenv.c twice.
 
 By using the `diff` command with the two files, we noticed there was no difference. 
 
-![Alt text](image-4.png)
+![Alt text](images/image-4.png)
 
 As such, we concluded that child processes inherit the environment variables of their parent.
 
@@ -33,7 +33,7 @@ To test the behaviour of this command, we compiled and ran myenv.c twice.
 
 * Firstly, we ran the script without modifying it, which meant the third parameter of `execve()` was set to `NULL`. To our surprise, nothing was output.
 
-![Alt text](image-5.png)
+![Alt text](images/image-5.png)
 
 * Next, we changed the script so that the third parameter of `execve()` was now `environ`. This time, running the program printed the environment variables.
 
@@ -52,7 +52,7 @@ In simple terms, `system()` wraps a call to `execve()`, ensuring the environment
 
 To verify this hypothesis, we copied the code present in this section of the guide into a script called "task4.c" and executed it. 
 
-![Alt text](image-6.png)
+![Alt text](images/image-6.png)
 
 Predictably, the environment variables were printed, thus validating our conclusion.
 
