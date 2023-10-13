@@ -66,9 +66,9 @@ To understand the relation between `Set-UID` and environment variables, we set t
 
 Next, we created a simple `Set-UID` program which prints the environment variables of the current process. We also made 'root' its owner, since 'root' has the highest access rights on the system.
 
-```bash
-sudo chown root task6.c # change its owner to 'root'
-sudo chmod 4755 task6.c # make it a Set-UID program
+``` bash
+$ sudo chown root task6.c # change its owner to 'root'
+$ sudo chmod 4755 task6.c # make it a Set-UID program
 ```
 
 Upon executing it, we noticed that the `PATH` and `HOLA` variables we had created were present, as expected, but `LD_LIBRARY_PATH` was nowhere to be found.
