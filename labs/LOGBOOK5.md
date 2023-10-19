@@ -121,8 +121,25 @@ The guide already had a Makefile which created the executable as well as its deb
 
 After confirming the compilation was successful, we created an empty file called "badfile", which is the file our program will read, using the `touch` command:
 
-```c
+```bash
 $ touch badfile
 ```
+
+Next, we started debugging the program by following the steps below:
+
+1. Set a breakpoint at the "bof" function.
+
+![Alt text](image-1.png)
+
+2. Use `next` in order to update the value of the `ebp` (i.e. the frame pointer).
+
+![Alt text](image.png)
+
+This is required because, when the debugger stops inside "bof", the value of `ebp` points to the caller's stack frame. As such, it is necessary to execute a few more instructions until the `ebp` value actually points to the stack frame of "bof", hence why `next` was used.
+
+3. Get the value of the `ebp` (i.e. the frame pointer). 
+
+![Alt text](image-1.png)
+
 
 
