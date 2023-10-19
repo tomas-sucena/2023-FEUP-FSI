@@ -119,7 +119,7 @@ The guide already had a Makefile which created the executable as well as its deb
 
 ![Alt text](images/5-4.png)
 
-After confirming the compilation was successful, we created an empty file called "badfile", which is the file our program will read, using the `touch` command:
+After confirming the compilation was successful, we had to create the "badfile", because our program would throw an error if the file did not exist, thus impossibilitating the debugging. To do that, we used the `touch` command like so:
 
 ```bash
 $ touch badfile
