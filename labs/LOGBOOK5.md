@@ -109,7 +109,7 @@ $ sudo chmod 4755 stack # make it a Set-UID program
 
 **Note:** The order of the last two commands could not be inverted, because changing the owner of a program caused the `Set-UID` bit to be turned off.
 
-## Task 3: Launching Attack (Level 1)
+## Task 3: Launching Attack
 
 ### Understanding the Stack
 
@@ -275,3 +275,27 @@ We decided to test that hypothesis:
 
 We were correct, which means the attack was successful!
 
+## Task 4: Launching Attack without Knowing the Buffer Size
+
+In the previous task, we had access to both the source code and a debugger (`gdb`) to discover the size of the buffer. However, this detail is often very hard to obtain in the real world.
+
+In this task, we had to once again exploit the buffer overflow present in "stack.c" in order to launch a root shell. This time, though, we did not know the size of the buffer, only that it ranged from 100 to 200 bytes.
+
+Thankfully, while researching how to bypass this hurdle, we found the following technique:
+
+> **Spraying** consists in allocating (large) blocks of memory and filling them with a sequence of bytes so as to put said sequence in a predetermined location in the memory of a process.
+
+Basically, since we could not know the exact location of the return address of "bof", we just had to "spray" the addresses most likely to contain it with our return address.
+
+We did so by replacing the line below
+
+```python
+content[offset:offset + L] = (ret).to_bytes(L,byteorder='little') 
+```
+
+with this loop:
+
+```python
+for i in range(offset, offset + 100, 4):
+    content[i:i + L] = (ret).to_bytes(L,byteorder='little') 
+```
