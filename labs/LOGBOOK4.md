@@ -14,7 +14,7 @@ After ensuring that COLOR had been correctly set, we proceeded to remove it usin
 
 ## Task 2: Passing Environment Variables from Parent Process to Child Process
 
-As requested in the guide, we compiled and ran myprintenv.c twice.
+As requested in the guide, we compiled and ran "myprintenv.c" twice.
 
 * Firstly, we ran the script as it was provided. Since it was meant to print the environment variables of a **child** process, we saved its output in a file named "child".
 * Next, we altered the script by changing the lines that were commented, making it so it would now print the environment variables of the **parent** process. Because of this, we saved the output of the modified script in a file named "parent".
@@ -29,7 +29,7 @@ As such, we concluded that child processes inherit the environment variables of 
 
 > `execve()` is a function that allows us to load and execute a new command, all the while the process's data is completely replaced by the process of the command ran.
 
-To test the behaviour of this command, we compiled and ran myenv.c twice.
+To test the behaviour of this command, we compiled and ran "myenv.c" twice.
 
 * Firstly, we ran the script without modifying it, which meant the third parameter of `execve()` was set to `NULL`. To our surprise, nothing was output.
 
