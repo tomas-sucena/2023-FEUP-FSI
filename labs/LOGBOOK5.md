@@ -6,7 +6,7 @@ Before starting the tasks themselves, we had to deactivate a couple of security 
 
 ### Address Space Layout Randomization
 
-> Address Space Layout Randomization (or `ASLR` for short) is a security measure that consists in randomly arranging the positions of a process' key address spaces, such as the base of the executable and the positions of the **stack**, **heap** and libraries.
+> Address Space Layout Randomization (or `ASLR` for short) is a security measure that consists in randomly arranging the positions of a process's key address spaces, such as the base of the executable and the positions of the **stack**, **heap** and libraries.
 
 Since this mechanism difficults guessing exact addresses, which is vital to perform buffer overflows, we disabled it with the following command:
 
@@ -24,8 +24,7 @@ Considering we would be exploiting a `Set-UID` program using `/bin/sh`, we had t
 $ sudo ln -sf /bin/zsh /bin/sh
 ```
 
-#### Note
-**StackGuard** and **Non-Executable Stack** are additional countermeasures that will be turned off during compilation.
+**Note:** <u>StackGuard</u> and <u>Non-Executable Stack</u> are additional countermeasures that will be turned off during compilation.
 
 ## Task 1: Understanding Shellcode
 
@@ -90,9 +89,9 @@ In conclusion, by properly assembling a payload and writing it in "badfile", we 
 
 ### Setting Up the Executable
 
-Since our objective is to lauch a root shell using the program, we need to first prepare the executable. 
+Since our objective was to lauch a root shell using the program, we had to first prepare the executable. 
 
-The first step is compiling it. In order for our attack to work, we have to use `-fno-stack-protector` and `-z execstack` to deactivate the **StackGuard** and the non-executable stack protections, respectively.
+The first step was compiling it. In order for our attack to work, we had to use `-fno-stack-protector` and `-z execstack` to deactivate the **StackGuard** and the non-executable stack protections, respectively.
 
 The compilation command would be as follows:
 
@@ -100,7 +99,7 @@ The compilation command would be as follows:
 $ gcc -DBUF_SIZE=100 -m32 -o stack -z execstack -fno-stack-protector stack.c
 ```
 
-Next, we have to turn the executable into a root-owned `Set-UID` program. To that end, the commands below must be run:
+Next, we had to turn the executable into a root-owned `Set-UID` program. To that end, we ran the commands below:
 
 ```bash
 $ gcc chown root stack # change the owner to 'root'
@@ -113,7 +112,7 @@ $ sudo chmod 4755 stack # make it a Set-UID program
 
 ### Understanding the Stack
 
-> To exploit the buffer overflow, it is necessary to discover the distance between the vulnerable buffer's **base** and the position where the **return-address** is stored.
+> To exploit the buffer overflow, it is necessary to discover the distance between the vulnerable buffer's **base** and the position where the **return address** is stored.
 
 In order to calculate that distance, we first had to remember the layout of the **stack**.
 
@@ -130,19 +129,19 @@ Upon observing the stack, we realized we needed the following values:
 
 ### Investigating the Program
 
-Since we have the source code of the vulnerable program, the easiest way to obtain the information we required was to debug it. To do that, we had to compile it using the `-g` flag, which adds debugging information to the resulting binary.
+Since we had the source code of the vulnerable program, the easiest way to obtain the information we required was to debug it. To do that, we had to compile it using the `-g` flag, which adds debugging information to the resulting binary.
 
 The guide already had a Makefile which created the executable for this task as well as its debugging counterpart, so we ran it.
 
 ![Alt text](images/5-5.png)
 
-After confirming the compilation was successful, we had to create the "badfile", because our program would throw an error if the file did not exist, thus abruptly ending the debugging session. To do that, we used the `touch` command like so:
+After confirming the compilation was successful, we had to create the "badfile", because our program would throw an error if the file did not exist, thus abruptly ending the debugging session. To do that, we used the `touch` command.
 
 ```bash
-$ touch badfile
+$ touch badfile # creates an empty file called "badfile"
 ```
 
-Next, we started debugging the program using `GDB` by following the steps below:
+Next, we started debugging the program using `gdb` by following the steps below:
 
 1. Set a breakpoint at the "bof" function.
 
@@ -183,10 +182,10 @@ shellcode= (
 2. Creates a byte array which represents the payload and fill it with `NOP`'s.
 
 ```python
-content = bytearray(0x90 for i in range(517))
+content = bytearray(0x90 for i in range(517)) # 0x90 is the bytecode for NOP
 ```
 
-**Note:** `NOP` is an instruction that does nothing. Despite that, filling the payload with `NOP`'s is extremely important, because it will guarantee that, given we incorrectly guess an address, the program will keep executing until it finds it, thereby increasing our chances of executing the shellcode.
+**Note:** `NOP` is an instruction that does nothing. Despite that, filling the payload with `NOP`'s is extremely important, because it will guarantee that, given we incorrectly guess an address, the program will keep executing until it finds it, thereby increasing our chances of executing the shellcode. This technique is called a <u>`NOP` slide</u>.
 
 3. Inserts the shellcode in the payload.
 
@@ -195,7 +194,7 @@ start = 0 # ✩ Need to change ✩
 content[start:start + len(shellcode)] = shellcode
 ```
 
-4. Decides what the return-address will be and places it in the payload.
+4. Decides what the return address will be and places it in the payload.
 
 ```python
 ret = 0x00 # ✩ Need to change ✩
@@ -242,13 +241,13 @@ content[start:] = shellcode
 
 **Note:** The "start" variable can be interpreted as the relative address of the <u>shellcode</u>, because it specifies the starting position of the shellcode relative to the base of "buffer", which will be the address of our payload.
 
-* Change the "ret" variable, which contains the return-address, so that it points to the shellcode.
+* Change the "ret" variable, which represents the return address, so that it points to the shellcode.
 
 ```python
 ret = buffer + start
 ```
 
-* Change the "offset" variable so that the return-address of "bof" can be overwritten.
+* Change the "offset" variable so that the return address of "bof" can be overwritten.
 
 ```python
 offset = ebp - buffer + 4
@@ -257,7 +256,7 @@ L = 4     # Use 4 for 32-bit address and 8 for 64-bit address
 content[offset:offset + L] = (ret).to_bytes(L,byteorder='little') 
 ```
 
-**Note:** Just like "start", "offset" is also a relative address, because it points to the starting position of the <u>return-address</u> relative to the base of "buffer".
+**Note:** Just like "start", "offset" is also a relative address, because it points to the starting position of the <u>return address</u> relative to the base of "buffer".
 
 After running the modified script, our payload was written into "badfile":
 
@@ -306,7 +305,7 @@ for i in range(offset, offset + 100, 4):
 
 ### Attack!
 
-With the new payload readied up, it was time to reattack our program. Once again, the Makefile provided by the guide had a target which corresponded to this task, so we ran it.
+With the new payload readied up, it was time to reattack our program. Once again, the `Makefile` provided by the guide had a target which corresponded to this task, so we ran it.
 
 ![Alt text](images/5-13.png)
 
@@ -318,7 +317,7 @@ Just like last time, we successfully launched a shell with 'root' privileges, wh
 
 ### Further Testing
 
-The Makefile we used to compile our program had a variable which determined the size of the buffer. By fiddling with its value, we created new binaries and tested our payload against them. The results are present in the table below:
+The `Makefile` we used to compile our program had a variable which determined the size of the buffer. By fiddling with its value, we created new binaries and tested our payload against them. The results are present in the table below:
 
 | Buffer Size | Results                      | Success? |
 |-------------|------------------------------|----------|
