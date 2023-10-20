@@ -132,7 +132,7 @@ Upon observing the stack, we realized we needed the following values:
 
 Since we have the source code of the vulnerable program, the easiest way to obtain the information we required was to debug it. To do that, we had to compile it using the `-g` flag, which adds debugging information to the resulting binary.
 
-The guide already had a Makefile which created the executable as well as its debugging counterpart, so we ran it.
+The guide already had a Makefile which created the executable for this task as well as its debugging counterpart, so we ran it.
 
 ![Alt text](images/5-5.png)
 
@@ -152,9 +152,7 @@ Next, we started debugging the program using `GDB` by following the steps below:
 
 ![Alt text](images/5-7.png)
 
-We had to use absolute paths so as to emulate the environment of the real program.
-
-3. Use `next` in order to update the value of the `ebp`.
+3. Use `next` to update the value of the `ebp`.
 
 ![Alt text](images/5-8.png)
 
@@ -170,9 +168,9 @@ This is required because, when the debugger stops inside "bof", the value of `eb
 
 With that, we had all the values that we needed.
 
-### Understanding How to Write the Payload
+### Understanding the Payload
 
-The guide provided a Python script that prepared the payload and output it to "badfile". Its behaviour can be summarized like this:
+The guide provided a Python script, "exploit.py", that prepared the payload and output it to "badfile". Its behaviour can be summarized like this:
 
 1. Writes and encodes the shellcode.
 
@@ -216,7 +214,7 @@ with open(’badfile’, ’wb’) as f:
 
 ### Writing the Payload
 
-Before running the script, we had to make the modifications listed below:
+Before running "exploit.py", we had to make the modifications listed below:
 
 * Replace "shellcode" with the 32-bit shellcode we studied in the [first task](#task-1-understanding-shellcode).
 
@@ -277,15 +275,21 @@ We were correct, which means the attack was successful!
 
 ## Task 4: Launching Attack without Knowing the Buffer Size
 
+### The Problem
+
 In the previous task, we had access to both the source code and a debugger (`gdb`) to discover the size of the buffer. However, this detail is often very hard to obtain in the real world.
 
-In this task, we had to once again exploit the buffer overflow present in "stack.c" in order to launch a root shell. This time, though, we did not know the size of the buffer, only that it ranged from 100 to 200 bytes.
+In this task, we had to once again exploit the buffer overflow present in "stack.c" in order to launch a root shell. This time, though, we did not know the **size** of the buffer, only that it ranged from 100 to 200 bytes.
 
-Thankfully, while researching how to bypass this hurdle, we found the following technique:
+The lack of a fixed buffer size seemed to be very problematic, because we depended on that value to calculate the base of the **return address**. Without its starting position, we could not overwrite the return address with the address of our shellcode.
+
+### The Solution
+
+Thankfully, while researching how to bypass this hurdle, we cane across the following technique:
 
 > **Spraying** consists in allocating (large) blocks of memory and filling them with a sequence of bytes so as to put said sequence in a predetermined location in the memory of a process.
 
-Basically, since we could not know the exact location of the return address of "bof", we just had to "spray" the addresses most likely to contain it with our return address.
+Basically, since we had no way of knowing the exact location where the return address of "bof" would be stored, we just had to _spray_ the positions most likely to contain it with the address of the shellcode.
 
 We did so by replacing the line below
 
@@ -299,3 +303,25 @@ with this loop:
 for i in range(offset, offset + 100, 4):
     content[i:i + L] = (ret).to_bytes(L,byteorder='little') 
 ```
+
+### Attack!
+
+With the new payload readied up, it was time to reattack our program. Once again, the Makefile provided by the guide had a target which corresponded to this task, so we ran it.
+
+![Alt text](images/5-13.png)
+
+After that, we reran the Python script and executed our program, obtaining the following results:
+
+![Alt text](images/5-14.png)
+
+Just like last time, we successfully launched a shell with 'root' privileges, which effectively proved that `spraying` worked.
+
+### Further Testing
+
+The Makefile we used to compile our program had a variable which determined the size of the buffer. By fiddling with its value, we created new binaries and tested our payload against them. The results are present in the table below:
+
+| Buffer Size | Results                      | Success? |
+|-------------|------------------------------|----------|
+| 120         | ![Alt text](images/5-15.png) | Yes      |
+| 140         | ![Alt text](images/5-16.png) | Yes      |
+| 180         | ![Alt text](images/5-17.png) | Yes      |
