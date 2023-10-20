@@ -6,7 +6,7 @@ Upon accessing the Linux server in the port `4006` of `ctf-fsi.fe.up.pt`, we wer
 
 ![img.png](./images/env_start_files.png)
 
-While checking their content, we immediatily found our first clue in the file `admin_note.txt`:
+While checking their content, we immediately found our first clue in the file `admin_note.txt`:
 
 ![img.png](images/admin_note.png)
 

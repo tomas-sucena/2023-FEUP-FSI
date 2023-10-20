@@ -111,7 +111,7 @@ $ sudo chmod 4755 stack # make it a Set-UID program
 
 ## Task 3: Launching Attack (Level 1)
 
-### Studying the Stack
+### Understanding the Stack
 
 > To exploit the buffer overflow, it is necessary to discover the distance between the vulnerable buffer's **base** and the position where the **return-address** is stored.
 
@@ -170,9 +170,51 @@ This is required because, when the debugger stops inside "bof", the value of `eb
 
 With that, we had all the values that we needed.
 
-### Writing the Payload
+### Understanding How to Write the Payload
 
-The guide provided a Python script that would write the payload. Briefly, it creates an array of `NOP` characters, which are operands that do nothing, and fills it accordingly.
+The guide provided a Python script that prepared the payload and output it to "badfile". Its behaviour can be summarized like this:
+
+1. Writes and encodes the shellcode.
+
+```python
+shellcode= (
+"" # ✩ Need to change ✩
+).encode(’latin-1’)
+```
+
+2. Creates a byte array which represents the payload and fill it with `NOP`'s.
+
+```python
+content = bytearray(0x90 for i in range(517))
+```
+
+**Note:** `NOP` is an instruction that does nothing. Despite that, filling the payload with `NOP`'s is extremely important, because it will guarantee that, given we incorrectly guess an address, the program will keep executing until it finds it, thereby increasing our chances of executing the shellcode.
+
+3. Inserts the shellcode in the payload.
+
+```python
+start = 0 # ✩ Need to change ✩
+content[start:start + len(shellcode)] = shellcode
+```
+
+4. Decides what the return-address will be and places it in the payload.
+
+```python
+ret = 0x00 # ✩ Need to change ✩
+offset = 0 # ✩ Need to change ✩
+
+L = 4 # Use 4 for 32-bit address and 8 for 64-bit address
+content[offset:offset + L] = (ret).to_bytes(L,byteorder=’little’)
+```
+
+5. Outputs the payload to "badfile".
+
+```python
+with open(’badfile’, ’wb’) as f:
+    f.write(content)
+```
+
+### Writing the Payload
 
 Before running the script, we had to make the modifications listed below:
 
@@ -219,11 +261,11 @@ content[offset:offset + L] = (ret).to_bytes(L,byteorder='little')
 
 **Note:** Just like "start", "offset" is also a relative address, because it points to the starting position of the <u>return-address</u> relative to the base of "buffer".
 
-### Attack!
-
 After running the modified script, our payload was written into "badfile":
 
 ![Alt text](images/5-11.png)
+
+### Attack!
 
 We were finally ready to launch our attack. If all went well, we would be able to spawn a shell with privileged access, so running the command `whoami` in it should yield 'root' as an answer.
 
