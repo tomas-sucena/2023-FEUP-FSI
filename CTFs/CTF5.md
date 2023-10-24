@@ -50,5 +50,119 @@ while(1){
 
 Upon analyzing this script, it became glaringly obvious that we could overwrite the contents of "meme_file" by purposefully overflowing the "buffer". This is because the two variables are side by side in **memory** and, since "buffer" is initialized after "meme_file", the end of "buffer" corresponds to the start of "meme_file".
 
-### Test
+### Preparing the Payload
 
+As recommended by the guide, we used the "exploit_example.py" to interact with the program.
+
+Before executing it, though, we had to create the payload we would use to cause the buffer overflow.
+
+Since "buffer" is 32 bytes, the length of the string had to be greater than that to trigger the buffer overflow. In addition, the string had to contain the name of the file we wanted to access, "flag.txt", immediately after the 32nd character in order to overwrite the "meme_file" variable.
+
+As such, we opted to use the following string: **aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt**.
+
+### Attack!
+
+With our payload ready, we modified the Python script so that it would send it to the program.
+
+```python
+r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt")
+```
+
+Finally, we were ready to attack. Running our script, we got the following output:
+
+![Alt text](image.png)
+
+We found the first flag: `flag{f658895ccf55dc13834f5764c8338de3}`!
+
+## 2nd flag
+
+### Analysis
+
+Once again, our first task was investigating the source code.
+
+Opening "main.c", we realized this program was quite similar to the one from the [previous challenge](#1st-flag). Its behaviour is described below:
+
+1. Initialize three character arrays by this order: "meme_file" (9 bytes), "val" (4 bytes), and "buffer" (32 bytes).
+
+```c
+char meme_file[9] = "mem.txt\0\0";
+char val[4] = "\xef\xbe\xad\xde";
+char buffer[32];
+```
+
+This means that "buffer" is adjacent to "val" in **memory** and "val" is adjacent to "meme_file". So, in order to overwrite "meme_file", we had to overwrite "val" first.
+
+2. Read 45 characters of user input and store them in the "buffer" array.
+
+```c
+scanf("%45s", &buffer);
+```
+
+3. Convert "val" into an integer pointer and dereference it. After that, compare the result with 0xfefc2324.
+
+```c
+if(*(int*)val == 0xfefc2324) {
+    ...
+}
+```
+
+4. If the previous values are equal, open the file whose name is given by the "meme_file" variable.
+
+```c
+FILE *fd = fopen(meme_file,"r");
+```
+
+5. Attempt to read from the file, if it exists, and print its content.
+
+```c
+while(1){
+    if(fd != NULL && fgets(buffer, 32, fd) != NULL) {
+        printf("%s", buffer);
+    } else {
+        break;
+    }
+}
+```
+
+Once again, we had to overflow "buffer" to overwrite the contents of "meme_file". Unlike last time, though, we had to be concerned with properly overwriting "val" as well, since the code that accessed the file was only executed when "val" equalled 0xfefc2324.
+
+### Preparing the Payload
+
+Since this challenge did not provide a script for interacting with the program, we copied the one we [previously](#preparing-the-payload) used.
+
+Yet again, we had to create the string we would use as a payload. The restrictions this time were the following:
+
+* The size of the string had to be greater than 32 bytes so that we could properly overflow the "buffer" variable.
+* The bytes in the positions 32 to 36 would have to contain the characters whose hexadecimal values corresponded to 0xfcfe2324. In Python, this restriction would be represented like this:
+
+```python
+string[32:36] = "\x24\x23\xfc\xfe"
+```
+
+**Note:** TODO
+
+* The string had to contain the name of the file we wanted to access, "flag.txt", immediately after its 36th character. In Python, this could be represented as follow:
+
+```python
+string[37:] = "flag.txt"
+```
+
+Taking that into account, we chose to use the following string:
+
+```python
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x24\x23\xfc\xfeflag.txt"
+```
+
+### Attack!
+
+It was time to attack once again.
+
+```python
+r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x24\x23\xfc\xfeflag.txt")
+```
+
+It was time to attack once again. Running our script, we got the following output:
+
+![Alt text](image-1.png)
+
+We found the first flag: `flag{f658895ccf55dc13834f5764c8338de3}`!
