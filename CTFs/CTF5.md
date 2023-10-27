@@ -11,6 +11,8 @@ Each challenge came with a folder which contained a few files. The most relevant
 
 ### Analysis
 
+#### Source Code
+
 Before attempting to exploit the program, we had to properly understand its source code. As such, we opened "main.c" and started thoroughly scrutinizing it.
 
 The script itself was pretty simple. It can be summarized as follows:
@@ -48,7 +50,33 @@ while(1){
 
 **Note:** This step is equivalent to printing the content of the file, given it exists.
 
-Upon analyzing this script, it became glaringly obvious that we could overwrite the contents of "meme_file" by purposefully overflowing the "buffer". This is because the two variables are side by side in **memory** and, since "buffer" is initialized after "meme_file", the end of "buffer" corresponds to the start of "meme_file".
+#### Executable
+
+When attacking a program, in addition to understanding its source code, it is also vital to ascertain how the executable was set up. In other words, we should be aware of any security measures that could prevent us from exploiting it.
+
+To that end, we ran `checksec`, which is a bash script for checking the properties of executables, as such:
+
+```bash
+$ checksec program
+```
+
+The output of the command above was the following:
+
+![Alt text](images/6-1.png)
+
+As such, we have acquired the following information:
+
+* There is no **canary** protecting the stack, which means buffer overflows will not be detected.
+
+> A **stack canary** is a secret value placed on the **stack** which changes every time the program is started. Prior to a function return, it is checked and, if it appears to have been modified, the program returns immediately.
+
+* The executable is not a `PIE`, which means the positions of the executable are NOT **randomized**.
+
+> A **Position-independent executable** (or `PIE` for short) is a binary that executes properly regardless of its **absolute address** (i.e. independently of where it is placed in memory).
+
+* The stack has **reading**, **writing** and **execution** permissions (`RWX`).
+
+So, considering our analysis of the source code and the executable, it became glaringly obvious that we could overwrite the contents of "meme_file" by purposefully overflowing the "buffer". This is because the two variables are side by side in **memory** and, since "buffer" is initialized after "meme_file", the end of "buffer" corresponds to the start of "meme_file".
 
 ### Preparing the Payload
 
@@ -81,13 +109,15 @@ r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt")
 
 Finally, we were ready to attack. Running our script, we got the following output:
 
-![Alt text](image.png)
+![Alt text](images/6-2.png)
 
 We found the first flag: `flag{f658895ccf55dc13834f5764c8338de3}`!
 
 ## 2nd flag
 
 ### Analysis
+
+#### Source Code
 
 Once again, our first task was investigating the source code. Opening "main.c", we realized this program was quite similar to the one from the [previous challenge](#1st-flag). 
 Its behaviour is described below:
@@ -134,7 +164,17 @@ while(1){
 }
 ```
 
-Once again, we had to overflow "buffer" to overwrite the contents of "meme_file". Unlike last time, though, we had to be concerned with properly overwriting "val" as well, since the code that accessed the file was only executed when "val" equalled 0xfefc2324.
+Once again, we had to overflow "buffer" to overwrite the contents of "meme_file". Unlike last time, though, we had to be concerned with properly overwriting "val" as well, since the code that accessed the file was only executed when "val" equalled `0xfefc2324`.
+
+#### Executable
+
+Before getting our hopes up, though, we had to make sure the executable would allow us to perform such an attack. That is, we had to run `checksec` again to verify its security measures.
+
+The output this time was as follows:
+
+![Alt text](images/6-3.png)
+
+Luckily for us, this executable has the same security measures (or lack thereof) as the one from the [last challenge](#executable). As such, our attack was feasible and no further examination was needed.
 
 ### Preparing the Payload
 
@@ -173,6 +213,6 @@ r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x24\x23\xfc\xfeflag.txt")
 
 It was time to attack once again. This time, executing our exploit net us the following output:
 
-![Alt text](image-1.png)
+![Alt text](images/6-4.png)
 
 We found the second flag: `flag{c586c7c8e1587ed588f60088a760ad1f}`!
