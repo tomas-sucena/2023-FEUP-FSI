@@ -64,8 +64,9 @@ The output of the command above was the following:
 
 ![Alt text](images/6-1.png)
 
-As such, we have acquired the following information:
+As such, we acquired the following information:
 
+* The program is a **little-endian** system, which means the least significant bytes are stored at the smallest memory addresses.
 * There is no **canary** protecting the stack, which means buffer overflows will not be detected.
 
 > A **stack canary** is a secret value placed on the **stack** which changes every time the program is started. Prior to a function return, it is checked and, if it appears to have been modified, the program returns immediately.
@@ -174,7 +175,14 @@ The output this time was as follows:
 
 ![Alt text](images/6-3.png)
 
-Luckily for us, this executable has the same security measures (or lack thereof) as the one from the [last challenge](#executable). As such, our attack was feasible and no further examination was needed.
+Luckily for us, this program had the same properties as the one from the [last challenge](#executable), that is:
+
+* The program is a **little-endian** system.
+* There is no **canary** protecting the stack.
+* Positions of the executable are NOT **randomized**.
+* The stack has **reading**, **writing** and **execution** permissions (`RWX`).
+
+So, this meant we were dealing with the same security measures (or lack thereof). Thus, our attack was feasible.
 
 ### Preparing the Payload
 
@@ -189,7 +197,7 @@ Yet again, we had to create the string we would use as a payload. The restrictio
 string[32:36] = "\x24\x23\xfc\xfe"
 ```
 
-**Note:** Since the address of "val" comes right after the end of "buffer", we overwrote its content from its <u>least significant</u> bytes to its <u>most significant</u>. As such, we had to write the hexadecimal characters in <u>reverse</u>.
+**Note:** Since this program is a <u>little-endian</u> system, the content of "val" was overwritten from its least significant bytes to its most significant. As such, we had to write the hexadecimal characters in <u>reverse</u>.
 
 * The string had to contain the name of the file we wanted to access, "flag.txt", immediately after its 36th character. In Python, this could be represented as follows:
 
