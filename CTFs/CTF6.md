@@ -69,7 +69,7 @@ Now if we put all of this together and submit it in the Input Page, we can see t
 
 ![img](images/website_forbidden.png)
 
-This is a good signal, it means we are trying to make the same request as the "Give the Flag" button, but we do not have permission to do it. Now we need to wait for the admin to enter the Request Page.
+This is a good sign, since it means we are trying to make the same request as the "Give the Flag" button, but we do not have permission to do it. Now we need to wait for the admin to enter the Request Page.
 
 Only one more obstacle to overcome, we cannot go to the Request Page and see the flag displayed there since we keep being redirected to the Forbidden Page, so let's turn off the javascript in our browser.
 
