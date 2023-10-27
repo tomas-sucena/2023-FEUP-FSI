@@ -320,7 +320,7 @@ Just like last time, we successfully launched a shell with 'root' privileges, wh
 The `Makefile` we used to compile our program had a variable which determined the size of the buffer. By fiddling with its value, we created new binaries and tested our payload against them. The results are present in the table below:
 
 | Buffer Size | Results                      | Success? |
-|-------------|------------------------------|----------|
+|:-----------:|:----------------------------:|:--------:|
 | 120         | ![Alt text](images/5-15.png) | Yes      |
 | 140         | ![Alt text](images/5-16.png) | Yes      |
 | 180         | ![Alt text](images/5-17.png) | Yes      |

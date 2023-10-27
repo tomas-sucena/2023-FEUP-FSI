@@ -52,13 +52,22 @@ Upon analyzing this script, it became glaringly obvious that we could overwrite 
 
 ### Preparing the Payload
 
-As recommended by the guide, we used the "exploit_example.py" to interact with the program.
+As recommended by the guide, we used the "exploit_example.py" script to interact with the program.
 
-Before executing it, though, we had to create the payload we would use to cause the buffer overflow.
+Before executing it, though, we had to create the payload we would use to cause the buffer overflow. Since our input was limited to the command line, it would have to be a string with the following restrictions:
 
-Since "buffer" is 32 bytes, the length of the string had to be greater than that to trigger the buffer overflow. In addition, the string had to contain the name of the file we wanted to access, "flag.txt", immediately after the 32nd character in order to overwrite the "meme_file" variable.
+* Since "buffer" is 32 bytes, the length of the string had to be greater than that to trigger the buffer overflow.
+* The string had to contain the name of the file we wanted to access, "flag.txt", immediately after the 32nd character in order to overwrite the "meme_file" variable. In Python, this can be expressed as follows:
 
-As such, we opted to use the following string: **aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt**.
+```python
+string[32:] = "flag.txt"
+```
+
+As such, we opted to use the following string: 
+
+```python
+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt" # 32 * 'a' + "flag.txt"
+```
 
 ### Attack!
 
@@ -67,6 +76,8 @@ With our payload ready, we modified the Python script so that it would send it t
 ```python
 r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt")
 ```
+
+**Note:** The 'b' before the string means the characters will be encoded as <u>octets</u> (integers ranging from 0 to 255), which is the format C uses for character encoding.
 
 Finally, we were ready to attack. Running our script, we got the following output:
 
@@ -78,9 +89,8 @@ We found the first flag: `flag{f658895ccf55dc13834f5764c8338de3}`!
 
 ### Analysis
 
-Once again, our first task was investigating the source code.
-
-Opening "main.c", we realized this program was quite similar to the one from the [previous challenge](#1st-flag). Its behaviour is described below:
+Once again, our first task was investigating the source code. Opening "main.c", we realized this program was quite similar to the one from the [previous challenge](#1st-flag). 
+Its behaviour is described below:
 
 1. Initialize three character arrays by this order: "meme_file" (9 bytes), "val" (4 bytes), and "buffer" (32 bytes).
 
@@ -98,7 +108,7 @@ This means that "buffer" is adjacent to "val" in **memory** and "val" is adjacen
 scanf("%45s", &buffer);
 ```
 
-3. Convert "val" into an integer pointer and dereference it. After that, compare the result with 0xfefc2324.
+3. Convert "val" into an integer pointer and dereference it. After that, compare the result with `0xfefc2324`.
 
 ```c
 if(*(int*)val == 0xfefc2324) {
@@ -133,15 +143,15 @@ Since this challenge did not provide a script for interacting with the program, 
 Yet again, we had to create the string we would use as a payload. The restrictions this time were the following:
 
 * The size of the string had to be greater than 32 bytes so that we could properly overflow the "buffer" variable.
-* The bytes in the positions 32 to 36 would have to contain the characters whose hexadecimal values corresponded to 0xfcfe2324. In Python, this restriction would be represented like this:
+* The bytes in the positions 32 to 36 would have to contain the characters whose hexadecimal values corresponded to `0xfcfe2324`. In Python, this restriction would be represented like this:
 
 ```python
 string[32:36] = "\x24\x23\xfc\xfe"
 ```
 
-**Note:** TODO
+**Note:** Since the address of "val" comes right after the end of "buffer", we overwrote its content from its <u>least significant</u> bytes to its <u>most significant</u>. As such, we had to write the hexadecimal characters in <u>reverse</u>.
 
-* The string had to contain the name of the file we wanted to access, "flag.txt", immediately after its 36th character. In Python, this could be represented as follow:
+* The string had to contain the name of the file we wanted to access, "flag.txt", immediately after its 36th character. In Python, this could be represented as follows:
 
 ```python
 string[37:] = "flag.txt"
@@ -155,14 +165,14 @@ Taking that into account, we chose to use the following string:
 
 ### Attack!
 
-It was time to attack once again.
+Having decided our payload, we copied it onto our Python script so that it would be sent to the program.
 
 ```python
 r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x24\x23\xfc\xfeflag.txt")
 ```
 
-It was time to attack once again. Running our script, we got the following output:
+It was time to attack once again. This time, executing our exploit net us the following output:
 
 ![Alt text](image-1.png)
 
-We found the first flag: `flag{f658895ccf55dc13834f5764c8338de3}`!
+We found the second flag: `flag{c586c7c8e1587ed588f60088a760ad1f}`!
