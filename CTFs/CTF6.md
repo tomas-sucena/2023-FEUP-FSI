@@ -35,7 +35,7 @@ To look for vulnerabilities, we chose to start by checking if the input in the r
 
 ![img](images/website_alert_source.png)
 
-It turns out that actually was the answer! Given the admin will review our request, we are likely to be able to inject some code that forces them to give us the flag.
+It turns out that actually was the answer! The request's content is not validated! Given the admin will review our request, we are likely to be able to inject some code that forces them to give us the flag.
 
 ## Execution
 
