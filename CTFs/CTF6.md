@@ -1,16 +1,19 @@
 # XSS + CSRF
 
-In this Capture the Flag, we are required to perform a XSS attack on a website where only the admin should be capable of providing us with the flag.
+In this CTF, we are required to perform a XSS attack on a website where only an administrator should be capable of providing us with the flag.
 
 ## Exploration
 
-### Input Page:
+Upon accessing http://ctf-fsi.fe.up.pt:5004, we started investigating the website. Considering the title of this challenge, we were particularly interested in understanding the requests it could make.
+The pages we found are listed below:
+
+### Input Page
 
 ![img](images/website_input.png)
 
-This page allows us to input a message, for the admins to review. When the "Submit" button is pressed, that message is displayed in the following page.
+This page allows us to input a message for the admins to review. When the "Submit" button is pressed, that message is displayed in the following page.
 
-### Request Page:
+### Request Page
 
 ![img](images/website_show_test.png)
 
@@ -20,7 +23,7 @@ This new page displays our request message. If we look closely, by inspecting th
 
 By pressing the hyperlinked label in this page, we are redirected to the page where the admin reviews requests.
 
-### Admin Page:
+### Admin Page
 
 ![img](images/website_admin.png)
 
