@@ -59,10 +59,6 @@ The format-string vulnerability is present in "myprintf()", because the call to 
 
 As such, by construction a proper payload, executing "myprintf()" could lead to the divulgation of sensitive program data or the execution of malicious code.
 
-```bash
-$ gcc -DBUF_SIZE=100 -m32 -o stack -z execstack -fno-stack-protector stack.c
-```
-
 ## Task 1: Crashing the Program
 
 Our first task was to crash the vulnerable program. We started by opening two terminals, one for running the server and another for communicating with it.
@@ -73,10 +69,37 @@ According to the guide, the server would output a message if it returned success
 |----------|-----------------------------|
 | 'hi'     | ![Alt text](images/7-1.png) |
 
-Next, we decided to send the `"%s"` string, since that would force the program to find a string in the value immeadiately above the format string on the stack. Since there would be no string above our format string, the program should crash. The result of our experiment was as follows:
+Now that we were aware of the output we did *not* want to receive, we started constructing our payload. Our first idea was to send the string `"%d`, because it would force the program to find an integer in the value immediately above the format string on the stack. Since there would be no integer above our format string, the program should crash.
+
+However, our hypothesis did not turn out to be correct, as proven by the output below:
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
-| '%s'     | ![Alt text](images/7-2.png) |
+| '%d'     | ![Alt text](images/7-2.png)        |
 
-Since neither our payload nor the "Returned properly" message were output, we managed to crash the program!
+This happened because the program interpreted the bytes above the format string as an integer, even if they represented something else entirely.
+
+Next, we decided to send the `"%s"` string, thus making the program search for a pointer to a string in the value stored above the format string. We thought this approach would be more reliable, given that the program cannot simply interpret random values as pointers like it did with integers. 
+
+The result of our experiment was as follows:
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| '%s'     | ![Alt text](images/7-3.png) |
+
+Since neither our payload nor the "Returned properly" message were output, that means we managed to crash the program!
+
+## Task 2: Printing Out the Memory
+
+### Understanding the Memory
+
+### 2.A: Stack Data
+
+Our next task was to print data stored in the program's stack. More specifically, we had to print the first four bytes of our input, which would be stored somewhere on the stack.
+
+Before we could do that, though, we had to understand the layout of the stack.
+Thankfully, the guide provided the image below:
+
+![Alt text](image.png)
+
+Now that we were familiar with the stack, 
