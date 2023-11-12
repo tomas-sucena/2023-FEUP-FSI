@@ -65,8 +65,8 @@ badfile = fopen("badfile", "r"); // open the file
 fread(str, sizeof(char), 517, badfile); // read at most 517 chars from the file
 ```
 
-2. Calls the function "bof", passing "str" as an argument.
-3. "bof" allocates memory for a new character array, "buffer", and copies the contents of "str" to it.
+2. Calls the function "bof()", passing "str" as an argument.
+3. "bof()" allocates memory for a new character array, "buffer", and copies the contents of "str" to it.
 
 ```c
 int bof(char *str)
@@ -80,7 +80,7 @@ int bof(char *str)
 }
 ```
 
-The buffer overflow vulnerability is present in the "bof" function for the following reasons:
+The buffer overflow vulnerability is present in the "bof()" function for the following reasons:
 
 * The size of "buffer" is dictated by "BUF_SIZE", which, being a user-defined constant, can be less than the size of "str".
 * `strcpy`, which is used to copy the content of "str" to "buffer", does NOT perform bounds checking. As such, it does not verify if "buffer" has enough space to receive all the characters from "str".
@@ -120,11 +120,11 @@ The image below, taken from a [lecture](https://www.udemy.com/course/du-computer
 
 ![Alt text](images/5-4.png)
 
-**Note:** Some values are different, such as the function being called "foo" instead of "bof", but nevertheless the picture accurately represents what we dealt with.
+**Note:** Some values are different, such as the function being called "foo()" instead of "bof()", but nevertheless the picture accurately represents what we dealt with.
 
 Upon observing the stack, we realized we needed the following values:
 
-* **Frame pointer** of the "bof" function, which is stored in the `ebp` register.
+* **Frame pointer** of "bof()", which is stored in the `ebp` register.
 * The starting position (i.e. the **base**) of the "buffer" variable, which is the vulnerable buffer in our program.
 
 ### Investigating the Program
@@ -143,7 +143,7 @@ $ touch badfile # creates an empty file called "badfile"
 
 Next, we started debugging the program using `gdb` by following the steps below:
 
-1. Set a breakpoint at the "bof" function.
+1. Set a breakpoint at the "bof()" function.
 
 ![Alt text](images/5-6.png)
 
@@ -155,9 +155,9 @@ Next, we started debugging the program using `gdb` by following the steps below:
 
 ![Alt text](images/5-8.png)
 
-This is required because, when the debugger stops inside "bof", the value of `ebp` points to the caller's stack frame. As such, it is necessary to execute a few more instructions until the `ebp` value actually points to the stack frame of "bof", hence why `next` was used.
+This is required because, when the debugger stops inside "bof()", the value of `ebp` points to the caller's stack frame. As such, it is necessary to execute a few more instructions until the `ebp` value actually points to the stack frame of "bof()", hence why `next` was used.
 
-4. Get the value of the `ebp` (i.e. the frame pointer of "bof"). 
+4. Get the value of the `ebp` i.e. the frame pointer of "bof()". 
 
 ![Alt text](images/5-9.png)
 
@@ -247,7 +247,7 @@ content[start:] = shellcode
 ret = buffer + start
 ```
 
-* Change the "offset" variable so that the return address of "bof" can be overwritten.
+* Change the "offset" variable so that the return address of "bof()" can be overwritten.
 
 ```python
 offset = ebp - buffer + 4
@@ -288,7 +288,7 @@ Thankfully, while researching how to bypass this hurdle, we cane across the foll
 
 > **Spraying** consists in allocating (large) blocks of memory and filling them with a sequence of bytes so as to put said sequence in a predetermined location in the memory of a process.
 
-Basically, since we had no way of knowing the exact location where the return address of "bof" would be stored, we just had to _spray_ the positions most likely to contain it with the address of the shellcode.
+Basically, since we had no way of knowing the exact location where the return address of "bof()" would be stored, we just had to _spray_ the positions most likely to contain it with the address of the shellcode.
 
 We did so by replacing the line below
 
