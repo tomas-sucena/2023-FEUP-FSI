@@ -65,4 +65,18 @@ $ gcc -DBUF_SIZE=100 -m32 -o stack -z execstack -fno-stack-protector stack.c
 
 ## Task 1: Crashing the Program
 
-Our first task was to crash the vulnerable program.
+Our first task was to crash the vulnerable program. We started by opening two terminals, one for running the server and another for communicating with it.
+
+According to the guide, the server would output a message if it returned successfully upon printing our input, so we decided to test that by sending it a harmless message.
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| 'hi'     | ![Alt text](images/7-1.png) |
+
+Next, we decided to send the `"%s"` string, since that would force the program to find a string in the value immeadiately above the format string on the stack. Since there would be no string above our format string, the program should crash. The result of our experiment was as follows:
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| '%s'     | ![Alt text](images/7-2.png) |
+
+Since neither our payload nor the "Returned properly" message were output, we managed to crash the program!
