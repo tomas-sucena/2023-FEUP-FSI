@@ -69,7 +69,7 @@ According to the guide, the server would output a message if it returned success
 |----------|-----------------------------|
 | 'hi'     | ![Alt text](images/7-1.png) |
 
-Now that we were aware of the output we did *not* want to receive, we started constructing our payload. Our first idea was to send the string `"%d`, because it would force the program to find an integer in the value immediately above the format string on the stack. Since there would be no integer above our format string, the program should crash.
+Now that we were aware of the output we did *not* want to receive, we started constructing our payload. Our first idea was to send the string `"%d"`, because it would force the program to find an integer in the value immediately above the format string on the stack. Since there would be no integer above our format string, the program should crash.
 
 However, our hypothesis did not turn out to be correct, as proven by the output below:
 
@@ -91,15 +91,33 @@ Since neither our payload nor the "Returned properly" message were output, that 
 
 ## Task 2: Printing Out the Memory
 
-### Understanding the Memory
+![Alt text](image.png)
 
 ### 2.A: Stack Data
 
-Our next task was to print data stored in the program's stack. More specifically, we had to print the first four bytes of our input, which would be stored somewhere on the stack.
+The next task was to print data stored in the program's stack. More specifically, we had to print the first four bytes of our input, which would be stored somewhere on the stack.
 
-Before we could do that, though, we had to understand the layout of the stack.
-Thankfully, the guide provided the image below:
+Our plan was simple: input a string followed by several `%x` format specifiers. This would cause the program to print the values stored in the stack. As such, all we would have to do would be to find the hexadecimal value of our string.
 
-![Alt text](image.png)
+In order to easily identify our string in the output, we decided that 0xAAAAAAAA would be its first four bytes. As for the number of format specifiers we would need, we opted to start with 100 and planned on increasing them if necessary.
 
-Now that we were familiar with the stack, 
+Since creating the payload manually would be quite tedious, due to the amount of format specifiers we would have to write, we modified the "exploit.py" script that was provided in this lab.
+
+```python
+#!/usr/bin/python3
+import sys
+
+payload = bytearray.fromhex("A" * 8) + b"\n" + b" %x " * 100
+
+# Save the format string to file
+with open('badfile', 'wb') as f:
+    f.write(payload)
+```
+
+Upon running the script, we sent our payload to the server and obtained the following response:
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| badfile  | ![Alt text](images/7-4.png) |
+
+By counting the amount of spaces between values, we concluded that our payload was the 64th value printed. Thus, we needed exactly 64 `%x` specifiers: 63 for printing the intermediate values and another one for the first four bytes of our string.
