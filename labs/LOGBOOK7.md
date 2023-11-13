@@ -93,7 +93,7 @@ Since neither our payload nor the "Returned properly" message were output, that 
 
 ![Alt text](image.png)
 
-### 2.A: Stack Data
+### 2.A: Stack
 
 The next task was to print data stored in the program's stack. More specifically, we had to print the first four bytes of our input, which would be stored somewhere on the stack.
 
@@ -121,3 +121,32 @@ Upon running the script, we sent our payload to the server and obtained the foll
 | badfile  | ![Alt text](images/7-4.png) |
 
 By counting the amount of spaces between values, we concluded that our payload was the 64th value printed. Thus, we needed exactly 64 `%x` specifiers: 63 for printing the intermediate values and another one for the first four bytes of our string.
+
+### 2.B: Heap
+
+The objective of the next task was to print a secret message stored in the heap. The only information we were given was its address, which was printed by the server upon each request like so:
+
+![Alt text](images/7-5.png)
+
+Having discovered in the previous section that our input was stored in the 64th value above the format string, we had the means to design a payload that would force the program to fetch it and access the content pointed by it.
+
+In fact, if we wrote the address of the secret message followed by 63 `%x` format specifiers, we would be pointing to the memory region of our input. Then, by using a `%s` format specifier, the program would the input - the address of the message - and access its memory location, outputting its content.
+
+Once again, we modified "exploit.py" so that it would concoct our payload. To make it easier to read the output, we decided to add line breaks before and after the secret message.
+
+```python
+address = 0x080b4008 # the address of the secret message
+payload = address.to_bytes(4, byteorder='little') + b"%x" * 63 + b"\n%s\n"
+
+# Save the format string to file
+with open('badfile', 'wb') as f:
+    f.write(payload)
+```
+
+After running the script, we send the payload to the server and received the following output:
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| badfile  | ![Alt text](images/7-6.png) |
+
+There it lay, the most secret of messages: "A secret message"!
