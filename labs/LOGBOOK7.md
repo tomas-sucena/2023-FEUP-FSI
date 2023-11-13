@@ -135,6 +135,9 @@ In fact, if we wrote the address of the secret message followed by 63 `%x` forma
 Once again, we modified "exploit.py" so that it would concoct our payload. To make it easier to read the output, we decided to add line breaks before and after the secret message.
 
 ```python
+#!/usr/bin/python3
+import sys
+
 address = 0x080b4008 # the address of the secret message
 payload = address.to_bytes(4, byteorder='little') + b"%x" * 63 + b"\n%s\n"
 
@@ -150,3 +153,42 @@ After running the script, we send the payload to the server and received the fol
 | badfile  | ![Alt text](images/7-6.png) |
 
 There it lay, the most secret of messages: "A secret message"!
+
+## Task 3: Modifying the Memory
+
+The final two tasks involve using the format-string vulnerability to alter the value of a variable named "target". To do that, we could reuse the payload we used in the last section with a few modifications:
+
+* Replace the address of the secret message with the address of "target".
+* Replace the last format specifier, `%s`, with `%n`.
+
+These changes would make the program write the number of characters read in the format string into the memory location specified by our input, which would be the address of "target". Thus, we would effectively rewrite its value.
+
+Thanfully, the server printed its address upon each request, as well its value before and after said request, so we had all the information we needed. 
+
+![Alt text](images/7-7.png)
+
+### 3.A: Changing the value
+
+Firstly, we were tasked with changing the value of "target". It did not matter what its final value was as long as it differed from its initial value, so, for simplicity, we decided that we would assign "target" the number of characters read in the format string.
+
+To that end, we modified "exploit.py" like so:
+
+```python
+#!/usr/bin/python3
+import sys
+
+address = 0x080e5068
+payload = address.to_bytes(4, byteorder='little') + b"%x" * 63 + b"%n\n"
+
+# Save the format string to file
+with open('badfile', 'wb') as f:
+    f.write(payload)
+```
+
+After executing the script and sending the payload to the server, we obtained the following response:
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| badfile  | ![Alt text](images/7-8.png) |
+
+We changed "target"!
