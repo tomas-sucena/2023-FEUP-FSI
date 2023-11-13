@@ -31,8 +31,8 @@ select * from credential where name = "Alice";
 To get started with this task, we found it especially important to look at the provided code snippet.
 
 ```php
-$input_uname = $_GET[’username’];
-$input_pwd = $_GET[’Password’];
+$input_uname = $_GET['username'];
+$input_pwd = $_GET['Password'];
 $hashed_pwd = sha1($input_pwd);
 ...
 $sql = "SELECT id, name, eid, salary, birth, ssn, address, email,
