@@ -1,7 +1,5 @@
 # Format Strings
 
-> Add definition
-
 ## Setup
 
 Before starting the tasks themselves, we had to deactivate a couple of security mechanisms Unix uses to prevent memory exploitation.
@@ -161,6 +159,18 @@ The final two tasks involve using the format-string vulnerability to alter the v
 * Replace the address of the secret message with the address of "target".
 * Replace the last format specifier, `%s`, with `%n`.
 
+> The `%n` format specifier assigns a variable the count of the number of characters used in the print statement before its occurrence.
+
+```c
+// Example
+int main() {
+    int n;
+
+    printf("Hello %n World!", &n);
+    printf("%d", n); // "6"
+}
+```
+
 These changes would make the program write the number of characters read in the format string into the memory location specified by our input, which would be the address of "target". Thus, we would effectively rewrite its value.
 
 Thanfully, the server printed its address upon each request, as well its value before and after said request, so we had all the information we needed. 
@@ -206,8 +216,8 @@ To solve both of those problems, we used the `%N` format specifier.
 
 > The `%N` format specifier, where N is an integer, adds padding on the **left** of a format string. If N is negative, the padding is added on the **right**. It is important to note that N represents the **size** of the format string with padding.
 
-**Example:**
 ```c
+// Example
 int main() {
     printf("|%10s|", "Hello"); // "|    Hello!|"
     printf("|%-10s|", string); // "|Hello!    |"

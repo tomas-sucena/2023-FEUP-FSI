@@ -43,7 +43,7 @@ $sql = "SELECT id, name, eid, salary, birth, ssn, address, email,
 $result = $conn -> query($sql);
 ```
 
-This sql query, makes it so, if there is no verification of the user input, one could make an SQL injection attack. We will exploit this to complete our task. We will also use it as a reference to make the attack.
+This SQL query makes it so, if there is no verification of the user input, one could make an SQL injection attack. We will exploit this to complete our task. We will also use it as a reference to make the attack.
 
 ### Task 2.1: SQL Injection Attack from webpage
 
