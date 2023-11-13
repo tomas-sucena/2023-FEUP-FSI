@@ -18,7 +18,7 @@ $ sudo sysctl -w kernel.randomize_va_space=0
 
 ### Non-executable Stack
 
-> `Non-executable stack` is one of many executable-space protection mechanisms which marks the **stack** as non-executable, meaning all writable addresses stored on it cannot be executed.
+> `Non-executable stack` is one of many executable-space protection mechanisms that marks the **stack** as non-executable, meaning all writable addresses stored on it cannot be executed.
 
 Since one of our tasks was to exploit the format-string vulnerability to inject code into the program's stack and execute it, we deactivated it during compilation using the `-z execstack` flag.
 
@@ -69,7 +69,7 @@ According to the guide, the server would output a message if it returned success
 |----------|-----------------------------|
 | 'hi'     | ![Alt text](images/7-1.png) |
 
-Now that we were aware of the output we did *not* want to receive, we started constructing our payload. Our first idea was to send the string `"%d"`, because it would force the program to find an integer in the value immediately above the format string on the stack. Since there would be no integer above our format string, the program should crash.
+Now that we were aware of the output we did *not* want to receive, we started constructing our payload. Our first idea was to send the string `"%d"` because it would force the program to find an integer in the value immediately above the format string on the stack. Since there would be no integer above our format string, the program should crash.
 
 However, our hypothesis did not turn out to be correct, as proven by the output below:
 
@@ -87,7 +87,7 @@ The result of our experiment was as follows:
 |----------|-----------------------------|
 | '%s'     | ![Alt text](images/7-3.png) |
 
-Since neither our payload nor the "Returned properly" message were output, that means we managed to crash the program!
+Since neither our payload nor the 'Returned properly' message were output, that means we managed to crash the program!
 
 ## Task 2: Printing Out the Memory
 
@@ -114,7 +114,7 @@ with open('badfile', 'wb') as f:
     f.write(payload)
 ```
 
-Upon running the script, we sent our payload to the server and obtained the following response:
+Upon running the script, we dispatched our payload to the server and obtained the following response:
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
@@ -130,7 +130,7 @@ The objective of the next task was to print a secret message stored in the heap.
 
 Having discovered in the previous section that our input was stored in the 64th value above the format string, we had the means to design a payload that would force the program to fetch it and access the content pointed by it.
 
-In fact, if we wrote the address of the secret message followed by 63 `%x` format specifiers, we would be pointing to the memory region of our input. Then, by using a `%s` format specifier, the program would the input - the address of the message - and access its memory location, outputting its content.
+In fact, if we wrote the address of the secret message followed by 63 `%x` format specifiers, we would be pointing to the memory region of our input. Then, by using a `%s` format specifier, the program would read the input - the address of the message - and access its memory location, outputting its content.
 
 Once again, we modified "exploit.py" so that it would concoct our payload. To make it easier to read the output, we decided to add line breaks before and after the secret message.
 
@@ -146,13 +146,13 @@ with open('badfile', 'wb') as f:
     f.write(payload)
 ```
 
-After running the script, we send the payload to the server and received the following output:
+After running the script, we sent the payload to the server and received the following output:
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
 | badfile  | ![Alt text](images/7-6.png) |
 
-There it lay, the most secret of messages: "A secret message"!
+There it lay, the most secret of messages: 'A secret message'!
 
 ## Task 3: Modifying the Memory
 
@@ -177,7 +177,7 @@ To that end, we modified "exploit.py" like so:
 #!/usr/bin/python3
 import sys
 
-address = 0x080e5068
+address = 0x080e5068 # the address of our target
 payload = address.to_bytes(4, byteorder='little') + b"%x" * 63 + b"%n\n"
 
 # Save the format string to file
@@ -185,10 +185,55 @@ with open('badfile', 'wb') as f:
     f.write(payload)
 ```
 
-After executing the script and sending the payload to the server, we obtained the following response:
+Upon inputting the new payload, we obtained the following response:
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
 | badfile  | ![Alt text](images/7-8.png) |
 
 We changed "target"!
+
+### Task 3.B: Changing the value to 0x5000
+
+Our final task consisted in changing the value of "target" to **0x5000**, which corresponds to 20480 in decimal base. In order to achieve that, we would have to create a payload that would make the program read precisely 20480 characters before reaching the `%n` format specifier, so that it would then assign "target" that value.
+
+Since we had to specify the address of "target", 4 characters were already covered.However, there were still a few problems we had to solve:
+
+* There was no way to know the number of characters each value in the stack would require to be written. Based on the output from the previoust tasks, values could need as few as one character or as many as 8. As such, we could not calculate how many more characters we would need to append to the format string.
+* The server only accepted up to 1500 characters of user input, so we could not simply input the characters normally. 
+
+To solve both of those problems, we used the `%N` format specifier.
+
+> The `%N` format specifier, where N is an integer, adds padding on the **left** of a format string. If N is negative, the padding is added on the **right**. It is important to note that N represents the **size** of the format string with padding.
+
+**Example:**
+```c
+int main() {
+    printf("|%10s|", "Hello"); // "|    Hello!|"
+    printf("|%-10s|", string); // "|Hello!    |"
+}
+```
+
+With `%N`, we made it so the first 62 `%x` specifiers would take exactly 8 characters, which avoided the problem of figuring out how many characters would be output. We reserved the final `%x` specifier for the padding of the string. With that in mind, we calculated that we needed 20480 - 4 - 62 * 8 = **19480** characters of padding.
+
+One last time, we modified "exploit.py" as such:
+
+```python
+#!/usr/bin/python3
+import sys
+
+address = 0x080e5068 # the address of our target
+payload = address.to_bytes(4, byteorder='little') + b"%8x" * 62 + b"%19980x" + b"%n\n"
+
+# Save the format string to file
+with open('badfile', 'wb') as f:
+    f.write(payload)
+```
+
+Forwarding the final payload to the server net us the response below:
+
+| Payload  | Server Response             |
+|----------|-----------------------------|
+| badfile  | ![Alt text](images/7-9.png) |
+
+While the output looked a bit odd due to the padding, it was clear that the value of "target" was 0x5000. We did it!
