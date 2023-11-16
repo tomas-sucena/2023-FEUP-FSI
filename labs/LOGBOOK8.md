@@ -3,11 +3,11 @@
 
 As instructed in this task, we firstly opened the shell using the command `docksh`, passing it the value we obtained using `dockps`. Afterwards, we opened the MySQL container by using the command `mysql -u root -pdees`. Then, we opened the provided database, `sqllab_users`, by using the command `use sqllab_users;` inside the MySQL container.
 
-(img)
+![](images/8-1.png)
 
 By using the command `show tables`, we found the table `credential`, as expected.
 
-(img)
+![](images/8-2.png)
 
 In order to view the contents of this table, we used the following SQL query:
 
@@ -16,7 +16,7 @@ select * from credential;
 ```
 Which gave us profile information for all users. 
 
-(img)
+![](images/8-3.png)
 
 Because we only want the profile information of the user Alice, all we had to do was to change the query and so we got the profile information for Alice.
 
@@ -24,7 +24,7 @@ Because we only want the profile information of the user Alice, all we had to do
 select * from credential where name = "Alice";
 ```
 
-(img)
+![](images/8-4.png)
 
 ## Task 2: SQL Injection Attack on SELECT Statement
 
@@ -53,8 +53,8 @@ We chose to make the username `admin' #`. The `admin'` portion makes it so it ge
 
 With this, we successfully logged in as the admin.
 
-(img)
-(img)
+![](images/8-5.png)
+![](images/8-6.png)
 
 ### Task 2.2: SQL injection from command line
 
@@ -70,16 +70,16 @@ We can simply modify the link above to have the arguments we passed in Task 2.1.
 $ curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20%23'
 ```
 
-(img)
+![](images/8-7.png)
 
 If we grab this HTML code and put it in a file, then loading it into the browser, we can more easily see the results of our attack.
 
-(img)
+![](images/8-8.png)
 
 ### Task 2.3: Append a new SQL statement
 
 In the website, we attempted to run 2 statements with a SQL injection attack by attempting to log in into the website with the username `admin'; DROP TABLE credential; #`, which should have dropped the table credential, removing the data. However, this did not happen. Instead we were presented with an error message:
 
-(img)
+![](images/8-9.png)
 
 This is so because this website is protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to happen. 
