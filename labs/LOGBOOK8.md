@@ -55,3 +55,31 @@ With this, we successfully logged in as the admin.
 
 (img)
 (img)
+
+### Task 2.2: SQL injection from command line
+
+To perform this attack from a command line is fairly similar to doing so in a webpage. Since the website gets our inputs to username and password, then using HTML POST with our arguments, we can simply create a link that has the same effect. Let's take a look at the example:
+
+```sh
+$ curl 'www.seed-server.com/unsafe_home.php?username=alice&Password=11'
+```
+
+We can simply modify the link above to have the arguments we passed in Task 2.1. Something to take in mind when creating this link is that we can not simply have specials characters, such as `#`, in the link. With this said, all we have to do is transform our `' #` into `%27%20%23`. With this said, we just have to run the following command to execute the attack:
+
+```sh
+$ curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20%23'
+```
+
+(img)
+
+If we grab this HTML code and put it in a file, then loading it into the browser, we can more easily see the results of our attack.
+
+(img)
+
+### Task 2.3: Append a new SQL statement
+
+In the website, we attempted to run 2 statements with a SQL injection attack by attempting to log in into the website with the username `admin'; DROP TABLE credential; #`, which should have dropped the table credential, removing the data. However, this did not happen. Instead we were presented with an error message:
+
+(img)
+
+This is so because this website is protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to happen. 
