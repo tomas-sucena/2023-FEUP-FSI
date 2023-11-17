@@ -154,7 +154,7 @@ There it lay, the most secret of messages: 'A secret message'!
 
 ## Task 3: Modifying the Memory
 
-The final two tasks involve using the format-string vulnerability to alter the value of a variable named "target". To do that, we could reuse the payload we used in the last section with a few modifications:
+The final two tasks involved using the format-string vulnerability to alter the value of a variable named "target". To do that, we reused the payload we used in the last section with a few modifications:
 
 * Replace the address of the secret message with the address of "target".
 * Replace the last format specifier, `%s`, with `%n`.
@@ -203,7 +203,7 @@ Upon inputting the new payload, we obtained the following response:
 
 We changed "target"!
 
-### Task 3.B: Changing the value to 0x5000
+### 3.B: Changing the value to 0x5000
 
 Our final task consisted in changing the value of "target" to **0x5000**, which corresponds to 20480 in decimal base. In order to achieve that, we would have to create a payload that would make the program read precisely 20480 characters before reaching the `%n` format specifier, so that it would then assign "target" that value.
 

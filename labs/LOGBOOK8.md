@@ -55,3 +55,55 @@ With this, we successfully logged in as the admin.
 
 (img)
 (img)
+
+
+## Task 3: SQL Injection Attack on UPDATE Statement
+
+> In SQL, `UPDATE` statements are used to modify existing records in a table.
+
+Our final tasks consisted in exploiting an SQL injection vulnerability present in the Edit Profile page. As its name suggests, this page contains a simple input form for altering the profile information of an account, as shown below:
+
+![Alt text](image-1.png)
+
+The guide also discloses the code fragment that processes the user input. Once again, it contains an unsanitized database query:
+
+```php
+$hashed_pwd = sha1($input_pwd);
+$sql = "UPDATE credential SET
+    nickname=’$input_nickname’,
+    email=’$input_email’,
+    address=’$input_address’,
+    Password=’$hashed_pwd’,
+    PhoneNumber=’$input_phonenumber’
+    WHERE ID=$id;";
+$conn->query($sql);
+```
+
+### 3.1: Modifying our salary
+
+Our next objective was to update our salary. That is, upon logging in to an account, we had to use the input form to alter its database entry.
+
+To that end, we logged in to Alice's account by repeating the attack from [before](#task-21-sql-injection-attack-from-webpage), except instead of 'admin' we wrote 'alice':
+
+![Alt text](image-2.png)
+
+Immediately after logging in, we were redirected to a page which contained Alice's profile information, including her salary: **20000**.
+
+![Alt text](image-3.png)
+
+Now that we were familiar with the value we had to change, we navigated to the Edit Profile page. However, as seen above, there was no form for altering the salary. Thankfully, the guide revealed that the salaries are stored in a column appropriately named "salary", so we had all the information we needed.
+
+Considering that each assignment in the query (i.e. `value=’$input_value’`) was in a separate line, our payload had the following restrictions:
+* Contain a backtick, so as to close the SQL string in the query.
+* Have a clause which updates the `salary` column (i.e. `salary=...`).
+* Have a hashtag at the end to comment the last backtick.
+
+With that in mind, we chose the following payload:
+
+![Alt text](image-4.png)
+
+After inputting, we checked Alice's profile again.
+
+![Alt text](image-5.png)
+
+And _voilá_, Alice was now 50x richer!
