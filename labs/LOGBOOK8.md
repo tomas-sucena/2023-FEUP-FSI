@@ -3,11 +3,11 @@
 
 As instructed in this task, we firstly opened the shell using the command `docksh`, passing it the value we obtained using `dockps`. Afterwards, we opened the MySQL container by using the command `mysql -u root -pdees`. Then, we opened the provided database, `sqllab_users`, by using the command `use sqllab_users;` inside the MySQL container.
 
-(img)
+![](images/8-1.png)
 
 By using the command `show tables`, we found the table `credential`, as expected.
 
-(img)
+![](images/8-2.png)
 
 In order to view the contents of this table, we used the following SQL query:
 
@@ -16,7 +16,7 @@ select * from credential;
 ```
 Which gave us profile information for all users. 
 
-(img)
+![](images/8-3.png)
 
 Because we only want the profile information of the user Alice, all we had to do was to change the query and so we got the profile information for Alice.
 
@@ -24,7 +24,7 @@ Because we only want the profile information of the user Alice, all we had to do
 select * from credential where name = "Alice";
 ```
 
-(img)
+![](images/8-4.png)
 
 ## Task 2: SQL Injection Attack on SELECT Statement
 
