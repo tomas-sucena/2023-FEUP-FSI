@@ -51,35 +51,168 @@ We must log in into the Admin's account without knowing its password. To do so, 
 
 We chose to make the username `admin' #`. The `admin'` portion makes it so it gets us the admin's credentials while the `#` makes it so it comments out the remainder of the SQL code, thus not verifying the password. There was no need to input anything into the password field as it is ignored.
 
+**Note:** The <u>semicolon</u> which terminates the SQL statement is optional. That is why our payload works even though we commented the rest of the query. However, if we were to include it, it would still perform the attack as expected.
+
 With this, we successfully logged in as the admin.
 
-![](images/8-5.png)
-![](images/8-6.png)
+(img)
+(img)
 
-### Task 2.2: SQL injection from command line
 
-To perform this attack from a command line is fairly similar to doing so in a webpage. Since the website gets our inputs to username and password, then using HTML POST with our arguments, we can simply create a link that has the same effect. Let's take a look at the example:
+## Task 3: SQL Injection Attack on UPDATE Statement
 
-```sh
-$ curl 'www.seed-server.com/unsafe_home.php?username=alice&Password=11'
+> In SQL, `UPDATE` statements are used to modify existing records in a table.
+
+Our final tasks consisted in exploiting an SQL injection vulnerability present in the Edit Profile page. As its name suggests, this page contains a simple input form for altering the profile information of an account, as shown below:
+
+![Alt text](image-1.png)
+
+The guide also discloses the code fragment that processes the user input. Once again, it contains an unsanitized database query:
+
+```php
+$hashed_pwd = sha1($input_pwd);
+$sql = "UPDATE credential SET
+    nickname=’$input_nickname’,
+    email=’$input_email’,
+    address=’$input_address’,
+    Password=’$hashed_pwd’,
+    PhoneNumber=’$input_phonenumber’
+    WHERE ID=$id;";
+$conn->query($sql);
 ```
 
-We can simply modify the link above to have the arguments we passed in Task 2.1. Something to take in mind when creating this link is that we can not simply have specials characters, such as `#`, in the link. With this said, all we have to do is transform our `' #` into `%27%20%23`. With this said, we just have to run the following command to execute the attack:
+**Note:** To verify whether our attacks had been successful, we compared our results with the values we obtained when we hijacked the administrator's account. For reference, they have been copied below:
 
-```sh
-$ curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20%23'
+(img)
+
+### 3.1: Modifying our salary
+
+Our next objective was to update our salary. That is, upon logging in to an account, we had to use the input form to alter its database entry.
+
+To that end, we logged in to Alice's account by repeating the attack from [before](#task-21-sql-injection-attack-from-webpage), except instead of 'admin' we wrote 'alice':
+
+![Alt text](image-2.png)
+
+Immediately after logging in, we were redirected to a page which contained Alice's profile information, including her salary: **20000**.
+
+![Alt text](image-3.png)
+
+Now that we were familiar with the value we had to change, we navigated to the Edit Profile page. However, as seen above, there was no text field for altering the salary. Thankfully, the guide revealed that the salaries are stored in a column appropriately named "salary", so we had all the information we needed.
+
+Considering that each value change in the query (i.e. `value=’$input_value’`) was in a separate line, our payload had the following restrictions:
+* Have a backtick, so as to close the string where `$input_value` is inserted.
+* Modify the `salary` column (i.e. `salary=...`).
+* Have a backtick before the salary value. This is a necessity considering we already closed the `$input_value` string, which causes its final backtick to become unpaired.
+
+With that in mind, we chose the following payload:
+
+```
+, salary=1000000'
 ```
 
-![](images/8-7.png)
+Since we input it in the "NickName" field, our payload made the server execute the following query:
 
-If we grab this HTML code and put it in a file, then loading it into the browser, we can more easily see the results of our attack.
+```sql
+UPDATE credential SET
+    nickname='$input_nickname', salary='1000000'
+    email='',
+    address='',
+    Password='',
+    PhoneNumber=''
+    WHERE ID=$id;
+```
 
-![](images/8-8.png)
+After submitting, we checked Alice's profile again.
 
-### Task 2.3: Append a new SQL statement
+![Alt text](image-4.png)
 
-In the website, we attempted to run 2 statements with a SQL injection attack by attempting to log in into the website with the username `admin'; DROP TABLE credential; #`, which should have dropped the table credential, removing the data. However, this did not happen. Instead we were presented with an error message:
+And _voilá_, Alice's salary was now **1000000**. Just like that, she was 50x richer! No wonder computer scientists make so much money...
 
-![](images/8-9.png)
+### 3.2: Modifying someone else's salary
 
-This is so because this website is protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to happen. 
+Our next task was very similar to the previous one, except we had to change the salary of another user. In other words, whilst logged in as Alice, we had to modify someone else's databse entry.
+
+We chose Bobby as our victim. The payload this time would have to:
+* Have a backtick, so as to close the string where `$input_value` is inserted.
+* Modify the `salary` column (i.e. `salary=...`).
+* Have a `WHERE` clause that specifies the user whose entry we want to update.
+* Have a hashtag in order to comment the rest of the query.
+
+We assumed that Alice only knew Boby's username, so we used it in our `WHERE` clause. As such, our payload was the following:
+
+```
+', salary=1 WHERE name='Boby' #
+```
+
+Once again, we placed it in the "NickName" field, which made the server execute the following:
+
+```sql
+UPDATE credential SET
+    nickname='', salary=1 WHERE name='Boby';
+```
+
+Upon submitting it, we logged in as an administrator to view Boby's information.
+
+![Alt text](image-5.png)
+
+We did it! Our boss was now making less money than us.
+
+### 3.3: Modifying someone else's password
+
+Our final task was to change the password of another user. Yet again, Boby was our target, so our goal was to update his database entry while logged in as Alice.
+
+Since we were dealing with passwords, this task was slightly different from the previous two. In fact, the guide stated that, unlike the values stored in the `salary` column, passwords were hashed before being inserted in the database. This meant that we could not simply write the password on our payload - we would have to write its **hash** instead. This rendered our previous payload useless, since we did not know which hashing algorithm used for computing the password hashes.
+
+Given this adversity, we recalled the code used by the server:
+
+```php
+$hashed_pwd = sha1($input_pwd); # the hashing occurs here
+$sql = "UPDATE credential SET
+    nickname=’$input_nickname’,
+    email=’$input_email’,
+    address=’$input_address’,
+    Password=’$hashed_pwd’,
+    PhoneNumber=’$input_phonenumber’
+    WHERE ID=$id;";
+$conn->query($sql);
+```
+
+By reanalyzing it, we realized that the input processed in the "Password" field was hashed before being inserted in the query. We also noticed that the password was only processed in the query before the phone number, which meant we input our payload in the "Phone Number" field without risking commenting the hashed password.
+
+This time, the payload needed to:
+* Have a backtick, so as to close the string where `$input_value` is inserted.
+* Have a `WHERE` clause that specifies the user whose entry we want to update.
+* Have a hashtag in order to comment the rest of the query.
+
+We opted to use the payload below:
+
+```
+' WHERE name = 'Boby' #
+```
+
+We placed it on the "Phone Number" field. After writing the new password, which we decided would be **'hahahaha123'**, on the "Password" field, we submitted the form. The query executed by the server was as follows:
+
+```sql
+UPDATE credential SET
+    nickname='',
+    email='',
+    address='',
+    Password='$hashed_pwd',
+    PhoneNumber='' WHERE name='Boby';
+```
+
+Weirdly enough, our payload triggered an error message from the server.
+
+![Alt text](image-6.png)
+
+Still, we decided to test if our attack had worked by attempting to log in as Boby. To that end, we wrote 'Boby' and 'hahaha123' on the "USERNAME" and "PASSWORD" fields, respectively.
+
+![Alt text](image-8.png)
+
+**Note:** In order to show the password on the screenshot, we altered the `text-form` value of a `div` in the page's HTML code.
+
+After pressing the login button, we were greeted with Boby's profile information.
+
+![Alt text](image-9.png)
+
+We successfully changed Boby's password!
