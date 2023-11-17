@@ -79,6 +79,10 @@ $sql = "UPDATE credential SET
 $conn->query($sql);
 ```
 
+**Note:** To verify whether our attacks had been successful, we compared our results with the values we obtained when we hijacked the administrator's account. For reference, they have been copied below:
+
+(img)
+
 ### 3.1: Modifying our salary
 
 Our next objective was to update our salary. That is, upon logging in to an account, we had to use the input form to alter its database entry.
@@ -93,17 +97,60 @@ Immediately after logging in, we were redirected to a page which contained Alice
 
 Now that we were familiar with the value we had to change, we navigated to the Edit Profile page. However, as seen above, there was no form for altering the salary. Thankfully, the guide revealed that the salaries are stored in a column appropriately named "salary", so we had all the information we needed.
 
-Considering that each assignment in the query (i.e. `value=’$input_value’`) was in a separate line, our payload had the following restrictions:
-* Contain a backtick, so as to close the SQL string in the query.
-* Have a clause which updates the `salary` column (i.e. `salary=...`).
-* Have a hashtag at the end to comment the last backtick.
+Considering that each value change in the query (i.e. `value=’$input_value’`) was in a separate line, our payload had the following restrictions:
+* Have a backtick, so as to close the string where `$input_value` is inserted.
+* Modify the `salary` column (i.e. `salary=...`).
+* Have a backtick before the salary value. This is a necessity considering we already closed the `$input_value` string, which causes its final backtick to become unpaired.
 
 With that in mind, we chose the following payload:
 
+```
+, salary=1000000'
+```
+
+Since we input it in the "NickName" form, our payload made the server execute the following query:
+
+```sql
+UPDATE credential SET
+    nickname='$input_nickname', salary='1000000'
+    email='$input_email',
+    address='$input_address',
+    Password='$hashed_pwd',
+    PhoneNumber='$input_phonenumber'
+    WHERE ID=$id;
+```
+
+After submitting, we checked Alice's profile again.
+
 ![Alt text](image-4.png)
 
-After inputting, we checked Alice's profile again.
+And _voilá_, Alice's salary was now **1000000**. Just like that, she was 50x richer! No wonder computer scientists make so much money...
+
+### 3.2: Modifying someone else's salary
+
+Our next task was very similar to the previous one, except we had to change the salary of another user. In other words, whilst logged in as Alice, we had to modify someone else's databse entry.
+
+We chose Bobby as our victim. The payload restrictions this time were as follows:
+* Have a backtick, so as to close the string where `$input_value` is inserted.
+* Modify the `salary` column (i.e. `salary=...`).
+* Have a `WHERE` clause that specifies the user whose entry we want to update.
+* Have a hashtag in order to comment the rest of the query.
+
+We assumed that Alice only knew Boby's username, so we used it in our `WHERE` clause. As such, our payload was the following:
+
+```
+, salary=1 WHERE name='Boby' #
+```
+
+Once again, we placed it in the "NickName" form, which made the server execute the following:
+
+```sql
+UPDATE credential SET
+    nickname='$input_nickname', salary='1' WHERE name='Boby';
+```
+
+Upon submitting it, we logged in as an administrator to view Boby's information.
 
 ![Alt text](image-5.png)
 
-And _voilá_, Alice was now 50x richer!
+We did it! Our boss was now making less money than us.
