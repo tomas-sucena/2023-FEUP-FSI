@@ -3,11 +3,11 @@
 
 As instructed in this task, we firstly opened the shell using the command `docksh`, passing it the value we obtained using `dockps`. Afterwards, we opened the MySQL container by using the command `mysql -u root -pdees`. Then, we opened the provided database, `sqllab_users`, by using the command `use sqllab_users;` inside the MySQL container.
 
-![](images/8-1.png)
+![Alt text](images/8-1.png)
 
-By using the command `show tables`, we found the table `credential`, as expected.
+By using the command `show tables`, we found the table "credential", as expected.
 
-![](images/8-2.png)
+![Alt text](images/8-2.png)
 
 In order to view the contents of this table, we used the following SQL query:
 
@@ -16,7 +16,7 @@ select * from credential;
 ```
 Which gave us profile information for all users. 
 
-![](images/8-3.png)
+![Alt text](images/8-3.png)
 
 Because we only wanted Alice's profile information, all we had to do was to change the query and so we got the profile information for Alice.
 
@@ -24,7 +24,7 @@ Because we only wanted Alice's profile information, all we had to do was to chan
 select * from credential where name = "Alice";
 ```
 
-![](images/8-4.png)
+![Alt text](images/8-4.png)
 
 ## Task 2: SQL Injection Attack on SELECT Statement
 
@@ -72,7 +72,7 @@ WHERE name= ’admin’ --and Password=’$hashed_pwd’
 
 After pressing the login button, we were redirected to the administration page shown below:
 
-![Alt text](images/8-6.png)
+![Alt text](images/8-5.png)
 
 We usurped the administrator's account!
 
@@ -90,23 +90,36 @@ We can simply modify the link above to have the arguments we passed in Task 2.1.
 $ curl 'www.seed-server.com/unsafe_home.php?username=admin%27%20%23'
 ```
 
-![](images/8-7.png)
+![Alt text](images/8-6.png)
 
 If we grab this HTML code and put it in a file, then loading it into the browser, we can more easily see the results of our attack.
 
-![](images/8-8.png)
+![Alt text](images/8-7.png)
 
 ### Task 2.3: Append a new SQL statement
 
-In the website, we attempted to run 2 statements with a SQL injection attack by attempting to log in into the website with the username `admin'; DROP TABLE credential; #`, which should have dropped the table credential, removing the data. 
+Our next task was to append an SQL statement at the end of our payload. That way, the server would execute the query wherein the input was processed plus an additional statement crafted by us.
+
+To more easily verify if our attack worked, we decided to append a `DROP` statement that would remove the "credential" table. 
 
 > In SQL, `DROP` statements are used to delete tables from the database.
 
-However, this did not happen. Instead we were presented with an error message:
+So, our payload would then have to:
+* Have an apostrophe, so as to close the string where `$input_uname` is inserted.
+* Have a `DROP` statement that would remove the "credential" table.
+* Have a hashtag in order to comment the rest of the query.
 
-![](images/8-9.png)
+Given those restrictions, we opted to use the payload below:
 
-This is so because this website is protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to happen. 
+```
+admin'; DROP TABLE credential; #
+```
+
+We input it on the "Username" text field and pressed the login button. However, to our surprise, our attack failed. Instead, we were presented with an error message stating that the server could not execute the `DROP` statement:
+
+![Alt text](images/8-8.png)
+
+This happened because the website was protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to be executed. 
 
 So, for our attack to work, we had to replace the `query` method with `multi_query` in the website's source code. The problematic line was in the "unsafe_home.php" file, so we modified it like so:
 
@@ -129,19 +142,13 @@ dcbuild # rebuild the server
 dcup # start the server
 ```
 
-When the server went up again, we input the payload below on the "Username" text field:
+When the server went up again, we reinput our payload. After pressing the login button, we stumbled upon a blank page with an error message at the top:
 
-```
-admin'; DROP TABLE credential; #
-```
+![Alt text](images/8-9.png)
 
-After pressing the login button, we stumbled upon a blank page with an error message at the top:
+The fact that the table "credential" no longer existed meant the `DROP` statement worked. Thus, we successfully appended a statement!
 
-![Alt text](images/8-18.png)
-
-The fact that the table `credential` no longer existed meant the `DROP` statement worked. Thus, we successfully appended a statement!
-
-**Note:** Since we deleted the table `credential`, we had to reset the database before proceeding with the tasks. To that end, we ran the command below:
+**Note:** Since we deleted the table "credential", we had to reset the database before proceeding with the tasks. To that end, we ran the command below:
 
 ```bash
 $ sudo rm -rf mysql_data
@@ -171,7 +178,7 @@ $conn->query($sql);
 
 **Note:** To verify whether our attacks had been successful, we compared our results with the values we obtained when we hijacked the administrator's account. For reference, they can be found below:
 
-![Alt text](images/8-6.png)
+![Alt text](images/8-5.png)
 
 ### 3.1: Modifying our salary
 
@@ -185,7 +192,7 @@ alice' #
 
 Immediately after logging in, we were redirected to a page which contained Alice's profile information, including her salary: **20000**.
 
-![Alt text](images/8-12.png)
+![Alt text](images/8-11.png)
 
 Now that we were familiar with the value we had to change, we navigated to the Edit Profile page. However, as seen above, there was no text field for altering the salary. Thankfully, the guide revealed that the salaries are stored in a column appropriately named "salary", so we had all the information we needed.
 
@@ -214,7 +221,7 @@ UPDATE credential SET
 
 After submitting, we checked Alice's profile again.
 
-![Alt text](images/8-13.png)
+![Alt text](images/8-12.png)
 
 And _voilá_, Alice's salary was now **1000000**. Just like that, she was 50x richer! No wonder computer scientists make so much money...
 
@@ -243,7 +250,7 @@ UPDATE credential SET
 
 Upon submitting it, we logged in as an administrator to view Boby's information.
 
-![Alt text](images/8-14.png)
+![Alt text](images/8-13.png)
 
 We did it! Our boss was now making less money than us.
 
@@ -267,7 +274,7 @@ $sql = "UPDATE credential SET
 $conn->query($sql);
 ```
 
-By reanalyzing it, we realized that the input processed in the "Password" field was hashed before being inserted in the query. We also noticed that the password was only processed in the query before the phone number, which meant we input our payload in the "Phone Number" field without risking commenting the hashed password.
+By reanalyzing it, we realized that the input processed in the "Password" field was hashed before being inserted in the query. We also noticed that the password was only processed in the query before the phone number, which meant we could type the payload in the "Phone Number" field without risking commenting the hashed password.
 
 Our payload for this task needed to:
 * Have an apostrophe, so as to close the string where `$input_value` is inserted.
@@ -293,16 +300,16 @@ UPDATE credential SET
 
 Weirdly enough, our payload triggered an error message from the server.
 
-![Alt text](images/8-15.png)
+![Alt text](images/8-14.png)
 
 Still, we decided to test if our attack had worked by attempting to log in as Boby. To that end, we wrote 'Boby' and 'hahaha123' on the "Username" and "Password" fields, respectively.
 
-![Alt text](images/8-16.png)
+![Alt text](images/8-15.png)
 
 **Note:** In order to show the password on the screenshot, we altered the `text-form` value of a `div` in the page's HTML code.
 
 After pressing the login button, we were greeted with Boby's profile information.
 
-![Alt text](images/8-17.png)
+![Alt text](images/8-16.png)
 
 We successfully changed Boby's password!
