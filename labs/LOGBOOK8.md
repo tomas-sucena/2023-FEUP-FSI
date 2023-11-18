@@ -18,7 +18,7 @@ Which gave us profile information for all users.
 
 ![](images/8-3.png)
 
-Because we only want the profile information of the user Alice, all we had to do was to change the query and so we got the profile information for Alice.
+Because we only wanted Alice's profile information, all we had to do was to change the query and so we got the profile information for Alice.
 
 ```sql
 select * from credential where name = "Alice";
@@ -80,7 +80,11 @@ If we grab this HTML code and put it in a file, then loading it into the browser
 
 ### Task 2.3: Append a new SQL statement
 
-In the website, we attempted to run 2 statements with a SQL injection attack by attempting to log in into the website with the username `admin'; DROP TABLE credential; #`, which should have dropped the table credential, removing the data. However, this did not happen. Instead we were presented with an error message:
+In the website, we attempted to run 2 statements with a SQL injection attack by attempting to log in into the website with the username `admin'; DROP TABLE credential; #`, which should have dropped the table credential, removing the data. 
+
+> In SQL, `DROP` statements are used to delete tables from the database.
+
+However, this did not happen. Instead we were presented with an error message:
 
 ![](images/8-9.png)
 
@@ -99,7 +103,7 @@ if (!$result = $conn->store_result()) {
 }
 ```
 
-Afterwards, we ran the following Docker commands to apply our change:
+Afterwards, we ran the following Docker commands to apply our changes:
 
 ```bash
 dcdown # shut down the server
@@ -113,11 +117,11 @@ When the server went up again, we input the payload below on the "USERNAME" text
 admin'; DROP TABLE credential; #
 ```
 
-After pressing the login button, we got the following error message:
+After pressing the login button, we stumbled upon a blank page with an error message at the top:
 
-![Alt text](image-7.png)
+![Alt text](images/8-18.png)
 
-The fact that the table `credential` did not exist meant the statement we appended worked. We did it!
+The fact that the table `credential` no longer existed meant the `DROP` statement worked. Thus, we successfully appended a statement!
 
 **Note:** Since we deleted the table `credential`, we had to reset the database before proceeding with the tasks. To that end, we ran the command below:
 
@@ -131,7 +135,7 @@ sudo rm -rf mysql_data
 
 Our final tasks consisted in exploiting an SQL injection vulnerability present in the Edit Profile page. As its name suggests, this page contains a simple input form for altering the profile information of an account, as shown below:
 
-![Alt text](image-1.png)
+![Alt text](images/8-10.png)
 
 The guide also discloses the code fragment that processes the user input. Once again, it contains an unsanitized database query:
 
@@ -157,11 +161,11 @@ Our next objective was to update our salary. That is, upon logging in to an acco
 
 To that end, we logged in to Alice's account by repeating the attack from [before](#task-21-sql-injection-attack-from-webpage), except instead of 'admin' we wrote 'alice':
 
-![Alt text](image-2.png)
+![Alt text](images/8-11.png)
 
 Immediately after logging in, we were redirected to a page which contained Alice's profile information, including her salary: **20000**.
 
-![Alt text](image-3.png)
+![Alt text](images/8-12.png)
 
 Now that we were familiar with the value we had to change, we navigated to the Edit Profile page. However, as seen above, there was no text field for altering the salary. Thankfully, the guide revealed that the salaries are stored in a column appropriately named "salary", so we had all the information we needed.
 
@@ -190,7 +194,7 @@ UPDATE credential SET
 
 After submitting, we checked Alice's profile again.
 
-![Alt text](image-4.png)
+![Alt text](images/8-13.png)
 
 And _voilá_, Alice's salary was now **1000000**. Just like that, she was 50x richer! No wonder computer scientists make so much money...
 
@@ -219,7 +223,7 @@ UPDATE credential SET
 
 Upon submitting it, we logged in as an administrator to view Boby's information.
 
-![Alt text](image-5.png)
+![Alt text](images/8-14.png)
 
 We did it! Our boss was now making less money than us.
 
@@ -269,16 +273,16 @@ UPDATE credential SET
 
 Weirdly enough, our payload triggered an error message from the server.
 
-![Alt text](image-6.png)
+![Alt text](images/8-15.png)
 
 Still, we decided to test if our attack had worked by attempting to log in as Boby. To that end, we wrote 'Boby' and 'hahaha123' on the "USERNAME" and "PASSWORD" fields, respectively.
 
-![Alt text](image-8.png)
+![Alt text](images/8-16.png)
 
 **Note:** In order to show the password on the screenshot, we altered the `text-form` value of a `div` in the page's HTML code.
 
 After pressing the login button, we were greeted with Boby's profile information.
 
-![Alt text](image-9.png)
+![Alt text](images/8-17.png)
 
 We successfully changed Boby's password!
