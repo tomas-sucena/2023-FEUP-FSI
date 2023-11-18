@@ -61,13 +61,13 @@ admin' #
 
 **Note:** The <u>semicolon</u> which terminates the SQL statement is optional. That is why our payload works even though we commented the rest of the query. However, if we were to include it, it would still perform the attack as expected.
 
-We input it on the "USERNAME" text field, which made the server execute the query below:
+We input it on the "Username" text field, which made the server execute the query below:
 
 ```sql
 SELECT id, name, eid, salary, birth, ssn, address, email,
         nickname, Password
 FROM credential
-WHERE name= ’admin’.
+WHERE name= ’admin’ --and Password=’$hashed_pwd’
 ```
 
 After pressing the login button, we were redirected to the administration page shown below:
@@ -129,7 +129,7 @@ dcbuild # rebuild the server
 dcup # start the server
 ```
 
-When the server went up again, we input the payload below on the "USERNAME" text field:
+When the server went up again, we input the payload below on the "Username" text field:
 
 ```
 admin'; DROP TABLE credential; #
@@ -144,7 +144,7 @@ The fact that the table `credential` no longer existed meant the `DROP` statemen
 **Note:** Since we deleted the table `credential`, we had to reset the database before proceeding with the tasks. To that end, we ran the command below:
 
 ```bash
-sudo rm -rf mysql_data
+$ sudo rm -rf mysql_data
 ```
 
 ## Task 3: SQL Injection Attack on UPDATE Statement
@@ -169,7 +169,7 @@ $sql = "UPDATE credential SET
 $conn->query($sql);
 ```
 
-**Note:** To verify whether our attacks had been successful, we compared our results with the values we obtained when we hijacked the administrator's account. For reference, they have been copied below:
+**Note:** To verify whether our attacks had been successful, we compared our results with the values we obtained when we hijacked the administrator's account. For reference, they can be found below:
 
 ![Alt text](images/8-6.png)
 
@@ -177,9 +177,11 @@ $conn->query($sql);
 
 Our next objective was to update our salary. That is, upon logging in to an account, we had to use the input form to alter its database entry.
 
-To that end, we logged in to Alice's account by repeating the attack from [before](#task-21-sql-injection-attack-from-webpage), except instead of 'admin' we wrote 'alice':
+To that end, we logged in to Alice's account by repeating the attack from [before](#task-21-sql-injection-attack-from-webpage), except instead of 'admin' we wrote 'alice' like so:
 
-![Alt text](images/8-11.png)
+```
+alice' #
+```
 
 Immediately after logging in, we were redirected to a page which contained Alice's profile information, including her salary: **20000**.
 
@@ -236,7 +238,7 @@ Once again, we placed it in the "NickName" field, which made the server execute 
 
 ```sql
 UPDATE credential SET
-    nickname='', salary=1 WHERE name='Boby';
+    nickname='', salary=1 WHERE name='Boby'
 ```
 
 Upon submitting it, we logged in as an administrator to view Boby's information.
@@ -249,7 +251,7 @@ We did it! Our boss was now making less money than us.
 
 Our final task was to change the password of another user. Yet again, Boby was our target, so our goal was to update his database entry while logged in as Alice.
 
-Since we were dealing with passwords, this task was slightly different from the previous two. In fact, the guide stated that, unlike the values stored in the `salary` column, passwords were hashed before being inserted in the database. This meant that we could not simply write the password on our payload - we would have to write its **hash** instead. This rendered our previous payload useless, since we did not know which hashing algorithm used for computing the password hashes.
+Since we were dealing with passwords, this task was slightly different from the previous two. In fact, the guide stated that, unlike the values stored in the `salary` column, passwords were hashed before being inserted in the database. This meant that we could not simply write the password on our payload - we would have to write its **hash** instead. This rendered our previous payload useless, since we did not know which hashing algorithm was used for computing the password hashes.
 
 Given this adversity, we recalled the code used by the server:
 
@@ -286,14 +288,14 @@ UPDATE credential SET
     email='',
     address='',
     Password='$hashed_pwd',
-    PhoneNumber='' WHERE name='Boby';
+    PhoneNumber='' WHERE name='Boby' --WHERE ID=$id;
 ```
 
 Weirdly enough, our payload triggered an error message from the server.
 
 ![Alt text](images/8-15.png)
 
-Still, we decided to test if our attack had worked by attempting to log in as Boby. To that end, we wrote 'Boby' and 'hahaha123' on the "USERNAME" and "PASSWORD" fields, respectively.
+Still, we decided to test if our attack had worked by attempting to log in as Boby. To that end, we wrote 'Boby' and 'hahaha123' on the "Username" and "Password" fields, respectively.
 
 ![Alt text](images/8-16.png)
 
