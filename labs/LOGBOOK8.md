@@ -28,7 +28,7 @@ select * from credential where name = "Alice";
 
 ## Task 2: SQL Injection Attack on SELECT Statement
 
-To get started with this task, we found it especially important to look at the provided code snippet.
+To get started with this task, we found it especially important to look at the provided code snippet:
 
 ```php
 $input_uname = $_GET['username'];
@@ -47,20 +47,38 @@ This SQL query makes it so, if there is no verification of the user input, one c
 
 ### Task 2.1: SQL Injection Attack from webpage
 
-We must log in into the Admin's account without knowing its password. To do so, we need to input a username so that the password condition in the SQL query is ignored.
+We were tasked with logging in as an administrator. The only information we were given was the account's username, which was 'admin'.
 
-We chose to make the username `admin' #`. The `admin'` portion makes it so it gets us the admin's credentials while the `#` makes it so it comments out the remainder of the SQL code, thus not verifying the password. There was no need to input anything into the password field as it is ignored.
+Since we did not know the password, we needed to input a username that would cause the password condition in the SQL query to be ignored. As such, our payload had to:
+* Have an apostrophe, so as to close the string where `$input_uname` is inserted.
+* Have a hashtag in order to comment the rest of the query.
+
+The payload we decided to use was the following:
+
+```
+admin' #
+```
 
 **Note:** The <u>semicolon</u> which terminates the SQL statement is optional. That is why our payload works even though we commented the rest of the query. However, if we were to include it, it would still perform the attack as expected.
 
-With this, we successfully logged in as the admin.
+We input it on the "USERNAME" text field, which made the server execute the query below:
 
-![](images/8-5.png)
-![](images/8-6.png)
+```sql
+SELECT id, name, eid, salary, birth, ssn, address, email,
+        nickname, Password
+FROM credential
+WHERE name= ’admin’.
+```
+
+After pressing the login button, we were redirected to the administration page shown below:
+
+![Alt text](images/8-6.png)
+
+We usurped the administrator's account!
 
 ### Task 2.2: SQL injection from command line
 
-To perform this attack from a command line is fairly similar to doing so in a webpage. Since the website gets our inputs to username and password, then using HTML POST with our arguments, we can simply create a link that has the same effect. Let's take a look at the example:
+Performing this attack from a command line is fairly similar to doing so in a webpage. Since the website gets our inputs to username and password, then using HTML POST with our arguments, we can simply create a link that has the same effect. Let's take a look at the example:
 
 ```sh
 $ curl 'www.seed-server.com/unsafe_home.php?username=alice&Password=11'
@@ -153,7 +171,7 @@ $conn->query($sql);
 
 **Note:** To verify whether our attacks had been successful, we compared our results with the values we obtained when we hijacked the administrator's account. For reference, they have been copied below:
 
-(img)
+![Alt text](images/8-6.png)
 
 ### 3.1: Modifying our salary
 
@@ -169,10 +187,10 @@ Immediately after logging in, we were redirected to a page which contained Alice
 
 Now that we were familiar with the value we had to change, we navigated to the Edit Profile page. However, as seen above, there was no text field for altering the salary. Thankfully, the guide revealed that the salaries are stored in a column appropriately named "salary", so we had all the information we needed.
 
-Considering that each value change in the query (i.e. `value=’$input_value’`) was in a separate line, our payload had the following restrictions:
-* Have a backtick, so as to close the string where `$input_value` is inserted.
+Considering that each value change in the query (i.e. `value=’$input_value’`) was in a separate line, our payload had to:
+* Have an apostrophe, so as to close the string where `$input_value` is inserted.
 * Modify the `salary` column (i.e. `salary=...`).
-* Have a backtick before the salary value. This is a necessity considering we already closed the `$input_value` string, which causes its final backtick to become unpaired.
+* Have an apostrophe before the salary value. This is a necessity considering we already closed the `$input_value` string, which causes its final apostrophe to become unpaired.
 
 With that in mind, we chose the following payload:
 
@@ -203,7 +221,7 @@ And _voilá_, Alice's salary was now **1000000**. Just like that, she was 50x ri
 Our next task was very similar to the previous one, except we had to change the salary of another user. In other words, whilst logged in as Alice, we had to modify someone else's databse entry.
 
 We chose Bobby as our victim. The payload this time would have to:
-* Have a backtick, so as to close the string where `$input_value` is inserted.
+* Have an apostrophe, so as to close the string where `$input_value` is inserted.
 * Modify the `salary` column (i.e. `salary=...`).
 * Have a `WHERE` clause that specifies the user whose entry we want to update.
 * Have a hashtag in order to comment the rest of the query.
@@ -249,8 +267,8 @@ $conn->query($sql);
 
 By reanalyzing it, we realized that the input processed in the "Password" field was hashed before being inserted in the query. We also noticed that the password was only processed in the query before the phone number, which meant we input our payload in the "Phone Number" field without risking commenting the hashed password.
 
-This time, the payload needed to:
-* Have a backtick, so as to close the string where `$input_value` is inserted.
+Our payload for this task needed to:
+* Have an apostrophe, so as to close the string where `$input_value` is inserted.
 * Have a `WHERE` clause that specifies the user whose entry we want to update.
 * Have a hashtag in order to comment the rest of the query.
 
