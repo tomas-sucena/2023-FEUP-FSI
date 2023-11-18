@@ -95,7 +95,7 @@ The next task was to print data stored in the program's stack. More specifically
 
 **Note:** While not strictly necessary for this task, the guide provided an image which depicted the layout of the stack. Given it helped us understand how to build our payload, we decided to include it below:
 
-![Alt text](image.png)
+![Alt text](images/7-4.png)
 
 Our plan was simple: input a string followed by several `%x` format specifiers. This would cause the program to print the values stored in the stack. As such, all we would have to do would be to find the hexadecimal value of our string.
 
@@ -118,7 +118,7 @@ Upon running the script, we dispatched our payload to the server and obtained th
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
-| badfile  | ![Alt text](images/7-4.png) |
+| badfile  | ![Alt text](images/7-5.png) |
 
 By counting the amount of spaces between values, we concluded that our payload was the 64th value printed. Thus, we needed exactly 64 `%x` specifiers: 63 for printing the intermediate values and another one for the first four bytes of our string.
 
@@ -126,7 +126,7 @@ By counting the amount of spaces between values, we concluded that our payload w
 
 The objective of the next task was to print a secret message stored in the heap. The only information we were given was its address, which was printed by the server upon each request like so:
 
-![Alt text](images/7-5.png)
+![Alt text](images/7-6.png)
 
 Having discovered in the previous section that our input was stored in the 64th value above the format string, we had the means to design a payload that would force the program to fetch it and access the content pointed by it.
 
@@ -150,7 +150,7 @@ After running the script, we sent the payload to the server and received the fol
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
-| badfile  | ![Alt text](images/7-6.png) |
+| badfile  | ![Alt text](images/7-7.png) |
 
 There it lay, the most secret of messages: 'A secret message'!
 
@@ -177,7 +177,7 @@ These changes would make the program write the number of characters read in the 
 
 Thanfully, the server printed its address upon each request, as well its value before and after said request, so we had all the information we needed. 
 
-![Alt text](images/7-7.png)
+![Alt text](images/7-8.png)
 
 ### 3.A: Changing the value
 
@@ -201,7 +201,7 @@ Upon inputting the new payload, we obtained the following response:
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
-| badfile  | ![Alt text](images/7-8.png) |
+| badfile  | ![Alt text](images/7-9.png) |
 
 We changed "target"!
 
@@ -246,6 +246,6 @@ Forwarding the final payload to the server net us the response below:
 
 | Payload  | Server Response             |
 |----------|-----------------------------|
-| badfile  | ![Alt text](images/7-9.png) |
+| badfile  | ![Alt text](images/7-10.png) |
 
 While the output looked a bit odd due to the padding, it was clear that the value of "target" was 0x5000. We did it!
