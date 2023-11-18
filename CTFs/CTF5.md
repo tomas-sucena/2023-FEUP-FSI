@@ -62,7 +62,7 @@ $ checksec program
 
 The output of the command above was the following:
 
-![Alt text](images/6-1.png)
+![Alt text](images/5-1.png)
 
 As such, we acquired the following information:
 
@@ -110,7 +110,7 @@ r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt")
 
 Finally, we were ready to attack. Running our script, we got the following output:
 
-![Alt text](images/6-2.png)
+![Alt text](images/5-2.png)
 
 We found the first flag: `flag{f658895ccf55dc13834f5764c8338de3}`!
 
@@ -173,7 +173,7 @@ Before getting our hopes up, though, we had to make sure the executable would al
 
 The output this time was as follows:
 
-![Alt text](images/6-3.png)
+![Alt text](images/5-3.png)
 
 Luckily for us, this program had the same properties as the one from the [last challenge](#executable), that is:
 
@@ -221,6 +221,6 @@ r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\x24\x23\xfc\xfeflag.txt")
 
 It was time to attack once again. This time, executing our exploit net us the following output:
 
-![Alt text](images/6-4.png)
+![Alt text](images/5-4.png)
 
 We found the second flag: `flag{c586c7c8e1587ed588f60088a760ad1f}`!
