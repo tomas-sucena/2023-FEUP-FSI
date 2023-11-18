@@ -86,6 +86,37 @@ In the website, we attempted to run 2 statements with a SQL injection attack by 
 
 This is so because this website is protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to happen. 
 
+So, for our attack to work, we had to replace the `query` method with `multi_query` in the website's source code. The problematic line was in the "unsafe_home.php" file, so we modified it like so:
+
+```php
+# before
+# if (!$result = $conn->query($sql))
+
+# after
+if (!$result = $conn->multi_query($sql)) {
+    ...
+}
+```
+
+Afterwards, we ran the following Docker commands to apply our change:
+
+```bash
+dcdown # shut down the server
+dcbuild # rebuild the server
+dcup # start the server
+```
+
+When the server went up again, we input the payload below on the "USERNAME" text field:
+
+```
+admin'; DROP TABLE credential; #
+```
+
+After pressing the login button, we got the following error message:
+
+![Alt text](image-7.png)
+
+The fact that the table `credential` did not exist meant our appended statement worked. We did it!
 
 ## Task 3: SQL Injection Attack on UPDATE Statement
 
