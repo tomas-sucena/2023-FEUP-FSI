@@ -116,7 +116,13 @@ After pressing the login button, we got the following error message:
 
 ![Alt text](image-7.png)
 
-The fact that the table `credential` did not exist meant our appended statement worked. We did it!
+The fact that the table `credential` did not exist meant the statement we appended worked. We did it!
+
+**Note:** Since we deleted the table `credential`, we had to reset the database before proceeding with the tasks. To that end, we ran the command below:
+
+```bash
+sudo rm -rf mysql_data
+```
 
 ## Task 3: SQL Injection Attack on UPDATE Statement
 
