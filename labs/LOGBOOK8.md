@@ -119,13 +119,27 @@ We input it on the "Username" text field and pressed the login button. However, 
 
 ![Alt text](images/8-8.png)
 
-This happened because the website was protected from multiple SQL statements by using the PHP function `query` over `multi_query`. The latter allows for multiple queries to be ran on its parameter. The function `query`, however, prevents this behavior, by only allowing a single query to be executed. 
+After searching on the Internet what might have caused this unexpected behavior, we came across the documentation for `mysqli`.
 
-So, for our attack to work, we had to replace the `query` method with `multi_query` in the website's source code. The problematic line was in the "unsafe_home.php" file, so we modified it like so:
+> `mysqli` is a PHP extension that provides functions for querying and manipulating a **MySQL** database.
+
+The documentation noted that there were two major functions for performing queries on a database:
+
+| Function                | Description                                                                                         |
+|-------------------------|-----------------------------------------------------------------------------------------------------|
+| `mysqli::query()`       | Performs a **single** query against the database.                                                   |
+| `mysqli::multi_query()` | Performs one or **multiple** queries agains the database. They must be concatenated by a semicolon. |
+
+This led us to conclude that the previous error occured because the server was protected from multiple SQL statements by using `query()` over `multi_query()`.
+So, for our attack to work, we had to replace calls to `query()` with `multi_query()` in the website's source code. 
+
+The problematic line was in the "unsafe_home.php" file, so we modified it like so:
 
 ```php
 # before
-# if (!$result = $conn->query($sql))
+# if (!$result = $conn->query($sql)) {
+#   ...
+# }
 
 # after
 $conn->multi_query($sql);
