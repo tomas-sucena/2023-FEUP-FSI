@@ -89,11 +89,13 @@ Since neither our payload nor the 'Returned properly' message were output, that 
 
 ## Task 2: Printing Out the Memory
 
-![Alt text](image.png)
-
 ### 2.A: Stack
 
 The next task was to print data stored in the program's stack. More specifically, we had to print the first four bytes of our input, which would be stored somewhere on the stack.
+
+**Note:** While not strictly necessary for this task, the guide provided an image which depicted the layout of the stack. Given it helped us understand how to build our payload, we decided to include it below:
+
+![Alt text](image.png)
 
 Our plan was simple: input a string followed by several `%x` format specifiers. This would cause the program to print the values stored in the stack. As such, all we would have to do would be to find the hexadecimal value of our string.
 
