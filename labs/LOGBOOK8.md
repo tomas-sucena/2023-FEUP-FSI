@@ -93,7 +93,8 @@ So, for our attack to work, we had to replace the `query` method with `multi_que
 # if (!$result = $conn->query($sql))
 
 # after
-if (!$result = $conn->multi_query($sql)) {
+$conn->multi_query($sql);
+if (!$result = $conn->store_result()) {
     ...
 }
 ```
