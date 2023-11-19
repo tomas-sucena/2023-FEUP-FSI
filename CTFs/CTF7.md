@@ -89,4 +89,38 @@ As such, we acquired the following information:
 
 > A **Position-independent executable** (or `PIE` for short) is a binary that executes properly regardless of its **absolute address** (i.e. independently of where it is placed in memory).
 
-So, taking into account our analysis of the source code and the executable, we realized that we could make the program print the "flag" array by inputing a format string. This is because the call to `printf()` was unsanitized, meaning that, since there were no other arguments apart from the "buffer", if we were to input a payload containing format specifiers, the program would replace them with values stored in the memory.
+So, taking into account our analysis of the source code and the executable, we realized that we could make the program print the "flag" array by inputing a format string that:
+* Started the **address** of "flag".
+* Had a certain amount of `%x` format specifiers.
+* End with a `%s` format specifier.
+
+The logic behind this payload was simple: considering the call to `printf()` was unsanitized, we could exploit that by making the program successively print the values stored in memory using `%x` specifiers. Eventually, it would reach the memory region where our input was stored. Then, the final specifier, `%s`, would make the program treat our input as an **address** and print the content it points to.
+
+### Preparing the Payload
+
+Now that we were aware of what to do, we had to first figure out the amount of `%x` specifiers we would need to reach our input. We decided to do so by inputting a string followed by 100 `%x` specifiers.
+
+Since the guide provided a script for crafting the payload - "exploit_example.py" - we opted to use it like so:
+
+```python
+from pwn import *
+
+p = remote("ctf-fsi.fe.up.pt", 4004)
+payload = bytearray.fromhex("A" * 8) + b"%x" * 100
+
+p.recvuntil(b"got:")
+p.sendline(payload)
+p.interactive()
+```
+
+Upon running the script, we obtained the following output:
+
+![Alt text](images/7-2.png)
+
+Much to our dismay, the first value that was printed from memory was our input. That meant that we would not need any `%x` specifiers after all. 
+
+While at first we were quite surprised by this, after giving it some more thought, it made sense: it had to do with the layout of the **stack**. 
+
+> The **stack frame** of a function is laid out as follows, in ascending order of memory addresses: <u>local variables</u>, <u>frame pointer</u>, <u>return address</u> and <u>function parameters</u>.
+
+In fact, the stack frame of the `printf()` function would be located below the stack frame of the `main()` function. Since local variables are stored in the lower addresses, the value above `printf()` was none other than the only local variable `main()` declared - "buffer", the array used to store our input.
