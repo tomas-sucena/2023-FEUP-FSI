@@ -1,29 +1,38 @@
 # SQL Injection
 
-In this CTF we need to exploit the website using a SQL injection to log in without knowing the user's usernames and passwords
+In this CTF we need to exploit the website using a SQL injection to log in, without knowing the user's username and password.
 
 # Exploration
 
-We can see that the website is just a form that tries to match our input with the data on the database
+After entering the website, we find ourselves in its login page. To attain the flag, we know we must login, despite having no credentials.
+
+In the provided `index.php` file, we may also see the query used in the login:
+
+```php
+$username = $_POST['username'];
+$password = $_POST['password'];
+               
+$query = "SELECT username FROM user WHERE username = '".$username."' AND password = '".$password."'";
+```
+
+Given both username and password are not hashed, we are likely to be capable of executing an SQL injection attack on this website.
 
 # Execution
 
-I wonder if the form is protecting against code execution by using the single quote to close the input's string
+We wonder if the form is protected against code execution, by using a single quote to close the input's string.
 
-And to our surprise, it is not protected for that exploit, so let's develop a SQL query to let us access the website without knowing the credentials of a user
+To our surprise, it is not protected for that exploit, so we developed a SQL query to let us access the website without knowing the credentials of a user.
 
-We assume that the input matching query is something like:
+Given we are aware of how the query is performed, a username such as `' OR 1=1;--` should be enough to exploit this vulnerability.
 
-`USERNAME='$username' AND HASH_PASSWORD='$hash_password';`
+Replaced, it will look like this:
 
-So a simple query like `' OR 1=1;--` added to the username field should be enough
+``"SELECT username FROM user WHERE username = '' OR 1=1;--' AND password = ''";`
 
-Replaced it will look like this:
-
-`USERNAME='' OR 1=1;--` ~~`' AND HASH_PASSWORD='$hash_password';`~~
+It is important to note that we use `--` in order to comment the remainder of the query, thus making it skip the password condition, while successfully logging us in as any user.
 
 ![img](images/sqlinjection.png)
 
-When we submit the form, we get flag
+When we submit the form, we successfully get flag
 
 ![img](images/sqlinjection_flag.png)
