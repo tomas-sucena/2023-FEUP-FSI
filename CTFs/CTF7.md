@@ -91,9 +91,9 @@ As such, we acquired the following information:
 > A **Position-independent executable** (or `PIE` for short) is a binary that executes properly regardless of its **absolute address** (i.e. independently of where it is placed in memory).
 
 So, taking into account our analysis of the source code and the executable, we realized that we could make the program print the "flag" array by inputing a format string that:
-* Started the **address** of "flag".
+* Started with the **address** of "flag".
 * Had a certain amount of `%x` format specifiers.
-* End with a `%s` format specifier.
+* Ended with a `%s` format specifier.
 
 The logic behind this payload was simple: considering the call to `printf()` was unsanitized, we could exploit that by making the program successively print the values stored in memory using `%x` specifiers. Eventually, it would reach the memory region where our input was stored. Then, the final specifier, `%s`, would make the program treat our input as an **address** and print the content it points to.
 
@@ -215,26 +215,45 @@ Analyzing the output led us to conclude that this program had the same propertie
 * There is a **canary** protecting the stack.
 * Positions of the executable are NOT **randomized**.
 
-Our suspicion was correct - the program could indeed be exploited using format strings. So, if we changed the value of "key" with our payload, the program would launch the **shell**, thus allowing us to open "flag.txt".
+Our suspicion was correct - the program could indeed be exploited using format strings. So, if we changed the value of "key" to **0xbeef** with our payload, the program would launch the shell, thus allowing us to open "flag.txt".
+
+To do that, we would have to craft a payload that:
+* Started with the **address** of "key".
+* Had a `%x` specifier with padding.
+* Ended with a `%n` format specifier.
+
+The keys to our payload was the `%n` specifier.
+
+> The `%n` format specifier assigns a variable the count of the number of characters used in the print statement before its occurrence.
+
+To add the aforementioned padding, we would need the `%N` format specifier.
+
+> The `%N` format specifier, where N is an integer, adds padding on the **left** of a format string. If N is negative, the padding is added on the **right**. It is important to note that N represents the **size** of the format string with padding.
 
 ### Preparing the Payload
 
-Yet again, the stack frame of the `printf()` function was below the stack frame of the `main()` function. So, "buffer" - the local variable defined by `main()` - would be located directly above `printf()`, which meant no `%x` specifiers would be necessary.
+Yet again, the stack frame of the `printf()` function was below the stack frame of the `main()` function. So, "buffer" - the local variable defined by `main()` - would be located directly above `printf()`, which meant no `%x` specifiers would be necessary to reach our input.
 
 To discover the address of "key", we relied on `gdb` once more like so:
 
 ![Alt text](images/7-6.png)
 
-We wanted "key" to equal **0xbeef**, which is 48879 in decimal base. To do that, we would have to craft a payload containing `%n`.
+Next, we had to calculate the amount of padding we would need. We wanted "key" to equal **0xbeef**, which is 48879 in decimal base. Since 4 characters would already be used to specify the address of "key", we concluded that we would need 48879 - 4 = **48875** characters of padding.
 
-> The `%n` format specifier assigns a variable the count of the number of characters used in the print statement before its occurrence.
+With that, we had all the information we needed to concoct the payload. However, there was a problem: we couldn't simply use `%n` after `%x`. This is because `printf()` successively uses the values above it in memory everytime it needs to replace a specifier with a value. So, since `%x` came first on the payload, it would "consume" our input, which was undesirable.
 
-So, our payload would have to make the program read precisely 48879 characters before reaching the `%n` format specifier and then assign "key" that value.
+To circunvent this, we used the `%N$n` format specifier:
 
-Since we had already written a payload for the [previous challenge](#preparing-the-payload), we decided to reutilize it, applying the modifications below:
+> The `%N$n` format specifier, where N is an integer, is equivalent to the `%n` format specifier, except it forces the program to store the number of characters read in the **N-th** value.
+
+**Note:** The `%N$...` can be used with other specifiers.
+
+Thus, we could use `%1$n` to make the program store the number of characters read in "key".
+
+With that settled, we were finally ready to concoct our payload. To save some time, we decided to reutilize the payload from the [previous challenge](#preparing-the-payload) with the modifications below:
 
 ```python
-address = 0x804b324
+address = 0x804b324 # the address of "key"
 payload = address.to_bytes(4, byteorder='little') + b"%48875x" + b"%1$n"
 ```
 
