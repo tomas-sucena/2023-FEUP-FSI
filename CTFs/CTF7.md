@@ -81,6 +81,7 @@ The output of the command above was the following:
 
 As such, we acquired the following information:
 
+* The program is a **little-endian** system, which means the least significant bytes are stored at the smallest memory addresses.
 * There is a **canary** protecting the stack, which means buffer overflows will be detected.
 
 > A **stack canary** is a secret value placed on the **stack** which changes every time the program is started. Prior to a function return, it is checked and, if it appears to have been modified, the program returns immediately.
@@ -153,3 +154,54 @@ Running "exploit_example.py", we got the following output:
 ![Alt text](images/7-4.png)
 
 Just as we predicted, the program leaked the first flag: `flag{7a33d6062ce2c9f4c81dce9e92fdb6d5}`.
+
+## 2nd flag
+
+### Analysis
+
+#### Source Code
+
+Once again, our first task was investigating the source code. Opening "main.c", we realized this program was quite similar to the one from the [previous challenge](#1st-flag). 
+Its behaviour is described below:
+
+1. Create a global variable, "key", with value 0.
+
+```c
+int key = 0;
+```
+
+**Note:** There is also a global character array, "pad", but it is not relevant to us.
+
+2. Read at most 32 bytes of user input and store them in a character array named "buffer".
+
+```c
+char buffer[32];
+...
+scanf("%32s", &buffer);
+```
+
+3. Compare the value of "key" with `0xbeef`.
+
+```c
+if(key == 0xbeef) {
+    ...
+}
+```
+
+4. If the previous values are equal, launch a `bash` shell.
+
+```c
+system("/bin/bash");
+```
+
+#### Executable
+
+Before proceeding, we verified if the executable had any countermeasures by running `checksec`.
+
+![Alt text](images/7-5.png)
+
+Analyzing the output led us to conclude that this program had the same properties as the one from the [last challenge](#executable), that is:
+
+* The program is a **little-endian** system.
+* There is a **canary** protecting the stack.
+* Positions of the executable are NOT **randomized**.
