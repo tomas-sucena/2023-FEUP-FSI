@@ -161,8 +161,7 @@ Just as we predicted, the program leaked the first flag: `flag{7a33d6062ce2c9f4c
 
 #### Source Code
 
-Once again, our first task was investigating the source code. Opening "main.c", we realized this program was quite similar to the one from the [previous challenge](#1st-flag). 
-Its behaviour is described below:
+Our first task was to analyze the source code, which was once again present in "main.c". The behaviour of the program could be described like so:
 
 1. Create a global variable, "key", with value 0.
 
@@ -180,7 +179,13 @@ char buffer[32];
 scanf("%32s", &buffer);
 ```
 
-3. Compare the value of "key" with `0xbeef`.
+3. Call `printf()` with "buffer" as an argument.
+
+```c
+printf(buffer);
+```
+
+4. Compare the value of "key" with `0xbeef`.
 
 ```c
 if(key == 0xbeef) {
@@ -188,11 +193,15 @@ if(key == 0xbeef) {
 }
 ```
 
-4. If the previous values are equal, launch a `bash` shell.
+5. If the previous values are equal, launch a `bash` shell.
 
 ```c
 system("/bin/bash");
 ```
+
+This time, the flag was not stored in a variable. Upon reading the guide, we learned that it was in a file appropriately named "flag.txt", which we would be able to access if we somehow got the program to launch the shell.
+
+Similarly to the previous challenge, the call to `printf()` was unsanitized, meaning we could potentially exploit the program by inputting format strings.
 
 #### Executable
 
@@ -205,3 +214,34 @@ Analyzing the output led us to conclude that this program had the same propertie
 * The program is a **little-endian** system.
 * There is a **canary** protecting the stack.
 * Positions of the executable are NOT **randomized**.
+
+Our suspicion was correct - the program could indeed be exploited using format strings. So, if we changed the value of "key" with our payload, the program would launch the **shell**, thus allowing us to open "flag.txt".
+
+### Preparing the Payload
+
+Yet again, the stack frame of the `printf()` function was below the stack frame of the `main()` function. So, "buffer" - the local variable defined by `main()` - would be located directly above `printf()`, which meant no `%x` specifiers would be necessary.
+
+To discover the address of "key", we relied on `gdb` once more like so:
+
+![Alt text](images/7-6.png)
+
+We wanted "key" to equal **0xbeef**, which is 48879 in decimal base. To do that, we would have to craft a payload containing `%n`.
+
+> The `%n` format specifier assigns a variable the count of the number of characters used in the print statement before its occurrence.
+
+So, our payload would have to make the program read precisely 48879 characters before reaching the `%n` format specifier and then assign "key" that value.
+
+Since we had already written a payload for the [previous challenge](#preparing-the-payload), we decided to reutilize it, applying the modifications below:
+
+```python
+address = 0x804b324
+payload = address.to_bytes(4, byteorder='little') + b"%48875x" + b"%1$n"
+```
+
+### Attack!
+
+It was time to attack! The output after rereunning "exploit_example.py" was as follows:
+
+![Alt text](images/7-7.png)
+
+While it looked weird due to the padding, it was clear that the shell was successfully launched. So, we opened "flag.txt" and found the second flag: `flag{f27d2028ca09517aaba3945962142608}`.

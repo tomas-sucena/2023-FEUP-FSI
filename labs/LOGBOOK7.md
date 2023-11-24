@@ -209,7 +209,7 @@ We changed "target"!
 
 Our final task consisted in changing the value of "target" to **0x5000**, which corresponds to 20480 in decimal base. In order to achieve that, we would have to create a payload that would make the program read precisely 20480 characters before reaching the `%n` format specifier, so that it would then assign "target" that value.
 
-Since we had to specify the address of "target", 4 characters were already covered.However, there were still a few problems we had to solve:
+Since we had to specify the address of "target", 4 characters were already covered. However, there were still a few problems we had to solve:
 
 * There was no way to know the number of characters each value in the stack would require to be written. Based on the output from the previoust tasks, values could need as few as one character or as many as 8. As such, we could not calculate how many more characters we would need to append to the format string.
 * The server only accepted up to 1500 characters of user input, so we could not simply input the characters normally. 
