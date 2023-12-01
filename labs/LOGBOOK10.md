@@ -130,3 +130,36 @@ THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARfEY WEINSTEIN AT ITS OUTSET AN
 | Substitution | Message |
 | ------ | ------ |
 | fko > VXJ | THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG |
+
+
+## Task 3: ECB vs CBC
+
+Our final task consisted in comparing two encryption modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
+
+![Alt text](images/10-1.bmp)
+
+We then had to treat the encrypted image as a `.bmp` file and visualize it. To better compare our results, we used the same cipher for the encryption: **128-bit AES**.
+
+**Note:** Given `.bmp` files have a header, we had to concatenate the header of the original file with the data from the encrypted file to view the encrypted image in a picture viewing software. As such, after encryting "pic_original.bmp" in the experiences below, we ran the following commands:
+
+```bash
+$ head -c 54 pic_original.bmp > header # extract the header from the original file
+$ tail -c +55 p2.bmp > body # extract the body from the encrypted file
+$ cat header body > new.bmp # concatenate both and store them in a new file
+```
+
+### ECB
+
+> Electronic Code Book, or **ECB** for short, is a simple encryption mode wherein each block of the original message is encrypted <u>separately</u>.
+
+![Alt text](images/10-2.png)
+
+With ECB, we obtained the following:
+
+| Original | Encrypted |
+|----------|-----------|
+| ![Alt text](images/10-1.bmp) | ![Alt text](images/10-3.bmp) |
+
+By comparing both images, it became clear just how similar they were. It was very easy to identify the shapes from the original picture in the encrypted version, even if they had a different color.
+
+This happened because ECB encrypts identical plaintext blocks into identical ciphertext blocks - there is no randomness. As such, this mode does not hide **data patterns** well. In the case of the images, while the color of each pixel changed due to the encryption, we could still discern patterns of identically colored pixels.
