@@ -2,26 +2,131 @@
 
 ## Task 1: Frequency Analysis
 
-| Modification | Message |
+Our first task was to decipher a message encrypted using a **monoalphabetic cipher**.
+
+> A **monoalphaebtic cipher** is a substitution cipher where each symbol in the original message is <u>consistently</u> replaced with another symbol to form the ciphertext.
+
+This type of cipher is vulnerable to a technique called **frequency analysis**.
+
+> **Frequency analysis** consists in counting the occurrence of each <u>symbol</u> in a ciphertext. It is based on the fact that, in any given piece of text, certain symbols and combinations of symbols occur with varying frequencies.
+
+So, as long as we know the language of the original message, we can search the most common characters and character combinations of said language to help us appropriately determine the mapping of cipher to plaintext symbols. 
+
+**Example:** In English, the most common letter is the vowel 'e', which means that the most common cipher symbol will most likely correspond to the 'e' symbol in the original message.
+
+### 1st Paragraph
+
+The message we had to decrypt was in a file named "ciphertext.txt", which we can be found [here](etc/ciphertext.txt).
+
+Since analyzing the whole file at once would be exhausting and fruitless, we opted to decipher it one paragraph at a time, starting with the first:
+
+```
+ytn xqavhq yzhu  xu qzupvd ltmat qnncq vgxzy hmrty vbynh ytmq ixur qyhvurn vlvhpq yhme ytn gvrrnh bnniq imsn v uxuvrnuvhmvu yxx
+```
+
+Before starting the substitution, we had to figure out the **frequency** of each symbol. Thankfully, the guide provided a Python program - "freq.py" - which not only computed the frequency of each character but also the most frequent groups of 2 and 3 characters. Upon running it, we obtained the following output:
+
+```bash
+$ python3 freq.py
+-------------------------------------
+1-gram (top 20):
+n: 488
+y: 373
+v: 348
+x: 291
+u: 280
+q: 276
+m: 264
+h: 235
+t: 183
+i: 166
+p: 156
+a: 116
+c: 104
+z: 95
+l: 90
+g: 83
+b: 83
+r: 82
+e: 76
+d: 59
+-------------------------------------
+2-gram (top 20):
+yt: 115
+tn: 89
+mu: 74
+nh: 58
+vh: 57
+hn: 57
+vu: 56
+nq: 53
+xu: 52
+up: 46
+xh: 45
+yn: 44
+np: 44
+vy: 44
+nu: 42
+qy: 39
+vq: 33
+vi: 32
+gn: 32
+av: 31
+-------------------------------------
+3-gram (top 20):
+ytn: 78
+vup: 30
+mur: 20
+ynh: 18
+xzy: 16
+mxu: 14
+gnq: 14
+ytv: 13
+nqy: 13
+vii: 13
+bxh: 13
+lvq: 12
+nuy: 12
+vyn: 12
+uvy: 11
+lmu: 11
+nvh: 11
+cmu: 11
+tmq: 10
+vhp: 10
+```
+
+We started by analyzing the most common 3-gram: 'ytn'. Since the message was in English, we deduced that 'ytn' mapped to **'the'**, because that preposition is the most common 3-gram in the English language. In addition, 'n', the most frequent symbol, was present at the end of 'ytn', which meant it had to map to **'e'**. As such, we made our first modification:
+
+| Substitution | Message |
 | ------ | ------ |
-|  ytn ~ THE  | THE xqavhq Tzhu  xu qzupvd lHmaH qEEcq vgxzT hmrHT vbTEh THmq ixur qThvurE vlvhpq Thme THE gvrrEh bEEiq imsE v uxuvrEuvhmvu Txx       |
-| v ~ A | THE xqaAhq Tzhu  xu qzupAd lHmaH qEEcq AgxzT hmrHT AbTEh THmq ixur qThAurE AlAhpq Thme THE gArrEh bEEiq imsE A uxuArEuAhmAu Txx |
-| h ~ R | THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT AbTER THmq ixur qTRAurE AlARpq TRme THE gArrER bEEiq imsE A uxuArEuARmAu Txx |
-| b > F | THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT AFTER THmq ixur qTRAurE AlARpq TRme THE gArrER FEEiq imsE A uxuArEuARmAu Txx |
-| mr > IG | THE xqaARq TzRu  xu qzupAd lHIaH qEEcq AgxzT RIGHT AFTER THIq ixuG qTRAuGE ... |
-| q > S | THE xSaARS TzRu  xu SzupAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ixuG STRAuGE ... |
-| u > N | THE xSaARS TzRN  xN SzNpAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ixNG STRANGE ... |
-| x > O | THE OSaARS TzRN  ON SzNpAd lHIaH SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE ... |
-| a > C | THE OSCARS TzRN  ON SzNpAd lHICH SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE AlARpS TRIe THE gAGGER FEEiS iIsE A NONAGENARIAN TOO |
-| zlcg > UWMB | THE OSCARS TURN  ON SUNpAd WHICH SEEMS ABOUT RIGHT AFTER THIS iONG STRANGE AWARpS TRIe THE BAGGER FEEiS iIsE A NONAGENARIAN TOO |
-| pdise > DYLKP | THE OSCARS TURN  ON SUNDAY WHICH SEEMS ABOUT RIGHT AFTER THIS LONG STRANGE AWARDS TRIP THE BAGGER FEELS LIKE A NONAGENARIAN TOO |
+|  `ytn` ~ `THE`  | **THE** xqavhq Tzhu  xu qzupvd lHmaH qEEcq vgxzT hmrHT vbTEh THmq ixur qThvurE vlvhpq Thme **THE** gvrrEh bEEiq imsE v uxuvrEuvhmvu Txx       |
+
+**Note:** As recommended by the guide, we ensured the symbols we substituted were in <u>uppercase</u> so we could more easily notice our changes.
+
+After that, we made the modifications below:
+
+| Substitution | Message |
+| ------ | ------ |
+| `v` ~ `A` | THE xqa**A**hq Tzhu  xu qzup**A**d lHmaH qEEcq **A**gxzT hmrHT **A**bTEh THmq ixur qTh**A**urE **A**l**A**hpq Thme THE g**A**rrEh bEEiq imsE **A** uxu**A**rEu**A**hm**A**u Txx |
+| `h` ~ `R` | THE xqaA**R**q Tz**R**u  xu qzupAd lHmaH qEEcq AgxzT **R**mrHT AbTE**R** THmq ixur qT**R**AurE AlA**R**pq T**R**me THE gArrE**R** bEEiq imsE A uxuArEuA**R**mAu Txx |
+| `b` > `F` | THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT A**F**TER THmq ixur qTRAurE AlARpq TRme THE gArrER **F**EEiq imsE A uxuArEuARmAu Txx |
+| `mr` > `IG` | THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**I****G**HT AFTER TH**I**q ixu**G** qTRAu**G**E ... |
+| `q` > `S` | THE x**S**aAR**S** TzRu  xu **S**zupAd lHIaH **S**EEc**S** AgxzT RIGHT AFTER THI**S** ixuG **S**TRAuGE ... |
+| `u` > `N` | THE xSaARS TzR**N**  x**N** Sz**N**pAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ix**N**G STRA**N**GE ... |
+| `x` > `O` | THE **O**SaARS TzRN  **O**N SzNpAd lHIaH SEEcS Ag**O**zT RIGHT AFTER THIS i**O**NG STRANGE ... |
+| `a` > `C` | THE OS**C**ARS TzRN  ON SzNpAd lHI**C**H SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE AlARpS TRIe THE gAGGER FEEiS iIsE A NONAGENARIAN TOO |
+| `zlcg` > `UWMB` | THE OSCARS T**U**RN  ON S**U**NpAd **W**HICH SEE**M**S A**B**O**U**T RIGHT AFTER THIS iONG STRANGE A**W**ARpS TRIe THE **B**AGGER FEEiS iIsE A NONAGENARIAN TOO |
+| `pdise` > `DYLKP` | THE OSCARS TURN  ON SUN**D**A**Y** WHICH SEEMS ABOUT RIGHT AFTER THIS **L**ONG STRANGE AWAR**D**S TRI**P** THE BAGGER FEE**L**S **L**I**K**E A NONAGENARIAN TOO |
 
 ### 2nd paragraph
 
+After fully decrypting the first paragraph, we moved on the the second:
+
+```
 THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARfEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIfISM AND A NATIONAL CONfERSATION AS BRIEF AND MAD AS A FEfER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT oUST SEEM EkTRA LONG IT WAS EkTRA LONG BECAUSE THE OSCARS WERE MOfED TO THE FIRST WEEKEND IN MARCH TO AfOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG
+```
 
-After fully decrypting the first paragraph, we moved on the the second.
-
-| Modification | Message |
+| Substitution | Message |
 | ------ | ------ |
 | fko > VXJ | THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG |
