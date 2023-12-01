@@ -111,7 +111,7 @@ After that, we made the modifications below:
 | `v` ~ `A` | THE xqa**A**hq Tzhu  xu qzup**A**d lHmaH qEEcq **A**gxzT hmrHT **A**bTEh THmq ixur qTh**A**urE **A**l**A**hpq Thme THE g**A**rrEh bEEiq imsE **A** uxu**A**rEu**A**hm**A**u Txx |
 | `h` ~ `R` | THE xqaA**R**q Tz**R**u  xu qzupAd lHmaH qEEcq AgxzT **R**mrHT AbTE**R** THmq ixur qT**R**AurE AlA**R**pq T**R**me THE gArrE**R** bEEiq imsE A uxuArEuA**R**mAu Txx |
 | `b` > `F` | THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT A**F**TER THmq ixur qTRAurE AlARpq TRme THE gArrER **F**EEiq imsE A uxuArEuARmAu Txx |
-| `mr` > `IG` | THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**I****G**HT AFTER TH**I**q ixu**G** qTRAu**G**E ... |
+| `mr` > `IG` | THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**IG**HT AFTER TH**I**q ixu**G** qTRAu**G**E ... |
 | `q` > `S` | THE x**S**aAR**S** TzRu  xu **S**zupAd lHIaH **S**EEc**S** AgxzT RIGHT AFTER THI**S** ixuG **S**TRAuGE ... |
 | `u` > `N` | THE xSaARS TzR**N**  x**N** Sz**N**pAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ix**N**G STRA**N**GE ... |
 | `x` > `O` | THE **O**SaARS TzRN  **O**N SzNpAd lHIaH SEEcS Ag**O**zT RIGHT AFTER THIS i**O**NG STRANGE ... |
@@ -150,16 +150,40 @@ $ cat header body > new.bmp # concatenate both and store them in a new file
 
 ### ECB
 
-> Electronic Code Book, or **ECB** for short, is a simple encryption mode wherein each block of the original message is encrypted <u>separately</u>.
+> Electronic Code Book (or **ECB** for short) is a simple encryption mode wherein each block of the original message is encrypted <u>separately</u>.
 
 ![Alt text](images/10-2.png)
 
-With ECB, we obtained the following:
+Upon encrypting "pic_original.bmp" with ECB, we obtained the following:
 
 | Original | Encrypted |
 |----------|-----------|
-| ![Alt text](images/10-1.bmp) | ![Alt text](images/10-3.bmp) |
+| ![Alt text](images/10-1.bmp) | ![Alt text](images/ebc.bmp) |
 
 By comparing both images, it became clear just how similar they were. It was very easy to identify the shapes from the original picture in the encrypted version, even if they had a different color.
 
-This happened because ECB encrypts identical plaintext blocks into identical ciphertext blocks - there is no randomness. As such, this mode does not hide **data patterns** well. In the case of the images, while the color of each pixel changed due to the encryption, we could still discern patterns of identically colored pixels.
+This happened because ECB encrypts **identical** plaintext blocks into identical ciphertext blocks. As such, this mode does not hide **data patterns** well. In the case of the images, while the color of each pixel changed due to the encryption, we could still discern patterns of identically colored pixels.
+
+### CBC
+
+> Cipher Block Chaining (or **CBC** for short) is an encryption mode wherein each block of the original message is <u>XORed</u> with the previous ciphertext block before beign encrypted. The first block is XORed with an <u>initialization vector</u>.
+
+![Alt text](images/10-2.png)
+
+This mode guarantees each ciphered block depends on all plaintext blocks processed up to that point. In addition, the **initialization vector** ensures the uniqueness of each message, meaning the same plaintext encrypted twice using the same key will <u>not</u> yield the same ciphertext.
+
+We used the command below to encrypt "pic_original.bmp":
+
+```bash
+$ openssl enc -aes-128-cbc -e -in pic_original.bmp -out pic_encrypted.bmp -K 00112233445566778889aabbccddeeff -iv 0102030405060708
+```
+
+The result this time was as follows:
+
+| Original | Encrypted |
+|----------|-----------|
+| ![Alt text](images/10-1.bmp) | ![Alt text](images/cbc.bmp) |
+
+Unlike with EBC, we were not able to identify any patterns in the encrypted image that resembled the original. It was as if the two images had no correlation.
+
+This is due to the fact that each plaintext block is XORed with the previous ciphered block, thus introducing an element of **pseudo-randomness** in the ciphertext. 
