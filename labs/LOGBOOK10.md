@@ -131,12 +131,28 @@ THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARfEY WEINSTEIN AT ITS OUTSET AN
 | ------ | ------ |
 | fko > VXJ | THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG |
 
+## Task 2: Encryption Ciphers
 
-## Task 3: ECB vs CBC
+Next, we were asked to experiment different **ciphers** and cipher modes. However, considering the [next task](#task-3-encryption-modes---ecb-vs-cbc) already focuses on cipher modes, we opted to focus exclusively on ciphers in this one.
+
+> A **cipher** is an algorithm for encrypting or decrypting a fixed-length block of data.
+
+Before starting the encryption itself, though, we deemed important to understand an essential cryptography concept: **keys**.
+
+> A **key** is a piece of information, usually a string of numbers or letters, which, when used in a <u>cipher</u>, can encode or decode data.
+
+So, keys are indispensable in ciphers. Additionally, depending on how a cipher utilizes keys, it can be classified as:
+
+* **Symmetric** - The cipher uses the same key for encryption and decryption.
+* **Asymmetric** - The cipher uses separate keys for encryption and decryption. These are known as <u>public</u> and <u>private keys</u>, respectively.
+
+**Note:** To allow for better analysis of the results, we used the same key in all experiments performed during this task: `00112233445566778889aabbccddeeff`.
+
+## Task 3: Encryption Modes - ECB vs CBC
 
 In the previous task, we explored different ciphers - the algorithms used to encrypt a fixed-length group of bits. This task, however, was focused on the **modes** of operation of a cipher.
 
-> In cryptography, a **cipher mode** is an algorithm that describes how to repeatedly apply a <u>cipher</u>'s single-block operation to securely transform amounts of data larger than a block.
+> A **cipher mode** is an algorithm that describes how to repeatedly apply a <u>cipher</u>'s single-block operation to securely transform amounts of data larger than a block.
 
 Our final task consisted in comparing two **block cipher** modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
 
@@ -178,7 +194,7 @@ This happened because ECB encrypts **identical** plaintext blocks into identical
 
 > Cipher Block Chaining (or **CBC** for short) is an encryption mode wherein each block of the original message is <u>XORed</u> with the previous ciphertext block before beign encrypted. The first block is XORed with an <u>initialization vector</u>.
 
-![Alt text](images/10-2.png)
+![Alt text](images/10-3.png)
 
 This mode guarantees each ciphered block depends on all plaintext blocks processed up to that point. In addition, the **initialization vector** ensures the uniqueness of each message, meaning the same plaintext encrypted twice using the same key will <u>not</u> yield the same ciphertext.
 
@@ -202,7 +218,7 @@ This is due to the fact that each plaintext block is XORed with the previous cip
 
 To confirm our results, we decided to retry this experience with another picture. The results were as follows:
 
-| Mode | Picture | Conclusion |
+| Cipher Mode | Picture | Conclusion |
 |------|---------|-------------------------|
 | *None* | ![Alt text](images/pattern.bmp) | - |
 | ECB    | ![Alt text](images/pattern-ecb.bmp) | Color patterns are easily recognizable. It conveys clear information about the original image, even though the colors are different. |
