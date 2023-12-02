@@ -8,10 +8,14 @@ Ciphers cannot process data out of the blue though - they need a **key** that sp
 
 > A **key** is a piece of information, usually a string of numbers or letters, which, when used in a <u>cipher</u>, can encode or decode data.
 
-Additionally, depending on how a cipher utilizes them, it can be classified as:
+Depending on how a cipher utilizes them, it can be classified as:
 
 * **Symmetric** - The cipher uses the same key for encryption and decryption.
 * **Asymmetric** - The cipher uses separate keys for encryption and decryption. These are known as <u>public</u> and <u>private keys</u>, respectively.
+
+Coupled with keys, most ciphers also utilize **initialization vectors**.
+
+> An **initialization vector** (or IV for short) is a variable used in several ciphers to <u>randomize</u> the encryption, thus producing distinct ciphertexts even if the same plaintext is encrypted multiple times.
 
 ## Task 1: Frequency Analysis
 
@@ -113,7 +117,7 @@ We started by analyzing the most common 3-gram: 'ytn'. Since the message was in 
 
 | Substitution | Message |
 | ------ | ------ |
-|  `ytn` ~ `THE`  | **THE** xqavhq Tzhu  xu qzupvd lHmaH qEEcq vgxzT hmrHT vbTEh THmq ixur qThvurE vlvhpq Thme **THE** gvrrEh bEEiq imsE v uxuvrEuvhmvu Txx       |
+|  `ytn` ~ `THE`  | '**THE** xqavhq Tzhu  xu qzupvd lHmaH qEEcq vgxzT hmrHT vbTEh THmq ixur qThvurE vlvhpq Thme **THE** gvrrEh bEEiq imsE v uxuvrEuvhmvu Txx' |
 
 **Note:** As recommended by the guide, we ensured the symbols we substituted were in <u>uppercase</u> so we could more easily notice our changes.
 
@@ -121,16 +125,16 @@ After that, we made the modifications below:
 
 | Substitution | Message |
 | ------ | ------ |
-| `v` ~ `A` | THE xqa**A**hq Tzhu  xu qzup**A**d lHmaH qEEcq **A**gxzT hmrHT **A**bTEh THmq ixur qTh**A**urE **A**l**A**hpq Thme THE g**A**rrEh bEEiq imsE **A** uxu**A**rEu**A**hm**A**u Txx |
-| `h` ~ `R` | THE xqaA**R**q Tz**R**u  xu qzupAd lHmaH qEEcq AgxzT **R**mrHT AbTE**R** THmq ixur qT**R**AurE AlA**R**pq T**R**me THE gArrE**R** bEEiq imsE A uxuArEuA**R**mAu Txx |
-| `b` > `F` | THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT A**F**TER THmq ixur qTRAurE AlARpq TRme THE gArrER **F**EEiq imsE A uxuArEuARmAu Txx |
-| `mr` > `IG` | THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**IG**HT AFTER TH**I**q ixu**G** qTRAu**G**E ... |
-| `q` > `S` | THE x**S**aAR**S** TzRu  xu **S**zupAd lHIaH **S**EEc**S** AgxzT RIGHT AFTER THI**S** ixuG **S**TRAuGE ... |
-| `u` > `N` | THE xSaARS TzR**N**  x**N** Sz**N**pAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ix**N**G STRA**N**GE ... |
-| `x` > `O` | THE **O**SaARS TzRN  **O**N SzNpAd lHIaH SEEcS Ag**O**zT RIGHT AFTER THIS i**O**NG STRANGE ... |
-| `a` > `C` | THE OS**C**ARS TzRN  ON SzNpAd lHI**C**H SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE AlARpS TRIe THE gAGGER FEEiS iIsE A NONAGENARIAN TOO |
-| `zlcg` > `UWMB` | THE OSCARS T**U**RN  ON S**U**NpAd **W**HICH SEE**M**S A**B**O**U**T RIGHT AFTER THIS iONG STRANGE A**W**ARpS TRIe THE **B**AGGER FEEiS iIsE A NONAGENARIAN TOO |
-| `pdise` > `DYLKP` | THE OSCARS TURN  ON SUN**D**A**Y** WHICH SEEMS ABOUT RIGHT AFTER THIS **L**ONG STRANGE AWAR**D**S TRI**P** THE BAGGER FEE**L**S **L**I**K**E A NONAGENARIAN TOO |
+| `v` ~ `A` | 'THE xqa**A**hq Tzhu  xu qzup**A**d lHmaH qEEcq **A**gxzT hmrHT **A**bTEh THmq ixur qTh**A**urE **A**l**A**hpq Thme THE g**A**rrEh bEEiq imsE **A** uxu**A**rEu**A**hm**A**u Txx' |
+| `h` ~ `R` | 'THE xqaA**R**q Tz**R**u  xu qzupAd lHmaH qEEcq AgxzT **R**mrHT AbTE**R** THmq ixur qT**R**AurE AlA**R**pq T**R**me THE gArrE**R** bEEiq imsE A uxuArEuA**R**mAu Txx' |
+| `b` > `F` | 'THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT A**F**TER THmq ixur qTRAurE AlARpq TRme THE gArrER **F**EEiq imsE A uxuArEuARmAu Txx' |
+| `mr` > `IG` | 'THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**IG**HT AFTER TH**I**q ixu**G** qTRAu**G**E ...' |
+| `q` > `S` | 'THE x**S**aAR**S** TzRu  xu **S**zupAd lHIaH **S**EEc**S** AgxzT RIGHT AFTER THI**S** ixuG **S**TRAuGE ...' |
+| `u` > `N` | 'THE xSaARS TzR**N**  x**N** Sz**N**pAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ix**N**G STRA**N**GE ...' |
+| `x` > `O` | 'THE **O**SaARS TzRN  **O**N SzNpAd lHIaH SEEcS Ag**O**zT RIGHT AFTER THIS i**O**NG STRANGE ...' |
+| `a` > `C` | 'THE OS**C**ARS TzRN  ON SzNpAd lHI**C**H SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE AlARpS TRIe THE gAGGER FEEiS iIsE A NONAGENARIAN TOO' |
+| `zlcg` > `UWMB` | 'THE OSCARS T**U**RN  ON S**U**NpAd **W**HICH SEE**M**S A**B**O**U**T RIGHT AFTER THIS iONG STRANGE A**W**ARpS TRIe THE **B**AGGER FEEiS iIsE A NONAGENARIAN TOO' |
+| `pdise` > `DYLKP` | 'THE OSCARS TURN  ON SUN**D**A**Y** WHICH SEEMS ABOUT RIGHT AFTER THIS **L**ONG STRANGE AWAR**D**S TRI**P** THE BAGGER FEE**L**S **L**I**K**E A NONAGENARIAN TOO' |
 
 ### 2nd paragraph
 
@@ -140,15 +144,68 @@ After fully decrypting the first paragraph, we moved on the the second:
 THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARfEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIfISM AND A NATIONAL CONfERSATION AS BRIEF AND MAD AS A FEfER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT oUST SEEM EkTRA LONG IT WAS EkTRA LONG BECAUSE THE OSCARS WERE MOfED TO THE FIRST WEEKEND IN MARCH TO AfOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG
 ```
 
+Luckily for us, the vast majority of it was already decrypted. In fact, we only needed to make one last modification:
+
 | Substitution | Message |
 | ------ | ------ |
-| fko > VXJ | THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG |
+| `fko` > `VXJ` | 'THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG' |
+
+And with that, the entire message had been decrypted. To avoid bloating this file, it can be found here.
 
 ## Task 2: Encryption Ciphers
 
-Next, we were asked to experiment different **ciphers** and cipher modes. However, considering the [next task](#task-3-encryption-modes---ecb-vs-cbc) already focuses on cipher modes, we opted to focus exclusively on ciphers in this one.
+Next, we were asked to experiment different **ciphers** and cipher modes. However, considering the [next task](#task-3-encryption-modes---ecb-vs-cbc) already highlights cipher modes, we opted to focus exclusively on ciphers in this one.
 
-**Note:** To allow for better analysis of the results, we used the same key in all experiments performed during this task: `00112233445566778889aabbccddeeff`.
+There are various types of ciphers, however, the two most prominent are **stream** and **block ciphers**. Out of curiosity, we investigated more about both.
+
+### Stream ciphers
+
+> A **stream cipher** is a <u>symmetric key</u> cipher where plaintext symbols are combined with a pseudorandom cipher symbol stream, known as a <u>keystream</u>.
+
+In these types of ciphers, each symbol is encrypted one at a time with the corresponding symbol from the **keystream** to create the ciphertext symbol. Generally, each symbol is a bit or a byte and the combining operation is **XOR**.
+
+**Note:** A <u>keystream</u> is generated by supplying a <u>key</u> to a psedorandom bit generator.
+
+### Block ciphers
+
+> A **block cipher** is a <u>symmetric key</u> cipher that operates on fixed-length groups of bits, called <u>blocks</u>.
+
+In these ciphers, the plaintext processes blocks of equal size, the most common being **octaves** (64-bit and 128-bit blocks). When the plaintext length is not a multiple of 8, it is necessary to add **padding**.
+
+Conceptually speaking, block ciphers are quite similar to **stream ciphers** - the main variation is the size of the data processed at a time. However, there are additional, less obvious differences between both types as can be seen below:
+
+|Stream cipher| Block cipher |
+|-------------|--------------|
+| Takes one <u>symbol</u> of plaintext at a time. | Takes one <u>block</u> of plaintext at a time.|
+| Keys are one-time use. | One key can be used multiple times.|
+| Faster than block cipher. | Slower than stream cipher. |
+| Easy to reverse encrypted text. | Difficult to reverse encrypted text.|
+| Require less code to be implemented. | Require more code to be implemented. |
+| Suitable for implementation in hardware. | Suitable for implementation in software. |
+
+### Testing the Ciphers
+
+After understanding the differences between the two major types of ciphers, we were finally ready to try a few ciphers out.
+
+We chose to encrypt a very simple file created by us - "message.txt" - which contained the following text:
+
+```
+A secret message
+```
+
+As recommended by the guide, we used `openssl enc` to encrypt our file. The guide also provided the command below, so we only had to replace the cipher field with the one we intended to use:
+
+```bash
+$ openssl enc -<cipher> -e -in message.txt -out encrypted.txt -K 00112233445566778889aabbccddeeff -iv 0102030405060708
+```
+
+The results of our experiment were compiled below:
+
+| Cipher | Type | Encrypted |
+|--------|----------|-----------|----------|
+| Blowfish | Block | ![Alt text](image-2.png) |
+| 128-bit Camellia | Block | ![Alt text](image.png)|
+| ChaCha20 | Stream | ![Alt text](image-1.png) |
 
 ## Task 3: Encryption Modes - ECB vs CBC
 
@@ -156,7 +213,7 @@ In the previous task, we explored different ciphers - the algorithms used to enc
 
 > A **cipher mode** is an algorithm that describes how to repeatedly apply a <u>cipher</u>'s single-block operation to securely transform amounts of data larger than a block.
 
-Our final task consisted in comparing two **block cipher** modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
+Our final task consisted in comparing two [block cipher](#block-ciphers) modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
 
 ![Alt text](images/10-1.bmp)
 
