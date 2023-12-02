@@ -127,14 +127,14 @@ After that, we made the modifications below:
 | ------ | ------ |
 | `v` ~ `A` | 'THE xqa**A**hq Tzhu  xu qzup**A**d lHmaH qEEcq **A**gxzT hmrHT **A**bTEh THmq ixur qTh**A**urE **A**l**A**hpq Thme THE g**A**rrEh bEEiq imsE **A** uxu**A**rEu**A**hm**A**u Txx' |
 | `h` ~ `R` | 'THE xqaA**R**q Tz**R**u  xu qzupAd lHmaH qEEcq AgxzT **R**mrHT AbTE**R** THmq ixur qT**R**AurE AlA**R**pq T**R**me THE gArrE**R** bEEiq imsE A uxuArEuA**R**mAu Txx' |
-| `b` > `F` | 'THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT A**F**TER THmq ixur qTRAurE AlARpq TRme THE gArrER **F**EEiq imsE A uxuArEuARmAu Txx' |
-| `mr` > `IG` | 'THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**IG**HT AFTER TH**I**q ixu**G** qTRAu**G**E ...' |
-| `q` > `S` | 'THE x**S**aAR**S** TzRu  xu **S**zupAd lHIaH **S**EEc**S** AgxzT RIGHT AFTER THI**S** ixuG **S**TRAuGE ...' |
-| `u` > `N` | 'THE xSaARS TzR**N**  x**N** Sz**N**pAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ix**N**G STRA**N**GE ...' |
-| `x` > `O` | 'THE **O**SaARS TzRN  **O**N SzNpAd lHIaH SEEcS Ag**O**zT RIGHT AFTER THIS i**O**NG STRANGE ...' |
-| `a` > `C` | 'THE OS**C**ARS TzRN  ON SzNpAd lHI**C**H SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE AlARpS TRIe THE gAGGER FEEiS iIsE A NONAGENARIAN TOO' |
-| `zlcg` > `UWMB` | 'THE OSCARS T**U**RN  ON S**U**NpAd **W**HICH SEE**M**S A**B**O**U**T RIGHT AFTER THIS iONG STRANGE A**W**ARpS TRIe THE **B**AGGER FEEiS iIsE A NONAGENARIAN TOO' |
-| `pdise` > `DYLKP` | 'THE OSCARS TURN  ON SUN**D**A**Y** WHICH SEEMS ABOUT RIGHT AFTER THIS **L**ONG STRANGE AWAR**D**S TRI**P** THE BAGGER FEE**L**S **L**I**K**E A NONAGENARIAN TOO' |
+| `b` ~ `F` | 'THE xqaARq TzRu  xu qzupAd lHmaH qEEcq AgxzT RmrHT A**F**TER THmq ixur qTRAurE AlARpq TRme THE gArrER **F**EEiq imsE A uxuArEuARmAu Txx' |
+| `mr` ~ `IG` | 'THE xqaARq TzRu  xu qzupAd lH**I**aH qEEcq AgxzT R**IG**HT AFTER TH**I**q ixu**G** qTRAu**G**E ...' |
+| `q` ~ `S` | 'THE x**S**aAR**S** TzRu  xu **S**zupAd lHIaH **S**EEc**S** AgxzT RIGHT AFTER THI**S** ixuG **S**TRAuGE ...' |
+| `u` ~ `N` | 'THE xSaARS TzR**N**  x**N** Sz**N**pAd lHIaH SEEcS AgxzT RIGHT AFTER THIS ix**N**G STRA**N**GE ...' |
+| `x` ~ `O` | 'THE **O**SaARS TzRN  **O**N SzNpAd lHIaH SEEcS Ag**O**zT RIGHT AFTER THIS i**O**NG STRANGE ...' |
+| `a` ~ `C` | 'THE OS**C**ARS TzRN  ON SzNpAd lHI**C**H SEEcS AgOzT RIGHT AFTER THIS iONG STRANGE AlARpS TRIe THE gAGGER FEEiS iIsE A NONAGENARIAN TOO' |
+| `zlcg` ~ `UWMB` | 'THE OSCARS T**U**RN  ON S**U**NpAd **W**HICH SEE**M**S A**B**O**U**T RIGHT AFTER THIS iONG STRANGE A**W**ARpS TRIe THE **B**AGGER FEEiS iIsE A NONAGENARIAN TOO' |
+| `pdise` ~ `DYLKP` | 'THE OSCARS TURN  ON SUN**D**A**Y** WHICH SEEMS ABOUT RIGHT AFTER THIS **L**ONG STRANGE AWAR**D**S TRI**P** THE BAGGER FEE**L**S **L**I**K**E A NONAGENARIAN TOO' |
 
 ### 2nd paragraph
 
@@ -148,7 +148,7 @@ Luckily for us, the vast majority of it was already decrypted. In fact, we only 
 
 | Substitution | Message |
 | ------ | ------ |
-| `fko` > `VXJ` | 'THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG' |
+| `fko` ~ `VXJ` | 'THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG' |
 
 And with that, the entire message had been decrypted. To avoid bloating this file, it can be found here.
 
@@ -174,8 +174,8 @@ In these ciphers, the plaintext processes blocks of equal size, the most common 
 
 Conceptually speaking, block ciphers are quite similar to **stream ciphers** - the main variation is the size of the data processed at a time. However, there are additional, less obvious differences between both types as can be seen below:
 
-|Stream cipher| Block cipher |
-|-------------|--------------|
+| Stream cipher | Block cipher |
+|---------------|--------------|
 | Takes one <u>symbol</u> of plaintext at a time. | Takes one <u>block</u> of plaintext at a time.|
 | Keys are one-time use. | One key can be used multiple times.|
 | Faster than block cipher. | Slower than stream cipher. |
@@ -202,10 +202,10 @@ $ openssl enc -<cipher> -e -in message.txt -out encrypted.txt -K 001122334455667
 The results of our experiment were compiled below:
 
 | Cipher | Type | Encrypted |
-|--------|----------|-----------|----------|
-| Blowfish | Block | ![Alt text](image-2.png) |
-| 128-bit Camellia | Block | ![Alt text](image.png)|
-| ChaCha20 | Stream | ![Alt text](image-1.png) |
+|--------|----------|-----------|
+| Blowfish | Block | ![Alt text](images/10-1.png) |
+| 128-bit Camellia | Block | ![Alt text](images/10-2.png)|
+| ChaCha20 | Stream | ![Alt text](images/10-3.png) |
 
 ## Task 3: Encryption Modes - ECB vs CBC
 
@@ -215,7 +215,7 @@ In the previous task, we explored different ciphers - the algorithms used to enc
 
 Our final task consisted in comparing two [block cipher](#block-ciphers) modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
 
-![Alt text](images/10-1.bmp)
+![Alt text](images/10-4.bmp)
 
 We then had to treat the encrypted image as a `.bmp` file and visualize it. To better compare our results, we used the same cipher for the encryption: **128-bit AES**.
 
@@ -231,7 +231,7 @@ $ cat header body > new.bmp # concatenate both and store them in a new file
 
 > Electronic Code Book (or **ECB** for short) is a simple encryption mode wherein each block of the original message is encrypted <u>separately</u>.
 
-![Alt text](images/10-2.png)
+![Alt text](images/10-5.png)
 
 Once again, we relied on `openssl enc` to encrypt "pic_original.bmp" like so:
 
@@ -243,7 +243,7 @@ We obtained the following:
 
 | Original | Encrypted |
 |----------|-----------|
-| ![Alt text](images/10-1.bmp) | ![Alt text](images/ebc.bmp) |
+| ![Alt text](images/10-4.bmp) | ![Alt text](images/10-6.bmp) |
 
 By comparing both images, it became clear just how similar they were. It was very easy to identify the shapes from the original picture in the encrypted version, even if they had a different color.
 
@@ -253,7 +253,7 @@ This happened because ECB encrypts **identical** plaintext blocks into identical
 
 > Cipher Block Chaining (or **CBC** for short) is an encryption mode wherein each block of the original message is <u>XORed</u> with the previous ciphertext block before beign encrypted. The first block is XORed with an <u>initialization vector</u>.
 
-![Alt text](images/10-3.png)
+![Alt text](images/10-7.png)
 
 This mode guarantees each ciphered block depends on all plaintext blocks processed up to that point. In addition, the **initialization vector** ensures the uniqueness of each message, meaning the same plaintext encrypted twice using the same key will <u>not</u> yield the same ciphertext.
 
@@ -267,7 +267,7 @@ The result this time was as follows:
 
 | Original | Encrypted |
 |----------|-----------|
-| ![Alt text](images/10-1.bmp) | ![Alt text](images/cbc.bmp) |
+| ![Alt text](images/10-4.bmp) | ![Alt text](images/10-8.bmp) |
 
 Unlike with EBC, we were not able to identify any patterns in the encrypted image that resembled the original. It was as if the two images had no correlation.
 
@@ -279,8 +279,8 @@ To confirm our results, we decided to retry this experience with another picture
 
 | Cipher Mode | Picture | Conclusion |
 |------|---------|-------------------------|
-| *None* | ![Alt text](images/pattern.bmp) | - |
-| ECB    | ![Alt text](images/pattern-ecb.bmp) | Color patterns are easily recognizable. It conveys clear information about the original image, even though the colors are different. |
-| CBC  | ![Alt text](images/pattern-cbc.bmp) | No color patterns can be detected. It is not possible to derive any meaningful information about the original image. |
+| *None* | ![Alt text](images/10-9.bmp) | - |
+| ECB    | ![Alt text](images/10-10.bmp) | Color patterns are easily recognizable. It conveys clear information about the original image, even though the colors are different. |
+| CBC  | ![Alt text](images/10-11.bmp) | No color patterns can be detected. It is not possible to derive any meaningful information about the original image. |
 
 So, our previous conclusions held true.
