@@ -134,7 +134,11 @@ THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARfEY WEINSTEIN AT ITS OUTSET AN
 
 ## Task 3: ECB vs CBC
 
-Our final task consisted in comparing two encryption modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
+In the previous task, we explored different ciphers - the algorithms used to encrypt a fixed-length group of bits. This task, however, was focused on the **modes** of operation of a cipher.
+
+> In cryptography, a **cipher mode** is an algorithm that describes how to repeatedly apply a <u>cipher</u>'s single-block operation to securely transform amounts of data larger than a block.
+
+Our final task consisted in comparing two **block cipher** modes: **ECB** and **CBC**. To that end, we were prompted to encrypt a file called "pic_original.bmp", which contained the image below:
 
 ![Alt text](images/10-1.bmp)
 
@@ -154,7 +158,13 @@ $ cat header body > new.bmp # concatenate both and store them in a new file
 
 ![Alt text](images/10-2.png)
 
-Upon encrypting "pic_original.bmp" with ECB, we obtained the following:
+Once again, we relied on `openssl enc` to encrypt "pic_original.bmp" like so:
+
+```bash
+$ openssl enc -aes-128-ecb -e -in pic_original.bmp -out pic_encrypted.bmp -K 00112233445566778889aabbccddeeff
+```
+
+We obtained the following:
 
 | Original | Encrypted |
 |----------|-----------|
@@ -186,4 +196,16 @@ The result this time was as follows:
 
 Unlike with EBC, we were not able to identify any patterns in the encrypted image that resembled the original. It was as if the two images had no correlation.
 
-This is due to the fact that each plaintext block is XORed with the previous ciphered block, thus introducing an element of **pseudo-randomness** in the ciphertext. 
+This is due to the fact that each plaintext block is XORed with the previous ciphered block, thus introducing an element of **pseudo-randomness** in the ciphertext.
+
+### Further testing
+
+To confirm our results, we decided to retry this experience with another picture. The results were as follows:
+
+| Mode | Picture | Conclusion |
+|------|---------|-------------------------|
+| *None* | ![Alt text](images/pattern.bmp) | - |
+| ECB    | ![Alt text](images/pattern-ecb.bmp) | Color patterns are easily recognizable. It conveys clear information about the original image, even though the colors are different. |
+| CBC  | ![Alt text](images/pattern-cbc.bmp) | No color patterns can be detected. It is not possible to derive any meaningful information about the original image. |
+
+So, our previous conclusions held true.
