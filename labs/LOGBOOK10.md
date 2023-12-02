@@ -1,5 +1,18 @@
 # Secret-Key Encryption
 
+The purpose of this lab was to become familiar with essential secret-key encryption concepts, such as **ciphers**.
+
+> A **cipher** is an algorithm for encrypting or decrypting a fixed-length block of data.
+
+Ciphers cannot process data out of the blue though - they need a **key** that specifies which modifications to make.
+
+> A **key** is a piece of information, usually a string of numbers or letters, which, when used in a <u>cipher</u>, can encode or decode data.
+
+Additionally, depending on how a cipher utilizes them, it can be classified as:
+
+* **Symmetric** - The cipher uses the same key for encryption and decryption.
+* **Asymmetric** - The cipher uses separate keys for encryption and decryption. These are known as <u>public</u> and <u>private keys</u>, respectively.
+
 ## Task 1: Frequency Analysis
 
 Our first task was to decipher a message encrypted using a **monoalphabetic cipher**.
@@ -134,17 +147,6 @@ THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARfEY WEINSTEIN AT ITS OUTSET AN
 ## Task 2: Encryption Ciphers
 
 Next, we were asked to experiment different **ciphers** and cipher modes. However, considering the [next task](#task-3-encryption-modes---ecb-vs-cbc) already focuses on cipher modes, we opted to focus exclusively on ciphers in this one.
-
-> A **cipher** is an algorithm for encrypting or decrypting a fixed-length block of data.
-
-Before starting the encryption itself, though, we deemed important to understand an essential cryptography concept: **keys**.
-
-> A **key** is a piece of information, usually a string of numbers or letters, which, when used in a <u>cipher</u>, can encode or decode data.
-
-So, keys are indispensable in ciphers. Additionally, depending on how a cipher utilizes keys, it can be classified as:
-
-* **Symmetric** - The cipher uses the same key for encryption and decryption.
-* **Asymmetric** - The cipher uses separate keys for encryption and decryption. These are known as <u>public</u> and <u>private keys</u>, respectively.
 
 **Note:** To allow for better analysis of the results, we used the same key in all experiments performed during this task: `00112233445566778889aabbccddeeff`.
 
