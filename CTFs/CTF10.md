@@ -1,5 +1,7 @@
 # Weak Encryption
 
+This CTF consisted deciphering the flag, which had been encrypted using a vulnerable algorithm.
+
 ## Analysis
 
 The guide provided a Python script which detailed the cipher used to encrypt the key. The script, named "cipherspec.py", contained three distinct functions:
@@ -19,7 +21,7 @@ def gen():
 
 We opted to not include the source code for the last two functions, seeing as they do not possess any vulnerabilities. In fact, the problem lies in the key generation function.
 
-The issue is very simple: only the last three bytes of the **key** are being randomized. This is because the variable "offset", defined in the first line of the key generation function, is being used to establish how many bytes of the key should be random as seen below:
+The issue is very simple: only very few bytes of the **key** are being randomized. This is because the variable "offset", defined in the first line of the key generation function, is being used to establish how many bytes of the key should be random as seen below:
 
 ```python
 key = bytearray(b'\x00'*(KEYLEN-offset)) # create a byte array with 0's
@@ -34,45 +36,50 @@ To that end, we would need to create a byte array filled with 0s, which would be
 
 Before writing our code, we needed a few variables: the **ciphertext** and the **nonce**. By connecting to the server, we obtained them as follows:
 
-
+![Alt text](images/10-1.png)
 
 Next, we started writing our script. Its behaviour can be summarized like so:
 
-* Iterate through all the possible keys. Since only the last three bytes could be different from 0, the keys were all the numbers belonging to [0, 2^24[.
+* Initialize all the necessary variables.
 
 ```python
-for key in range(2**24):
+ciphertext = "5ec0245e54dc7f4cbbc4941577d4f7ddab198caab78702646c1d853c6912a7d7f4052ba72c3ae6"
+nonce = "aab55d811f9e312a7cf589de98157163"
+
+offset = 3
+```
+
+* Iterate through all the possible keys. Since only the last three bytes could be different from 0, the keys were all the numbers belonging to **[0, 2^24[**.
+
+```python
+for i in range(2**24):
+	key = bytearray(b'\x00' * (KEYLEN - offset)) 
+	key.extend(i.to_bytes(3, "little"))
     ...
 ```
 
-* Decrypt the ciphertext using said keys.
+* Decrypt the ciphertext using said keys. Then, convert it into a string.
 
 ```python
-msg = dec(ciphertext, key, nonce)
+msg = str(dec(key, unhexlify(ciphertext), unhexlify(nonce)))
 ```
+
+**Note:** As recommended by the guide, we used the `unhexlify()` function to convert the <u>ciphertext</u> and the <u>nonce</u> to bytes.
 
 * Verify if the decrypted message is the flag using a **regular expression**.
 
 ```python
-if (re.search("flag{[0-9][a-z]}")):
-    print msg # flag found!
+if (re.search("flag{[A-Za-z0-9]+}", msg)):
+    print(msg) # flag found!
     break
 ```
 
-With the added ciphertext and nonce values, the finalized script was the following:
+The finalized script can be found [here](etc/exploit-CTF10.py).
 
-```python
-import re # regex
-import cipherspec.py
+## Attack!
 
-ciphertext = 0x5ec0245e54dc7f4cbbc4941577d4f7ddab198caab78702646c1d853c6912a7d7f4052ba72c3ae6
-nonce = 0xaab55d811f9e312a7cf589de98157163
+Armed with our attack script, we were finally ready to discover the flag. Running "attack.py", we got the following output after waiting a bit:
 
-for key in range(255 ** 3):
-	msg = dec(ciphertext, key, nonce)
-	
-	if (re.search("flag{[0-9][a-z]}")):
-		print msg # flag found!
-		break
-```
+![Alt text](images/10-2.png)
 
+We successfully decrypted the ciphertext, thus obtaining the flag: `flag{644c46b1fc3fecd59ce9fc5d5b660517}`!
