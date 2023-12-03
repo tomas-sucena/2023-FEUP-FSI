@@ -32,6 +32,47 @@ To that end, we would need to create a byte array filled with 0s, which would be
 
 ## Preparing the Script
 
-To separate our code from the server's, we created a new Python file - "attack.py".
+Before writing our code, we needed a few variables: the **ciphertext** and the **nonce**. By connecting to the server, we obtained them as follows:
 
+
+
+Next, we started writing our script. Its behaviour can be summarized like so:
+
+* Iterate through all the possible keys. Since only the last three bytes could be different from 0, the keys were all the numbers belonging to [0, 2^24[.
+
+```python
+for key in range(2**24):
+    ...
+```
+
+* Decrypt the ciphertext using said keys.
+
+```python
+msg = dec(ciphertext, key, nonce)
+```
+
+* Verify if the decrypted message is the flag using a **regular expression**.
+
+```python
+if (re.search("flag{[0-9][a-z]}")):
+    print msg # flag found!
+    break
+```
+
+With the added ciphertext and nonce values, the finalized script was the following:
+
+```python
+import re # regex
+import cipherspec.py
+
+ciphertext = 0x5ec0245e54dc7f4cbbc4941577d4f7ddab198caab78702646c1d853c6912a7d7f4052ba72c3ae6
+nonce = 0xaab55d811f9e312a7cf589de98157163
+
+for key in range(255 ** 3):
+	msg = dec(ciphertext, key, nonce)
+	
+	if (re.search("flag{[0-9][a-z]}")):
+		print msg # flag found!
+		break
+```
 
