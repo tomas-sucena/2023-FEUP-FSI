@@ -1,6 +1,6 @@
 # Format Strings
 
-This CTF consists in two very similar challenges. In each of them, we had to exploit a program with a format-string vulnerability in order to read an array which contained the flag, appropriately named "flag".
+This CTF consisted in two very similar challenges. In each of them, we had to exploit a program with a format-string vulnerability in order to read an array which contained the flag, appropriately named "flag".
 
 Each challenge came with a folder which contained a few files. The most relevant were the following:
 
