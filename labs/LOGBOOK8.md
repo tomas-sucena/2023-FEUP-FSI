@@ -1,4 +1,5 @@
 # SQL Injection
+
 ## Task 1: Get Familiar with SQL Statements
 
 As instructed in this task, we firstly opened the shell using the command `docksh`, passing it the value we obtained using `dockps`. Afterwards, we opened the MySQL container by using the command `mysql -u root -pdees`. Then, we opened the provided database, `sqllab_users`, by using the command `use sqllab_users;` inside the MySQL container.
