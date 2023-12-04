@@ -19,7 +19,7 @@ There are two types of CAs:
 
 Our first task was to become a **root CA**.
 
-## Configuration the Server
+## Configuring the Server
 
 We were going to rely on `OpenSSL` to create certificates, meaning we needed a **configuration file**. The default configuration file is located in `/usr/lib/ssl/openssl.cnf`, so we copied it to our working directory like so:
 
@@ -53,4 +53,17 @@ mkdir certs
 mv openssl.cnf certs
 ```
 
+## Generating the Certificate
 
+As previously mentioned, our goal was to become a root CA. As such, we needed to generate a **self-signed certificate**. Thankfully, the guide provided the command below, which we ran inside "certs":
+
+```bash
+openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
+    -keyout ca.key -out ca.crt
+```
+
+We were prompted to input a password, which we decided would be 'fsi2023', as well as the subject information seen below:
+
+![Alt text](images/11-1.png)
+
+Upon submitting our input, the command yielded two new files: "ca.key" and "ca.crt". The former contained the CA's **private key**, while the latter contained the **public-key certificate**.
