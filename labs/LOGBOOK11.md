@@ -79,168 +79,186 @@ openssl rsa -in ca.key -text -noout # print the key in plain text
 
 Upon inspecting their content, we were then asked the following questions:
 
-* **What part of the certificate indicates this is a CA’s certificate?**
+1. **What part of the certificate indicates this is a CA’s certificate?**
 
 The property "CA" indicates whether the certificate belongs to a CA or not.
 
-![Alt text](image-1.png)
+![Alt text](images/11-2.png)
 
 Since in our certificate that value was set to `TRUE`, it meant it was in fact a CA certificate.
 
-* **What part of the certificate indicates this is a self-signed certificate?**
+2. **What part of the certificate indicates this is a self-signed certificate?**
 
 If a certificate is self-signed, the "Subject Key Identifier" and the "Authority Key Identifier" must be the same.
 
-![Alt text](image-2.png)
+![Alt text](images/11-3.png)
 
 In our certificate, that was the case.
 
-* **In the RSA algorithm, we have a public exponent *e*, a private exponent *d*, a modulus *n*, and two secret numbers *p* and *q*, such that *n = pq*. Please identify the values for these elements in your certificate and key files.**
+3. **In the RSA algorithm, we have a public exponent *e*, a private exponent *d*, a modulus *n*, and two secret numbers *p* and *q*, such that *n = pq*. Please identify the values for these elements in your certificate and key files.**
 
-    * The public exponent, `e`
+The requested values were the following:
 
-        ```
-        publicExponent: 65537 (0x10001)
-        ```
+* The public exponent, `e`
 
-    * The private exponent, `d`
+    ```
+    publicExponent: 65537 (0x10001)
+    ```
 
-        ```
-        privateExponent:
-            2f:73:0e:f0:62:12:aa:d8:b3:ff:51:a1:c7:df:94:
-            a8:c3:d8:01:33:79:b9:bf:7b:5a:c8:bd:da:67:3b:
-            12:ca:19:a3:6c:63:6f:b7:8e:0c:6b:f5:cc:fb:86:
-            d5:04:08:27:79:1a:d0:0a:09:a7:b1:27:d4:5b:3d:
-            27:05:af:8b:c4:34:3f:a6:92:c6:8f:22:26:45:09:
-            f8:bc:8b:00:b1:94:24:49:00:65:1d:bc:f2:9a:8f:
-            49:93:8d:fb:79:b7:61:a7:e7:d0:9b:17:e1:67:df:
-            60:68:f0:3e:aa:3a:92:d7:0a:07:da:f8:91:26:aa:
-            28:2a:af:7d:3a:4c:a8:5d:e0:5c:e5:3e:0b:6a:4f:
-            79:d4:17:4d:00:1e:87:b3:f9:30:18:33:e0:80:cf:
-            f1:dc:b2:15:9e:89:4d:cf:f2:90:46:ff:d4:02:9b:
-            25:ca:f2:5e:45:44:cd:f0:d5:9f:50:d3:e9:02:2d:
-            9c:62:1f:58:48:b5:32:f1:c4:38:84:19:8b:02:c0:
-            67:26:69:ff:11:ef:ac:ff:9d:0a:aa:ff:cd:f0:65:
-            22:8e:42:75:74:e9:3c:2c:e9:9e:48:e9:4d:0c:af:
-            20:4c:a2:eb:b3:29:d5:de:b6:2f:f7:5f:7a:9f:c7:
-            e4:81:67:2a:da:0e:c1:34:0d:2a:94:1a:d0:b6:b0:
-            1f:bd:82:3b:44:4c:ab:96:98:52:f2:c1:b2:4d:78:
-            df:6b:5e:ea:03:4b:44:9e:40:60:82:2d:50:bf:64:
-            ec:20:a8:6e:35:72:b2:6a:fc:3b:1d:b8:b6:6e:20:
-            5f:a1:05:32:1d:eb:4b:ec:16:df:b2:3b:b5:37:99:
-            c3:23:86:8e:39:cf:c9:83:03:19:ce:e2:ab:8a:8a:
-            a9:40:7d:ea:b5:42:4f:c7:21:1c:40:fb:a8:f2:55:
-            e6:e5:ec:69:88:e1:48:21:a0:ca:11:d7:66:d9:69:
-            db:51:d5:45:53:5d:84:8f:0e:05:24:ec:70:d0:c5:
-            b9:40:6f:c7:31:83:94:5c:ad:d5:db:54:05:52:3e:
-            60:20:f9:21:cc:0d:ef:81:e2:28:0f:51:8f:3a:2d:
-            6d:79:35:c3:76:0a:7f:7c:5b:dd:92:05:8f:84:31:
-            a5:33:ee:a7:8b:23:54:1d:bc:31:bf:6a:65:02:d3:
-            1a:64:cd:1c:b6:0a:56:41:ea:aa:4a:83:0c:dc:25:
-            11:29:b0:e1:a8:41:4e:9f:1f:c4:85:0c:35:b8:28:
-            b6:3b:77:60:b3:d2:50:f9:46:83:ee:72:5d:1f:ba:
-            5d:b5:db:9e:b8:7c:ab:59:33:b8:6a:28:c6:0d:73:
-            4d:57:a3:c5:13:e1:2f:f6:34:c0:5d:af:4b:f3:f8:
-            31:b1
-        ```
+* The private exponent, `d`
 
-    * The modulus, `n`
+    ```
+    privateExponent:
+        71:9c:6b:19:1c:c5:5f:32:e0:a6:a2:55:bd:db:06:
+        14:2f:36:69:8a:d0:37:2e:a1:e6:18:2f:5a:de:0e:
+        ea:0a:56:bb:e9:b3:3d:71:34:a2:fd:9d:6b:8a:85:
+        3d:02:40:38:c2:2b:17:2e:89:b0:47:68:f8:61:af:
+        86:7d:3a:99:58:3e:da:9e:a0:2c:ef:7c:06:e4:dc:
+        f6:cf:fd:d5:6f:2d:67:84:20:b9:04:4c:f9:9b:a3:
+        f5:7e:1f:6e:ad:1f:e1:22:2f:04:0a:f1:36:35:cb:
+        58:5b:7d:be:bb:07:d7:34:17:42:e7:02:ed:fc:b5:
+        55:06:7d:e9:4e:8b:14:dc:98:d0:20:52:ad:ba:1d:
+        89:d8:76:04:6e:b1:ee:52:a5:56:e7:c8:c1:ca:fa:
+        8f:a7:cf:6e:55:5e:bc:bf:11:f0:8b:6e:e8:5f:38:
+        48:53:49:ee:fb:da:cf:ff:df:c9:91:ec:49:f2:17:
+        df:89:9b:42:c0:3f:4b:31:66:02:b2:4d:75:8d:e9:
+        6f:ab:68:22:c5:bc:82:b3:3e:ce:b1:cb:84:42:82:
+        37:c5:22:5b:e0:ea:f2:b4:cb:a9:ac:f3:67:84:83:
+        42:0e:11:a4:a4:a2:99:4e:ba:c7:c8:9e:6a:eb:c5:
+        5b:1e:00:47:0e:67:61:95:b8:ed:83:78:3c:9c:fd:
+        42:25:39:fa:7d:d6:3f:f7:5c:32:28:c2:84:93:5e:
+        93:7d:df:f3:5d:6c:14:74:ba:ee:ba:74:61:c2:48:
+        32:f1:36:fc:d8:22:fa:53:85:13:ad:ef:7c:05:ca:
+        5b:46:8f:ad:21:69:5b:d9:7b:36:12:d2:18:91:8f:
+        f5:3a:27:43:5c:bc:c4:2f:33:2f:f4:c9:53:16:31:
+        f5:06:f8:d9:46:1b:17:1b:85:38:a5:79:a6:fb:f2:
+        72:bf:b0:ef:ff:0e:b8:d0:a1:56:f5:ea:6c:2d:fa:
+        a0:9d:fa:4d:69:45:5b:62:0f:f8:00:b6:01:10:3b:
+        f6:b3:8d:f5:2f:55:3c:bc:8c:6f:5e:0b:a3:87:8b:
+        5d:fb:42:59:21:48:30:cf:e3:2c:aa:1d:51:d8:2f:
+        4e:4e:88:99:b1:e1:63:37:29:a7:51:69:bb:f4:81:
+        84:f4:38:7f:30:b4:0f:38:a6:05:b8:2a:b9:5e:d0:
+        6b:2f:a2:39:2b:6c:51:0d:2b:8b:48:ca:06:1a:8e:
+        a1:c1:ef:7d:a2:6e:c8:4a:a7:6c:d5:6a:9b:39:6c:
+        52:1c:96:4b:68:a5:dd:c8:76:3d:96:e7:3b:99:f2:
+        63:29:c8:b9:e8:d4:95:99:1e:20:94:d5:0e:d2:b7:
+        84:3e:20:74:96:83:9c:66:9d:72:30:bd:4c:00:52:
+        e9:f1
+    ```
 
-        ```
-        modulus:
-            00:bb:ce:60:77:7f:2a:78:36:a6:ca:9f:a2:64:84:
-            2a:cd:04:9e:85:33:c6:f0:08:3e:00:7f:09:2b:a5:
-            ab:7d:d6:92:58:38:42:7b:ab:bc:28:5a:53:51:40:
-            68:27:01:68:d8:f7:29:2c:a2:0e:30:57:cf:5a:4e:
-            bf:ef:38:f7:65:33:db:13:cd:73:23:7f:21:33:59:
-            26:96:31:b7:c9:47:1a:08:ac:fc:6a:37:c0:ad:86:
-            42:8b:9f:c3:df:96:e9:23:a4:3f:55:da:38:a7:f6:
-            5d:53:66:83:e7:cb:b3:25:39:3f:d6:06:21:06:b2:
-            b7:58:d9:ce:76:55:6f:44:28:d3:ea:ef:b0:1b:d5:
-            be:72:c6:39:97:c9:03:9d:75:ea:f9:6f:68:fd:61:
-            df:b2:85:35:9f:78:ea:f2:a1:5a:d1:fb:5d:07:1e:
-            62:07:15:1f:37:fe:50:e0:f2:f9:a9:d4:14:50:1e:
-            87:79:eb:76:be:c9:82:14:f2:e8:41:ae:b5:3f:ac:
-            11:d7:1a:74:a8:c4:e3:b0:b4:bc:c7:e0:be:dc:d8:
-            60:06:bb:46:e6:1b:de:fe:15:cb:ea:64:dc:21:5d:
-            3b:3a:e6:e9:17:a0:1a:db:1e:75:6b:7a:09:fc:d5:
-            a5:37:f5:0c:77:21:04:a8:61:70:90:7c:43:bb:21:
-            40:f2:de:da:2b:2b:18:3e:43:a4:3e:50:50:ed:9b:
-            e9:18:69:fc:9a:42:d8:54:6f:04:da:9f:58:67:6e:
-            78:93:12:e6:f4:1c:cd:6a:21:90:d7:50:e4:f4:da:
-            95:32:0c:5c:8e:f0:5a:78:ca:a6:be:3b:5d:73:4f:
-            d4:b6:7e:53:9b:48:b9:82:45:af:32:2b:91:10:35:
-            28:ff:e7:5b:93:5f:81:d4:26:10:bd:34:35:66:58:
-            fa:2f:eb:0e:fb:b4:ba:b9:39:9f:2c:e0:a9:11:bb:
-            9e:5f:44:e0:7d:e8:9b:bc:09:78:c4:52:be:70:93:
-            2d:55:7d:2d:60:c8:db:92:b9:aa:ee:e3:1d:2a:1c:
-            c0:c2:59:e8:41:5b:21:25:d8:d0:fb:61:fc:cb:55:
-            a7:e1:b6:50:7a:f1:6d:14:00:f6:1e:a9:e6:fb:1d:
-            25:33:7f:63:78:37:6b:42:e4:f7:1f:3a:c1:c9:79:
-            eb:7d:b8:0a:0a:0c:99:21:37:06:52:e0:9c:7c:6a:
-            7c:fb:78:17:41:a9:77:da:23:4d:60:0e:5a:39:26:
-            5c:9d:0a:c0:e7:c8:2b:0b:67:92:32:19:8c:15:fb:
-            23:ba:f4:4d:6a:97:9f:57:3c:d9:56:6f:4a:c5:8b:
-            29:3e:2b:03:86:ca:e3:7a:3c:37:a5:d8:dd:86:f3:
-            00:e8:17
-        ```
+* The modulus, `n`
 
-    * The two secret numbers, which are the **prime numbers**:
+    ```
+    modulus:
+        00:c8:86:9c:ff:9e:b1:b9:f7:a1:08:1b:9b:b3:33:
+        50:bc:73:19:dd:d3:52:68:f7:c4:bd:64:89:f0:54:
+        e5:c0:d7:55:aa:7f:4e:e3:50:a5:46:c9:a3:be:e3:
+        4a:2c:bd:e9:2c:1e:e2:e8:57:a6:24:81:d1:84:0a:
+        8f:ce:8e:ca:f3:61:c9:43:79:14:77:7e:47:91:4e:
+        d2:ed:a9:09:80:e9:e1:9d:21:28:47:59:f7:65:20:
+        41:a4:be:ae:4f:fe:72:17:94:64:3b:e2:aa:66:19:
+        cf:5a:77:f7:14:7d:2a:b6:8d:65:52:57:ce:ab:76:
+        c4:5a:90:a7:3b:58:1b:8b:dd:de:b4:5a:b9:36:e4:
+        85:33:9e:82:bd:65:a5:f3:71:32:d8:0a:4f:d5:e2:
+        f2:f0:74:97:f8:41:8f:74:70:a5:af:a9:2e:39:f1:
+        3c:89:9c:87:1e:d6:72:05:37:8c:2e:a5:70:8d:4c:
+        77:3b:28:7f:38:4d:d6:dd:0e:77:51:28:4c:aa:7b:
+        aa:af:39:0c:fb:cc:e4:98:eb:24:05:fd:14:03:df:
+        f8:ae:11:6e:22:0a:43:c5:3a:bc:a3:12:b9:dd:8a:
+        69:a0:b6:97:92:e3:b1:5c:5f:f8:df:e6:e4:3f:16:
+        07:a5:2e:5c:84:8e:fb:38:d6:cb:88:cf:7b:4b:89:
+        ac:f3:1f:9c:51:5c:09:88:35:ed:2a:6d:cf:b8:b6:
+        be:4e:90:49:d0:01:fc:5c:24:e9:ab:09:b2:ec:65:
+        a5:c4:20:65:39:f0:26:db:89:81:b5:3e:d6:eb:66:
+        d0:24:7d:8b:e9:3e:0c:2a:bc:e5:e3:df:a2:32:29:
+        0e:90:02:18:2c:d4:a9:e0:b6:ea:25:6d:70:ff:60:
+        bb:72:85:e4:0b:c4:50:3d:2c:39:83:3a:42:7d:51:
+        04:0a:b1:69:16:6f:5b:98:db:17:9e:c4:84:90:50:
+        41:e2:79:c2:2a:e7:3d:1a:a6:87:2b:e0:63:08:53:
+        8d:88:ef:a9:83:b3:3c:67:24:8d:b7:a0:1c:ca:8e:
+        92:db:00:f4:db:a1:0d:e4:68:a1:ca:47:0a:5f:4c:
+        80:5e:9a:4e:d0:3d:9f:e9:60:12:3c:89:7e:53:45:
+        47:34:67:92:be:4c:8b:df:30:aa:fe:14:ad:17:30:
+        54:80:41:ff:fe:d5:f7:d5:fb:3e:20:a8:21:76:46:
+        45:82:71:9b:23:1f:65:e9:b3:75:fc:b6:00:d3:47:
+        32:9d:18:76:eb:9a:7b:93:d7:ba:e9:5f:b7:00:89:
+        de:a2:db:3e:e6:86:5e:ba:68:a1:71:7c:bc:86:2c:
+        f9:20:de:9c:bb:93:84:ba:25:0e:20:9d:a5:19:c2:
+        09:7a:fb
+    ```
 
-        * `p`
+* The two secret numbers, which are the **prime numbers**:
 
-        ```
-        prime1:
-            00:ed:9f:1f:a3:41:91:39:bf:0c:41:f3:fb:61:08:
-            cc:b7:cc:66:e4:b4:5d:15:10:db:e7:77:75:36:f1:
-            4e:44:5c:37:04:33:93:10:9c:19:11:5c:31:e0:59:
-            8a:53:11:c8:42:43:d0:92:f4:4a:69:39:4e:2e:33:
-            60:fd:08:ff:36:7c:21:ac:88:ee:1e:58:46:ba:f0:
-            1a:f3:0b:80:d8:ae:b3:1a:45:b0:24:c7:40:ee:3b:
-            fe:fb:9f:7e:23:6e:11:64:52:7d:6b:be:3a:17:fb:
-            eb:ec:6a:a8:6f:b3:65:40:dc:2a:46:02:90:59:c1:
-            a7:76:51:15:64:07:d1:11:cc:dd:57:fd:61:59:a7:
-            9a:66:52:b1:ae:05:26:8f:fb:a3:70:b7:ab:98:a5:
-            6c:3b:83:29:8c:58:4f:ab:cb:0a:86:a9:8e:6c:88:
-            3b:ac:7e:c7:30:db:12:fa:8a:29:3d:51:3f:cf:ec:
-            e6:b9:72:8f:c4:c6:68:76:cc:c8:ec:1b:7f:27:89:
-            78:fc:0f:1b:94:a3:7d:2f:d5:84:92:b8:5e:d0:bf:
-            cd:67:dd:55:8b:0e:bf:c3:23:5a:60:0d:93:b8:31:
-            44:43:7d:67:fe:08:83:93:5f:cd:6d:3c:f4:7a:e1:
-            ed:f6:1c:03:66:ed:b7:15:2a:44:63:37:6c:8b:10:
-            0c:cb
-        ```
+    * `p`
 
-        * `q`
+    ```
+    prime1:
+        00:e9:d1:c7:dc:e3:bd:14:32:fc:4b:6e:48:f0:2b:
+        a4:3d:65:67:28:7a:cf:58:f7:2e:ae:27:c6:36:f4:
+        b6:a4:13:27:30:16:8a:e2:2c:40:9c:c7:84:91:13:
+        42:1e:4c:d9:82:11:0e:12:cb:d8:f7:b6:30:63:59:
+        f4:95:51:18:ae:70:5c:7e:00:fd:9f:0f:65:6a:11:
+        46:b1:46:c9:59:de:2e:84:80:73:9b:49:72:1c:cb:
+        60:85:f2:71:a9:29:91:f7:f6:28:9a:d3:73:35:f4:
+        db:3a:e6:a2:8c:f7:1f:66:e4:bc:a5:c9:e8:90:6d:
+        51:70:c2:3e:21:0a:60:d4:f3:1b:86:6b:0f:cd:14:
+        cd:5d:1d:55:c0:30:3f:37:cd:8b:bb:c7:e5:d9:62:
+        56:a9:c0:50:0d:7b:d9:1e:dc:cc:f2:a7:04:52:a6:
+        d1:0a:8e:3e:c2:a2:2c:53:98:0c:dd:6a:8a:de:e8:
+        b0:3a:28:94:8a:7d:48:ac:89:13:a1:82:c8:7e:fb:
+        da:8e:cf:1a:3b:2e:e6:bf:52:cf:01:8e:83:16:f6:
+        78:34:ab:7e:0e:db:2c:9d:5c:7b:0a:93:6d:5b:f4:
+        6f:ee:48:c4:62:81:9b:b0:20:ec:31:4e:db:8a:41:
+        a5:c1:14:f9:d3:2d:39:b0:6d:0a:a2:ee:d2:18:4e:
+        e4:e9
+    ```
 
-        ```
-        prime2:
-            00:ca:54:ea:18:9d:51:6d:e5:aa:9a:4d:e6:e5:05:
-            04:4b:56:7d:bb:22:04:fe:c7:e3:97:69:ea:22:a9:
-            52:23:f8:3f:e5:79:38:49:e7:52:55:1e:c2:90:01:
-            3f:7f:15:ba:5b:22:88:90:36:9d:5c:c5:a0:4d:86:
-            14:a4:7c:26:60:bf:e0:82:32:38:45:4e:65:06:7a:
-            c2:b4:d0:09:d1:cb:3a:61:27:6c:63:e0:e5:b7:f0:
-            ea:18:b9:fd:31:26:ca:ba:c9:16:72:63:d3:f2:69:
-            73:61:9a:9c:d8:51:91:00:0b:93:8a:a7:31:7f:9a:
-            b6:10:5e:53:5a:06:09:73:a3:47:3c:7e:0d:de:28:
-            cb:f0:59:50:64:6a:b3:10:c7:16:ec:24:96:04:7d:
-            80:5a:af:af:46:9f:bc:67:4c:61:e0:56:c9:95:0b:
-            46:57:1d:c7:e9:2c:99:a6:b3:d7:5a:4b:84:9a:df:
-            3f:55:4d:b4:cc:1e:d8:98:a1:7e:7e:f3:39:33:36:
-            96:e1:8b:fa:47:5f:18:44:7a:0e:ec:84:08:57:0f:
-            27:34:1a:54:af:a8:ca:7d:33:8c:1b:3b:99:e2:5b:
-            1c:6d:52:2e:62:20:0f:38:11:95:29:7d:d7:a5:7c:
-            3d:24:f6:68:07:bf:67:92:76:81:5d:2a:05:34:84:
-            14:65
-        ```
+    * `q`
+
+    ```
+    prime2:
+        00:db:8c:4f:28:17:ab:01:8a:e6:a6:ff:ab:90:cd:
+        35:22:7d:5e:96:89:60:47:b6:f9:e2:1c:1c:92:e2:
+        05:d7:fa:07:ab:7f:a6:ba:68:7b:aa:55:1b:00:14:
+        cf:3a:00:a5:c9:28:ea:d3:3d:a7:e3:04:cc:01:1e:
+        65:de:1b:30:2b:29:06:7e:89:2d:0b:d2:bb:fa:3a:
+        98:89:67:28:12:7b:9e:53:5c:02:f6:fa:aa:ee:8c:
+        a2:92:31:9c:70:53:85:74:45:d8:c2:6c:5a:a5:b2:
+        05:97:f4:b1:e5:1d:d8:10:21:00:e0:aa:87:01:7e:
+        4e:7c:3e:95:ea:ec:c1:4a:9f:fb:2d:e1:9f:27:e5:
+        b1:de:a9:df:2a:31:8e:c4:ee:1b:d4:00:f4:c8:35:
+        52:fc:cd:4b:5a:24:43:45:31:d5:69:ec:47:69:10:
+        62:e1:ed:42:c8:6e:39:b7:1c:74:42:2b:c0:4c:87:
+        09:fe:0e:2a:76:05:79:1a:6a:48:a0:68:18:82:23:
+        3b:04:89:7a:65:73:17:99:86:5c:0d:04:6a:d0:97:
+        2e:b1:c7:71:62:d4:72:68:9c:34:97:0e:ff:8b:c6:
+        d9:9b:28:ac:16:a6:84:f9:a8:33:5e:12:d8:f9:a3:
+        ed:a9:c6:09:72:92:04:1c:8f:51:ee:c6:37:05:b3:
+        c2:43
+    ```
+
+We found them by analyzing the private key, which also contained other important values. For convenience, the complete file can be found [here](ect/ca-key.txt).
 
 ## Task 2: Generating a CSR
 
 > When a company wants to get a <ins>public-key certificate</ins> from a CA, it must first generate a Certificate Signing Request (or **CSR** for short). This document, which contains the company's public key and identity information, is sent to the CA, who will verify it and only then generate the certificate.
 
-In this task, we had to generate a CSR for our server. The guide provided the command to do it, which was quite similar to the one used to generate the self-signed certificate. As a matter of fact, the only difference was the `-x509` flag, which prevented the command from self-signing the certificate.
+In this task, we had to generate a CSR for our server. To do that, we used the command provided by the guide, which was the following:
 
-Additionally, we were required to add additional **URLs** for our website. Since we wanted www.l11g04.com, www.l11g04.net and www.l11g04.pt to be valid hostnames, we accomplished that by using the `-addtext` flag coupled with the "subjectAltName" field. The final command was the following:
+```bash
+openssl req -newkey rsa:2048 -sha256 \
+    -keyout server.key -out server.csr \
+    -subj "/CN=www.l11g04.com/O=L11G04 Inc./C=PT" \
+    -passout pass:dees \
+    -addext "subjectAltName = DNS:www.l11g04.com, \
+                              DNS:www.l11g04-A.com, \
+                              DNS:www.l11g04-B.com"
+```
 
-After running it, two new files were generated.
+It was quite similar to the one used to generate the self-signed certificate. As a matter of fact, the only differences were:
+* `-x509` flag, which prevented the command from self-signing the certificate.
+* The `-addtext` flag coupled with the "subjectAltName" field. We used them to add additional **domains** for our website, thus establishing that www.l11g04.com, www.l11g04-A.com and www.l11g04-B.com were valid hostnames.
+
+After running it, two new files were created: the CSR ("server.csr") and the corresponding private key ("server.key").
+
+![Alt text](images/11-4.png)
