@@ -21,15 +21,15 @@ Our first task was to become a **root CA**.
 
 ### Configuring OpenSSL
 
-We were going to rely on `OpenSSL` to create certificates, meaning we needed a **configuration file**. The default configuration file is located in `/usr/lib/ssl/openssl.cnf`, so we copied it to our working directory like so:
+We were going to rely on `OpenSSL` to create certificates, meaning we needed a **configuration file**. The default configuration file was located in `/usr/lib/ssl/openssl.cnf`, so we copied it to our working directory like so:
 
 ```bash
-cp /usr/lib/ssl/openssl.cnf .
+cp /usr/lib/ssl/openssl.cnf my_openssl.cnf
 ```
 
 In it, there was a section which detailed its default configuration.
 
-![Alt text](image.png)
+![Alt text](images/11-01.png)
 
 To comply with it, we did the following:
 
@@ -39,9 +39,10 @@ To comply with it, we did the following:
 mkdir -p demoCA/newcerts
 ```
 
-* Create an empty "index.php".
+* Create "index.txt", which would be the database index file.
+
 ```bash
-touch demoCA/index.php
+touch demoCA/index.txt
 ```
 
 * Create a "serial" file with a single number in string format.
@@ -50,7 +51,7 @@ touch demoCA/index.php
 echo 2023 > demoCA/serial
 ```
 
-Next, we uncommented a line so we could allow the creation of certificates with the same subject.
+Next, we uncommented a line in our configuration so we could allow the creation of certificates with the same subject.
 
 ```shell
 unique_subject	= no	# Set to 'no' to allow creation of
@@ -74,7 +75,7 @@ Upon submitting our input, the command yielded two new files: "ca.key" and "ca.c
 
 ### Analyzing the Files
 
-To view the content of the output files - "ca.key" and "ca.crt" - the guide provided the commands below:
+To view the content of the output files ("ca.key" and "ca.crt") the guide provided the commands below:
 
 ```bash
 openssl x509 -in ca.crt -text -noout # print the certificate in plain text
@@ -260,8 +261,8 @@ openssl req -newkey rsa:2048 -sha256 \
 ```
 
 It was quite similar to the one used to generate the self-signed certificate. As a matter of fact, the only differences were:
-* `-x509` flag, which prevented the command from self-signing the certificate.
-* The `-addtext` flag coupled with the "subjectAltName" field. We used them to add additional **domains** for our website, thus establishing that www.l11g04.com, www.l11g04-A.com and www.l11g04-B.com were valid hostnames.
+* The `-x509` flag, which prevented the command from self-signing the certificate.
+* The `-addtext` flag coupled with the "subjectAltName" field. This attached the Subject Alternative Name (**SAN**) extension to our certificate, which allowed us to define additional **domains** for our website. 
 
 After running it, two new files were created: the CSR ("server.csr") and the corresponding private key ("server.key").
 
@@ -271,22 +272,36 @@ After running it, two new files were created: the CSR ("server.csr") and the cor
 
 > To form a **certificate**, it is necessary for the <ins>CSR</ins> to be signed by a trusted <ins>CA</ins>.
 
-In the next task, we had to use our own CA to sign the server's CSR, thus generating a **certificate**. Using our CA files - "ca.crt" and "ca.key" - we signed the CSR ("server.csr") using the command below:
+In this task, we had to use our CA to sign the CSR from the [previous task](#task-2-generating-a-csr), thus generating a **certificate**. Using our CA files - "ca.crt" and "ca.key" - we signed the CSR ("server.csr") using the command below:
 
 ```bash
-openssl ca -config openssl.cnf -policy policy_anything \
+openssl ca -config my_openssl.cnf -policy policy_anything \
     -md sha256 -days 3650 \
-    -in certs/server.csr -out certs/server.crt -batch \
-    -cert certs/ca.crt -keyfile certs/ca.key
+    -in server.csr -out server.crt -batch \
+    -cert ca.crt -keyfile ca.key
 ```
 
 **Note**: The policy used - 'policy_anything' - is not the default policy, because that would force some subject information in the CSR to match that in the CA's certificate, which was undesirable. As its name implies, the policy we ended up using did not enfore any such rules.
 
-Before running the command, though, we had to uncomment another line in `openssl.cnf`, because the default settings did not allow copying the extension field from the CSR to the final certificate. In our case, that meant our additional domains would not be valid, so we changed the file like so:
+Before running the command, though, we had to uncomment another line in `openssl.cnf`, because the default settings did not allow copying extension fields from the CSR to the final certificate. In our case, that meant our additional domains would not be valid, so we changed the file like so:
 
 ```shell
 # Extension copying option: use with caution.
 copy_extensions = copy
 ```
 
-With that taken care of, we ran the aforementioned command and 
+With that taken care of, we ran the aforementioned command and verified the certificate had been created.
+
+![Alt text](image-2.png)
+
+The guide also prompted us to verify if our **domains** had been copied into the certificate. So, we printed out its content with the command below:
+
+```bash
+openssl x509 -in server.crt -text -noout
+```
+
+The output was quite big, but we found the extension we added, **SAN**, as well as the domains:
+
+![Alt text](image-4.png)
+
+We had successfully created our first certificate as a CA!
