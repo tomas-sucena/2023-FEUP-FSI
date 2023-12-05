@@ -1,6 +1,6 @@
 # Public-Key Infrastructure (PKI)
 
-# Setup
+## Setup
 
 Before starting the tasks themselves, we had to set up an HTTPS web server. To that end, we added the following entry to the `etc/hosts` file of our virtual machine:
 
@@ -8,7 +8,7 @@ Before starting the tasks themselves, we had to set up an HTTPS web server. To t
 10.9.0.80   www.l11g04.com
 ```
 
-# Task 1: Becoming a CA
+## Task 1: Becoming a CA
 
 > A Certificate Authority (or **CA** for short) is a trusted entity that issues **digital certificates**, which are used to certify the ownership of a <u>public key</u> by the named subject of the certificate.
 
@@ -19,7 +19,7 @@ There are two types of CAs:
 
 Our first task was to become a **root CA**.
 
-## Configuring the Server
+### Configuring the Server
 
 We were going to rely on `OpenSSL` to create certificates, meaning we needed a **configuration file**. The default configuration file is located in `/usr/lib/ssl/openssl.cnf`, so we copied it to our working directory like so:
 
@@ -53,7 +53,7 @@ mkdir certs
 mv openssl.cnf certs
 ```
 
-## Generating the Certificate
+### Generating the Certificate
 
 As previously mentioned, our goal was to become a root CA. As such, we needed to generate a **self-signed certificate**. Thankfully, the guide provided the command below, which we ran inside "certs":
 
@@ -68,7 +68,7 @@ We were prompted to input a password, which we decided would be 'fsi2023', as we
 
 Upon submitting our input, the command yielded two new files: "ca.key" and "ca.crt". The former contained the CA's **private key**, while the latter contained the **public-key certificate**.
 
-## Analyzing the Files
+### Analyzing the Files
 
 To view the content of the output files - "ca.key" and "ca.crt" - the guide provided the commands below:
 
@@ -234,3 +234,13 @@ In our certificate, that was the case.
             3d:24:f6:68:07:bf:67:92:76:81:5d:2a:05:34:84:
             14:65
         ```
+
+## Task 2: Generating a CSR
+
+When a company wants to get a **public-key certificate** from a CA, it must first generate a Certificate Signing Request (or **CSR** for short). This document, which contains the company's public key and identity information, is sent to the CA, who will verify it and only then generate the certificate.
+
+In this task, we had to generate a CSR for our server. The guide provided the command to do it, which was quite similar to the one used to generate the self-signed certificate. As a matter of fact, the only difference was the `-x509` flag, which prevented the command from self-signing the certificate.
+
+
+
+Additionally, we were required to add additional **URLs** for our website. To accomplish that, we used the `-addtext` flag coupled with the 'subjectAltName' field. As such, "www.l11g04.net" and "www.l11g04.pt" would be valid hostnames, were the CA to accept our CSR.
