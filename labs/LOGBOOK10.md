@@ -150,7 +150,7 @@ Luckily for us, the vast majority of it was already decrypted. In fact, we only 
 | ------ | ------ |
 | `fko` ~ `VXJ` | 'THE AWARDS RACE WAS BOOKENDED BY THE DEMISE OF HARVEY WEINSTEIN AT ITS OUTSET AND THE APPARENT IMPLOSION OF HIS FILM COMPANY AT THE END AND IT WAS SHAPED BY THE EMERGENCE OF METOO TIMES UP BLACKGOWN POLITICS ARMCANDY ACTIVISM AND A NATIONAL CONVERSATION AS BRIEF AND MAD AS A FEVER DREAM ABOUT WHETHER THERE OUGHT TO BE A PRESIDENT WINFREY THE SEASON DIDNT JUST SEEM EXTRA LONG IT WAS EXTRA LONG BECAUSE THE OSCARS WERE MOVED TO THE FIRST WEEKEND IN MARCH TO AVOID CONFLICTING WITH THE CLOSING CEREMONY OF THE WINTER OLYMPICS THANKS PYEONGCHANG' |
 
-And with that, the entire message had been decrypted. To avoid bloating this file, it can be found here.
+And with that, the entire message had been decrypted. To avoid bloating this file, it can be found [here](etc/deciphered-text.txt).
 
 ## Task 2: Encryption Ciphers
 
