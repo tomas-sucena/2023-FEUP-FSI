@@ -241,6 +241,6 @@ In our certificate, that was the case.
 
 In this task, we had to generate a CSR for our server. The guide provided the command to do it, which was quite similar to the one used to generate the self-signed certificate. As a matter of fact, the only difference was the `-x509` flag, which prevented the command from self-signing the certificate.
 
+Additionally, we were required to add additional **URLs** for our website. Since we wanted www.l11g04.com, www.l11g04.net and www.l11g04.pt to be valid hostnames, we accomplished that by using the `-addtext` flag coupled with the "subjectAltName" field. The final command was the following:
 
-
-Additionally, we were required to add additional **URLs** for our website. To accomplish that, we used the `-addtext` flag coupled with the "subjectAltName" field. As such, besides www.l11g04.com, both www.l11g04.net and www.l11g04.pt would be valid hostnames, were the CA to accept our CSR.
+After running it, two new files were generated.
