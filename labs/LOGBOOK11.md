@@ -19,7 +19,7 @@ There are two types of CAs:
 
 Our first task was to become a **root CA**.
 
-### Configuring the Server
+### Configuring OpenSSL
 
 We were going to rely on `OpenSSL` to create certificates, meaning we needed a **configuration file**. The default configuration file is located in `/usr/lib/ssl/openssl.cnf`, so we copied it to our working directory like so:
 
@@ -27,30 +27,34 @@ We were going to rely on `OpenSSL` to create certificates, meaning we needed a *
 cp /usr/lib/ssl/openssl.cnf .
 ```
 
+In it, there was a section which detailed its default configuration.
+
+![Alt text](image.png)
+
+To comply with it, we did the following:
+
+* Create the directory where our files would be kept - "demoCA". Inside of it, create another directory to store certificates - "newcerts".
+
+```bash
+mkdir -p demoCA/newcerts
+```
+
+* Create an empty "index.php".
+```bash
+touch demoCA/index.php
+```
+
+* Create a "serial" file with a single number in string format.
+
+```bash
+echo 2023 > demoCA/serial
+```
+
 Next, we uncommented a line so we could allow the creation of certificates with the same subject.
 
 ```shell
 unique_subject	= no	# Set to 'no' to allow creation of
 					    # several certs with same subject.
-```
-
-The guide recommended we create an empty file for our "index.php", so we typed the command below:
-
-```bash
-touch index.php
-```
-
-Finally, we had to create a "serial" file with a single number in string format, so we did it like so:
-
-```bash
-echo 2023 > serial
-```
-
-While it was not necessary, we noticed the example directory provided by the guide had a folder named "certs" which contained the configuration file, so we decided to do the same ourselves:
-
-```bash
-mkdir certs
-mv openssl.cnf certs
 ```
 
 ### Generating the Certificate
@@ -262,3 +266,27 @@ It was quite similar to the one used to generate the self-signed certificate. As
 After running it, two new files were created: the CSR ("server.csr") and the corresponding private key ("server.key").
 
 ![Alt text](images/11-4.png)
+
+## Task 3: Generating a Certificate
+
+> To form a **certificate**, it is necessary for the <ins>CSR</ins> to be signed by a trusted <ins>CA</ins>.
+
+In the next task, we had to use our own CA to sign the server's CSR, thus generating a **certificate**. Using our CA files - "ca.crt" and "ca.key" - we signed the CSR ("server.csr") using the command below:
+
+```bash
+openssl ca -config openssl.cnf -policy policy_anything \
+    -md sha256 -days 3650 \
+    -in certs/server.csr -out certs/server.crt -batch \
+    -cert certs/ca.crt -keyfile certs/ca.key
+```
+
+**Note**: The policy used - 'policy_anything' - is not the default policy, because that would force some subject information in the CSR to match that in the CA's certificate, which was undesirable. As its name implies, the policy we ended up using did not enfore any such rules.
+
+Before running the command, though, we had to uncomment another line in `openssl.cnf`, because the default settings did not allow copying the extension field from the CSR to the final certificate. In our case, that meant our additional domains would not be valid, so we changed the file like so:
+
+```shell
+# Extension copying option: use with caution.
+copy_extensions = copy
+```
+
+With that taken care of, we ran the aforementioned command and 
