@@ -24,7 +24,7 @@ Our first task was to become a **root CA**.
 We were going to rely on `OpenSSL` to create certificates, meaning we needed a **configuration file**. The default configuration file was located in `/usr/lib/ssl/openssl.cnf`, so we copied it to our working directory like so:
 
 ```bash
-cp /usr/lib/ssl/openssl.cnf my_openssl.cnf
+$ cp /usr/lib/ssl/openssl.cnf my_openssl.cnf
 ```
 
 In it, there was a section which detailed its default configuration.
@@ -36,19 +36,19 @@ To comply with it, we did the following:
 * Create the directory where our files would be kept - "demoCA". Inside of it, create another directory to store certificates - "newcerts".
 
 ```bash
-mkdir -p demoCA/newcerts
+$ mkdir -p demoCA/newcerts
 ```
 
 * Create "index.txt", which would be the database index file.
 
 ```bash
-touch demoCA/index.txt
+$ touch demoCA/index.txt
 ```
 
 * Create a "serial" file with a single number in string format.
 
 ```bash
-echo 2023 > demoCA/serial
+$ echo 2023 > demoCA/serial
 ```
 
 Next, we uncommented a line in our configuration so we could allow the creation of certificates with the same subject.
@@ -63,7 +63,7 @@ unique_subject	= no	# Set to 'no' to allow creation of
 As previously mentioned, our goal was to become a root CA. As such, we needed to generate a **self-signed certificate**. Thankfully, the guide provided the command below, which we ran inside "certs":
 
 ```bash
-openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
+$ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
     -keyout ca.key -out ca.crt
 ```
 
@@ -78,8 +78,8 @@ Upon submitting our input, the command yielded two new files: "ca.key" and "ca.c
 To view the content of the output files ("ca.key" and "ca.crt") the guide provided the commands below:
 
 ```bash
-openssl x509 -in ca.crt -text -noout # print the certificate in plain text
-openssl rsa -in ca.key -text -noout # print the key in plain text
+$ openssl x509 -in ca.crt -text -noout # print the certificate in plain text
+$ openssl rsa -in ca.key -text -noout # print the key in plain text
 ```
 
 Upon inspecting their content, we were then asked the following questions:
@@ -251,7 +251,7 @@ We found them by analyzing the private key, which also contained other important
 In this task, we had to generate a CSR for our server. To do that, we used the command provided by the guide, which was the following:
 
 ```bash
-openssl req -newkey rsa:2048 -sha256 \
+$ openssl req -newkey rsa:2048 -sha256 \
     -keyout server.key -out server.csr \
     -subj "/CN=www.l11g04.com/O=L11G04 Inc./C=PT" \
     -passout pass:dees \
@@ -275,7 +275,7 @@ After running it, two new files were created: the CSR ("server.csr") and the cor
 In this task, we had to use our CA to sign the CSR from the [previous task](#task-2-generating-a-csr), thus generating a **certificate**. Using our CA files - "ca.crt" and "ca.key" - we signed the CSR ("server.csr") using the command below:
 
 ```bash
-openssl ca -config my_openssl.cnf -policy policy_anything \
+$ openssl ca -config my_openssl.cnf -policy policy_anything \
     -md sha256 -days 3650 \
     -in server.csr -out server.crt -batch \
     -cert ca.crt -keyfile ca.key
@@ -292,16 +292,92 @@ copy_extensions = copy
 
 With that taken care of, we ran the aforementioned command and verified the certificate had been created.
 
-![Alt text](image-2.png)
+![Alt text](images/11-5.png)
 
 The guide also prompted us to verify if our **domains** had been copied into the certificate. So, we printed out its content with the command below:
 
 ```bash
-openssl x509 -in server.crt -text -noout
+$ openssl x509 -in server.crt -text -noout
 ```
 
 The output was quite big, but we found the extension we added, **SAN**, as well as the domains:
 
-![Alt text](image-4.png)
+![Alt text](images/11-6.png)
 
 We had successfully created our first certificate as a CA!
+
+## Task 4: Deploying Certificate
+
+The objective of this task was to set up an HTTPS website based on **Apache**. Thankfully, the guide already had an example website set up, which meant we did not need to start from zero.
+
+### Configuring the Server
+
+The example files were in a directory named "image_www". Inside it, we found the Apache configuration file - "bank32_apache_ssl.conf" - and modified it like so:
+
+```apache
+<VirtualHost *:443> 
+    DocumentRoot /var/www/bank32
+    ServerName www.l11g04.com
+    ServerAlias www.l11g04-A.com
+    ServerAlias www.l11g04-B.com
+    DirectoryIndex index.html
+    SSLEngine On 
+    SSLCertificateFile /volumes/server.crt
+    SSLCertificateKeyFile /volumes/server.key
+</VirtualHost>
+
+<VirtualHost *:80> 
+    DocumentRoot /var/www/bank32
+    ServerName www.l11g04.com
+    DirectoryIndex index_red.html
+</VirtualHost>
+
+# Set the following global entry to suppress an annoying warning message
+ServerName localhost
+```
+
+The guide had mounted a shared folder - "volumes" - for accessing data inside the container, so we moved the server **certificate** and its respective **key** inside of it.
+
+### Starting the Server
+
+The guide informed us that the Apache server was not automatically started in the container, due to the need to type the password to unlock the private key. As such, we did so ourselves by running the command below:
+
+```bash
+$ service start
+```
+
+After that, we opened Firefox and typed the URL of our website. Upon submitting, we were redirected to the following page:
+
+![Alt text](images/11-7.png)
+
+We managed to access our website, but the connection was not secure. By clicking on "Advanced", we discovered the cause:
+
+![Alt text](images/11-8.png)
+
+This happened because the **CA** (us) was not on the browser's list of trusted authorities. Given we used `https`, this caused the browser to issue a warning.
+
+### Adding the CA
+
+To make the connection safe, we had to add our CA to the known certificate issuers. To that end, we navigated to the Firefox preferences page by typing the URL below:
+
+```
+about:preferences
+```
+
+Then, we clicked on "Privacy & Security" and scrolled all the way down until we found a section named "Certificates". 
+
+![Alt text](images/11-9.png)
+
+A view popped up which contained an option to import certificates, so we clicked it.
+
+![Alt text](images/11-10.png)
+
+After selecting our certificate, Firefox prompted us to confirm our decision, which meant we were on the right track.
+
+![Alt text](images/11-11.png)
+
+We pressed "OK" and switched to our website. Upon refreshing the window, the previous warning was nowhere to be seen.
+
+![Alt text](images/11-12.png)
+
+We were now part of Firefox's trusted CAs!
