@@ -381,3 +381,11 @@ We pressed "OK" and switched to our website. Upon refreshing the window, the pre
 ![Alt text](images/11-12.png)
 
 We were now part of Firefox's trusted CAs!
+
+## Task 5: Launching a Man-In-The-Middle Attack
+
+> A **Man-In-The-Middle** (MITM) attack is a general term for when a perpetrator positions themselves in a conversation between a user and an application — either to eavesdrop or to impersonate one of the parties, making it appear as if a normal exchange of information is underway.
+
+For example, let's assume Alice wants to visite Instagram. Since that website relies on the HTTPS protocol, she needs to get the **public key** from the server, so the information she sends to the server is encrypted using it. However, if an attacker were to intercept the communication, they could replace the server's public key with their own and send it to Alice. Thus, the messages Alice would send would be encrypted using the **attacker's key**, meaning they would be able to decrypt them.
+
+![Alt text](images/11-13.png)
