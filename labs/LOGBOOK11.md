@@ -10,12 +10,12 @@ Before starting the tasks themselves, we had to set up an HTTPS web server. To t
 
 ## Task 1: Becoming a CA
 
-> A Certificate Authority (or **CA** for short) is a trusted entity that issues **digital certificates**, which are used to certify the ownership of a <u>public key</u> by the named subject of the certificate.
+> A Certificate Authority (or **CA** for short) is a trusted entity that issues **digital certificates**, which are used to certify the ownership of a <ins>public key</ins> by the named subject of the certificate.
 
 There are two types of CAs:
 
 * **Normal -** The certificates they issue are generally signed by another CA.
-* **Root -** The certificates they issue are <u>unconditionally trusted</u>, thus not needing another signature.
+* **Root -** The certificates they issue are <ins>unconditionally trusted</ins>, thus not needing another signature.
 
 Our first task was to become a **root CA**.
 
@@ -389,3 +389,59 @@ We were now part of Firefox's trusted CAs!
 For example, let's assume Alice wants to visite Instagram. Since that website relies on the HTTPS protocol, she needs to get the **public key** from the server, so the information she sends to the server is encrypted using it. However, if an attacker were to intercept the communication, they could replace the server's public key with their own and send it to Alice. Thus, the messages Alice would send would be encrypted using the **attacker's key**, meaning they would be able to decrypt them.
 
 ![Alt text](images/11-13.png)
+
+### Impersonating the Website
+
+The first step in a Man-In-The-Middle attack is to intercept the communication between the user and the server. To do that, the attacker must impersonate the website the user is trying to reach.
+
+We chose to impersonate Instagram. Since it would be impossible to obtain Instagram's certificate, we decided to use our own. This also meant that we could reutilize the Apache configuration file from the [previous task](#task-4-deploying-certificate), which we did by simply modifying the 'ServerName' property:
+
+```apache
+<VirtualHost *:443> 
+    DocumentRoot /var/www/bank32
+    # the line below was modified
+    ServerName www.instagram.com
+    ServerAlias www.l11g04-A.com
+    ServerAlias www.l11g04-B.com
+    DirectoryIndex index.html
+    SSLEngine On 
+    SSLCertificateFile /volumes/server.crt
+    SSLCertificateKeyFile /volumes/server.key
+</VirtualHost>
+
+<VirtualHost *:80> 
+    DocumentRoot /var/www/bank32
+    ServerName www.l11g04.com
+    DirectoryIndex index_red.html
+</VirtualHost>
+
+# Set the following global entry to suppress an annoying warning message
+ServerName localhost
+```
+
+### Redirecting the User
+
+After the fake website is configured, the next step in a Man In The Middle attack is to force the user's HTTPS requests to land our the attacker's server. There are several ways to accomplish that:
+
+* Attack the **routing**, so the user's HTTPS requests are routed to the attacker's server.
+* Attack the **DNS**, making it so the victim's machine links the IP address of the target web server with the IP address of the attacker's.
+
+We opted to follow the second approach. Since we were also the victim of this attack, we changed our DNS by altering the entry we added [in the beginning](#setup) to the `etc/hosts` file:
+
+```shell
+10.9.0.80   www.instagram.com # instead of www.l11g04.com
+```
+
+### Browsing the Website
+
+With that, our fake Instagram was properly set up. We restarted the Apache server by typing the command below:
+
+```bash
+$ service apache2 restart
+```
+
+After that, we accessed www.instagram.com and were met with the following warning:
+
+![Alt text](images/11-14.png)
+
+While this certainly seemed odd, we recalled [creating the CSR](#task-2-generating-a-csr) and realized the **certificate** we were using for our fake Instagram - the one generated from said CSR - only guaranteed safe browsing on three domains: www.l11g04.com, www.l11g04-A.com and www.l11g04-B.com. As such, the browser detected this inconsistency and appropriately notified us.
