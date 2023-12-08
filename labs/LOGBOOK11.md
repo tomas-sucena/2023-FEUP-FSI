@@ -29,7 +29,7 @@ $ cp /usr/lib/ssl/openssl.cnf my_openssl.cnf
 
 In it, there was a section which detailed its default configuration.
 
-![Alt text](images/11-01.png)
+![Alt text](images/11-1.png)
 
 To comply with it, we did the following:
 
@@ -69,7 +69,7 @@ $ openssl req -x509 -newkey rsa:4096 -sha256 -days 3650 \
 
 We were prompted to input a password, which we decided would be 'fsi2023', as well as the subject information seen below:
 
-![Alt text](images/11-1.png)
+![Alt text](images/11-2.png)
 
 Upon submitting our input, the command yielded two new files: "ca.key" and "ca.crt". The former contained the CA's **private key**, while the latter contained the **public-key certificate**.
 
@@ -88,7 +88,7 @@ Upon inspecting their content, we were then asked the following questions:
 
 The property "CA" indicates whether the certificate belongs to a CA or not.
 
-![Alt text](images/11-2.png)
+![Alt text](images/11-3.png)
 
 Since in our certificate that value was set to `TRUE`, it meant it was in fact a CA certificate.
 
@@ -96,7 +96,7 @@ Since in our certificate that value was set to `TRUE`, it meant it was in fact a
 
 If a certificate is self-signed, the "Subject Key Identifier" and the "Authority Key Identifier" must be the same.
 
-![Alt text](images/11-3.png)
+![Alt text](images/11-4.png)
 
 In our certificate, that was the case.
 
@@ -266,7 +266,7 @@ It was quite similar to the one used to generate the self-signed certificate. As
 
 After running it, two new files were created: the CSR ("server.csr") and the corresponding private key ("server.key").
 
-![Alt text](images/11-4.png)
+![Alt text](images/11-5.png)
 
 ## Task 3: Generating a Certificate
 
@@ -292,7 +292,7 @@ copy_extensions = copy
 
 With that taken care of, we ran the aforementioned command and verified the certificate had been created.
 
-![Alt text](images/11-5.png)
+![Alt text](images/11-6.png)
 
 The guide also prompted us to verify if our **domains** had been copied into the certificate. So, we printed out its content with the command below:
 
@@ -302,7 +302,7 @@ $ openssl x509 -in server.crt -text -noout
 
 The output was quite big, but we found the extension we added, **SAN**, as well as the domains:
 
-![Alt text](images/11-6.png)
+![Alt text](images/11-7.png)
 
 We had successfully created our first certificate as a CA!
 
@@ -348,11 +348,11 @@ $ service start
 
 After that, we opened Firefox and typed the URL of our website. Upon submitting, we were redirected to the following page:
 
-![Alt text](images/11-7.png)
+![Alt text](images/11-8.png)
 
 We managed to access our website, but the connection was not secure. By clicking on "Advanced", we discovered the cause:
 
-![Alt text](images/11-8.png)
+![Alt text](images/11-9.png)
 
 This happened because the **CA** (us) was not on the browser's list of trusted authorities. Given we used `https`, this caused the browser to issue a warning.
 
@@ -366,19 +366,19 @@ about:preferences
 
 Then, we clicked on "Privacy & Security" and scrolled all the way down until we found a section named "Certificates". 
 
-![Alt text](images/11-9.png)
+![Alt text](images/11-10.png)
 
 A view popped up which contained an option to import certificates, so we clicked it.
 
-![Alt text](images/11-10.png)
+![Alt text](images/11-11.png)
 
 After selecting our certificate, Firefox prompted us to confirm our decision, which meant we were on the right track.
 
-![Alt text](images/11-11.png)
+![Alt text](images/11-12.png)
 
 We pressed "OK" and switched to our website. Upon refreshing the window, the previous warning was nowhere to be seen.
 
-![Alt text](images/11-12.png)
+![Alt text](images/11-13.png)
 
 We were now part of Firefox's trusted CAs!
 
@@ -388,7 +388,7 @@ We were now part of Firefox's trusted CAs!
 
 For example, let's assume Alice wants to visite Instagram. Since that website relies on the HTTPS protocol, she needs to get the **public key** from the server, so the information she sends to the server is encrypted using it. However, if an attacker were to intercept the communication, they could replace the server's public key with their own and send it to Alice. Thus, the messages Alice would send would be encrypted using the **attacker's key**, meaning they would be able to decrypt them.
 
-![Alt text](images/11-13.png)
+![Alt text](images/11-14.png)
 
 ### Impersonating the Website
 
@@ -415,7 +415,6 @@ We chose to impersonate Instagram. Since it would be impossible to obtain Instag
     DirectoryIndex index_red.html
 </VirtualHost>
 
-# Set the following global entry to suppress an annoying warning message
 ServerName localhost
 ```
 
@@ -442,6 +441,68 @@ $ service apache2 restart
 
 After that, we accessed www.instagram.com and were met with the following warning:
 
-![Alt text](images/11-14.png)
+![Alt text](images/11-15.png)
 
 While this certainly seemed odd, we recalled [creating the CSR](#task-2-generating-a-csr) and realized the **certificate** we were using for our fake Instagram - the one generated from said CSR - only guaranteed safe browsing on three domains: www.l11g04.com, www.l11g04-A.com and www.l11g04-B.com. As such, the browser detected this inconsistency and appropriately notified us.
+
+## Task 6: Launching a Man-In-The-Middle Attack with a Compromised CA
+
+In our final task, we had to prove that, once a **CA** is compromised, that is, their **private key** is stolen by an attacker, it is possible to pretend to be the CA and generate certificates for any website.
+
+### Preparing the Website
+
+Since we already had our CA credentials and a fake Instagram up and running, we decided to generate a new certificate for it. Before that, though, we had to once again create a **CSR** by rerunning the `openssl req` command:
+
+```bash
+$ openssl req -newkey rsa:2048 -sha256 \
+    -keyout instagram.key -out instagram.csr \
+    -subj "/CN=www.instagram.com/O=INSTAGRAM Inc./C=PT" \
+    -passout pass:dees
+```
+
+Expectedly, this yielded our new CSR - "instagram.csr" - and the **private key** - "instagram.key".
+
+![Alt text](images/11-16.png)
+
+Next, we signed the CSR using the command below:
+
+```bash
+$ openssl ca -config my_openssl.cnf -policy policy_anything \
+    -md sha256 -days 3650 \
+    -in instagram.csr -out instagram.crt -batch \
+    -cert ca.crt -keyfile ca.key
+```
+
+With that, we had our new certificate ready for deployment. We moved it and its key to the "volumes" shared folder. All that was left was to reflect these changes in the server, which we accomplished by updating the Apache configuration file once more:
+
+```apache
+<VirtualHost *:443> 
+    DocumentRoot /var/www/bank32
+    ServerName www.instagram.com
+    ServerAlias www.l11g04-A.com
+    ServerAlias www.l11g04-B.com
+    DirectoryIndex index.html
+    SSLEngine On
+    # the two lines below were modified
+    SSLCertificateFile /volumes/instagram.crt
+    SSLCertificateKeyFile /volumes/instagram.key
+</VirtualHost>
+
+<VirtualHost *:80> 
+    DocumentRoot /var/www/bank32
+    ServerName www.l11g04.com
+    DirectoryIndex index_red.html
+</VirtualHost>
+
+ServerName localhost
+```
+
+### Browsing the Website
+
+Now that the setup had been completed, we restarted both the Docker container and the Apache server so our changes could be put into effect. Then, we visited www.instagram.com again.
+
+![Alt text](images/11-17.png)
+
+This time, the browser did not issue any warning, which meant our Man-In-The-Middle attack was executed flawlessly. Thus, we proved just how dangerous an attacker with a CA's private key can truly be.
+For comparison, the results of both of our attacks can be found below:
+
