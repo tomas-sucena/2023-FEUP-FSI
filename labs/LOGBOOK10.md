@@ -203,9 +203,11 @@ The results of our experiment were compiled below:
 
 | Cipher | Type | Encrypted |
 |--------|----------|-----------|
-| Blowfish | Block | ![Alt text](images/10-1.png) |
-| 128-bit Camellia | Block | ![Alt text](images/10-2.png)|
-| ChaCha20 | Stream | ![Alt text](images/10-3.png) |
+| [Blowfish](https://en.wikipedia.org/wiki/Blowfish_(cipher)) | Block | ![Alt text](images/10-1.png) |
+| [128-bit Camellia](https://en.wikipedia.org/wiki/Camellia_(cipher)) | Block | ![Alt text](images/10-2.png)|
+| [ChaCha20](https://en.wikipedia.org/wiki/Salsa20#ChaCha_variant) | Stream | ![Alt text](images/10-3.png) |
+
+The algorithms above were chosen so as to include at least one algorithm of each studied cipher type.
 
 ## Task 3: Encryption Modes - ECB vs CBC
 

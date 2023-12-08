@@ -504,5 +504,3 @@ Now that the setup had been completed, we restarted both the Docker container an
 ![Alt text](images/11-17.png)
 
 This time, the browser did not issue any warning, which meant our Man-In-The-Middle attack was executed flawlessly. Thus, we proved just how dangerous an attacker with a CA's private key can truly be.
-For comparison, the results of both of our attacks can be found below:
-
