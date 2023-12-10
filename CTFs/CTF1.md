@@ -26,7 +26,7 @@ It was an Exploit Database entry for the vulnerability which, among more details
 
 * **1 -** Access http://ctf-fsi.fe.up.pt:5001/wp-json/wp/v2/users/ in order to obtain the user id of an administrator.
 Since the link redirected us to a JSON document, we searched for the `id` attribute and found out the integer `1` was the id of an administrator.
-* **2 -** Download a [Python script](./exploit_CVE-2021-34646.py) and execute it as such:
+* **2 -** Download a [Python script](etc/exploit_CVE-2021-34646.py) and execute it as such:
 ```shell
 python ./exploit_CVE-2021-34646.py http://ctf-fsi.fe.up.pt 1
 ```

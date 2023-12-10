@@ -1,6 +1,6 @@
 # Weak Encryption
 
-This CTF consisted deciphering the flag, which had been encrypted using a vulnerable algorithm.
+This CTF consisted in deciphering the flag, which had been encrypted using a vulnerable algorithm.
 
 ## Analysis
 
