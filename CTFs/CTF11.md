@@ -6,7 +6,7 @@ This system requires the following values:
 * Two **prime numbers**, `p` and `q`.
 * Their product, `n` ($n = p \times q$).
 * An exponent, `e`, such that $1 < e < (p-1)(q-1)$.
-* `d`, such that $d \equiv (e - 1) \mod\ (p-1)(q-1)$.
+* `d`, such that $d \times e \equiv 1 \mod\ (p-1)(q-1)$.
 
 The keys would then be the tuples below:
 * **Public key -** $(n, e)$
@@ -20,7 +20,7 @@ However, in this challenge, it is disclosed that $p \approx 2^{512}$ and $q \app
 
 The guide provided the Python script that served as the backend of this CTF. Its behaviour can be summarized as follows:
 
-1. Read the file which containts the flag.
+1. Read the file which contains the flag.
 
 ```python
 FLAG_FILE = '/flags/flag.txt'
@@ -75,7 +75,10 @@ We swiftly realized that, if we could discover the **primes** `p` and `q` used t
 
 As seen in the section above, the key to solving this challenge was the computation of **prime numbers**. Since we would be working with very big integers, we would need an algorithm that could quickly yet reliably determine whether a number is prime.
 
-For that purpose, the guide recommended the [Miller-Rabin algorithm](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test). Upon searching online, we found a [Python implementation](https://www.geeksforgeeks.org/primality-test-set-3-miller-rabin/) of said algorithm, which we opted to use. We placed it in a new Python script named "primes.py", which can be found [here](etc/primes.py).
+For that purpose, the guide recommended the [Miller-Rabin algorithm](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test). Upon searching online, we found a [Python implementation](https://www.geeksforgeeks.org/primality-test-set-3-miller-rabin/) of said algorithm 
+
+
+We placed it in a new Python script named "primes.py", which can be found [here](etc/primes.py). In addition, we also created a simple function which, given an integer, returns the next prime number.
 
 ## Preparing the Script
 
@@ -85,14 +88,11 @@ Before writing our code, we needed a few variables: the **public key**, constitu
 
 Next, we started writing our script. Its behaviour can be summarized like so:
 
-1. Import the auxiliary functions defined in other scripts.
+1. Define the decryption function.
 
 ```python
-import re # regex
 from binascii import hexlify, unhexlify
-
-from primes import isPrime
-
+from primes import nextPrime
 
 def dec(y, d, n):
     int_y = int.from_bytes(unhexlify(y), "little")
@@ -112,39 +112,42 @@ n = 3595386269724631815458610381578049467235953957884613145468601623154653516110
 ciphertext = "3334303164633363353339356539353130346566343665363638653537333831323930653036646532336666633036636166396164656265373334636531323430653138623237613166313636343362316661663330643038623331613561633136386261313636373064636633373261633366633436656532636664636335616333303431626334396630306431346462353165643831653065343233653866333933353737636231336266303431353738343835303261663564613638316164623534356165646339663433306435656437313234373064323635656136366130653664626634653838626237313366336638393736363934363636393130313030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030303030"
 ```
 
-3. Compute the remaining variables required for the RSA algorithm.
+3. Compute the **primes** used to encrypt the flag.
 
 ```python
-p = 2**512 + 1
-k = 3
+# compute the primes
+p = initial_p = nextPrime(2 ** 512)
+q = nextPrime(2 ** 513)
 
 while True:
-	# determine if the current number is prime
-	if not isPrime(p, k):
-		p += 2
+	while p * q < n:
+		p = nextPrime(p)
 		continue
 		
-	# compute the second prime
-	q = n // p
-	
-	# compute d
-	d = (e - 1) % ((p - 1) * (q - 1))
-
-    ...
+	if p * q == n:
+		break
+		
+	q = nextPrime(q)
+	p = initial_p # reset p
 ```
 
-4. Decrypt the ciphertext. Then, convert it into a string.
+Firstly, we assigned `p` and `q` the closest primes to $2^{512}$ and $2^{513}$, respectively. Then, for every pair of `p` and `q`, we compared their product with `n`. If both values were equal, that meant we had found our primes.
+
+4. Compute `d`.
 
 ```python
-msg = str(dec(ciphertext, d, n))
+# compute d
+d = pow(e, -1, (p - 1) * (q - 1))
 ```
 
-5. Verify if the decrypted message is the flag using a **regular expression**.
+5. Decrypt the ciphertext using the **private key** - tuple $(n, d)$. Then, print it.
 
 ```python
-if (re.search("flag{[A-Za-z0-9]+}", msg)):
-    print(msg) # flag found!
-    break
+# decrypt the message
+msg = dec(unhexlify(ciphertext), d, n).decode()
+
+# print the message
+print(msg)
 ```
 
 The finalized script can be found [here](etc/exploit-CTF11.py).
