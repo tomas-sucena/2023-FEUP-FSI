@@ -40,7 +40,7 @@ Before writing our code, we needed a few variables: the **ciphertext** and the *
 
 Next, we started writing our script. Its behaviour can be summarized like so:
 
-* Initialize all the necessary variables.
+1. Initialize all the necessary variables.
 
 ```python
 ciphertext = "5ec0245e54dc7f4cbbc4941577d4f7ddab198caab78702646c1d853c6912a7d7f4052ba72c3ae6"
@@ -49,7 +49,7 @@ nonce = "aab55d811f9e312a7cf589de98157163"
 offset = 3
 ```
 
-* Iterate through all the possible keys. Since only the last three bytes could be different from 0, the keys were all the numbers belonging to **[0, 2^24[**.
+2. Iterate through all the possible keys. Since only the last three bytes could be different from 0, the keys were all the numbers belonging to **[0, 2^24[**.
 
 ```python
 for i in range(2**24):
@@ -58,7 +58,7 @@ for i in range(2**24):
     ...
 ```
 
-* Decrypt the ciphertext using said keys. Then, convert it into a string.
+3. Decrypt the ciphertext using said keys. Then, convert it into a string.
 
 ```python
 msg = str(dec(key, unhexlify(ciphertext), unhexlify(nonce)))
@@ -66,7 +66,7 @@ msg = str(dec(key, unhexlify(ciphertext), unhexlify(nonce)))
 
 **Note:** As recommended by the guide, we used the `unhexlify()` function to convert the <u>ciphertext</u> and the <u>nonce</u> to bytes.
 
-* Verify if the decrypted message is the flag using a **regular expression**.
+4. Verify if the decrypted message is the flag using a **regular expression**.
 
 ```python
 if (re.search("flag{[A-Za-z0-9]+}", msg)):
