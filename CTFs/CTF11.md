@@ -18,6 +18,58 @@ However, in this challenge, it is disclosed that $p \approx 2^{512}$ and $q \app
 
 ## Analysis
 
+The guide provided the Python script that served as the backend of this CTF. Its behaviour can be summarized as follows:
+
+1. Read the file which containts the flag.
+
+```python
+FLAG_FILE = '/flags/flag.txt'
+
+...
+
+with open(FLAG_FILE, 'r') as fd:
+	un_flag = fd.read()
+```
+
+2. Get the parameters which will be used in the cipher.
+
+```python
+(p, q, n, phi, e, d) = getParams()
+```
+
+3. Output the **public key** (i.e. the exponent `e` and the product `n`).
+
+```python
+print("Public parameters -- \ne: ", e, "\nn: ", n)
+```
+
+4. Encrypt the flag and output it.
+
+```python
+print("ciphertext:", hexlify(enc(un_flag.encode(), e, n)).decode())
+```
+
+While it was useful to understand the output we would receive when connecting to the server, we were more interested in the auxiliary functions which supported the script. They are presented below:
+
+* **enc() -** Given a plaintext message, the exponent `e` and the product `n`, encrypts the message.
+
+```python
+def enc(x, e, n):
+    int_x = int.from_bytes(x, "little")
+    y = pow(int_x,e,n)
+    return hexlify(y.to_bytes(256, 'little'))
+```
+
+* **dec() -** Given an encrypted message, `d` and the product `n`, decrypts the message.
+
+```python
+def dec(y, d, n):
+    int_y = int.from_bytes(unhexlify(y), "little")
+    x = pow(int_y,d,n)
+    return x.to_bytes(256, 'little')
+```
+
+We swiftly realized that, if we could discover the **primes** `p` and `q` used to encrypt the flag, we would be able to use the "dec()" function to decrypt the ciphertext.
 
 ## Preparing the Script
 
