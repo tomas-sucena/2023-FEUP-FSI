@@ -75,10 +75,54 @@ We swiftly realized that, if we could discover the **primes** `p` and `q` used t
 
 As seen in the section above, the key to solving this challenge was the computation of **prime numbers**. Since we would be working with very big integers, we would need an algorithm that could quickly yet reliably determine whether a number is prime.
 
-For that purpose, the guide recommended the [Miller-Rabin algorithm](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test). Upon searching online, we found a [Python implementation](https://www.geeksforgeeks.org/primality-test-set-3-miller-rabin/) of said algorithm 
+For that purpose, the guide recommended the [Miller-Rabin algorithm](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test). Upon searching online, we found the following [Python implementation](https://www.geeksforgeeks.org/primality-test-set-3-miller-rabin/) of said algorithm:
 
+```python
+def miller_rabin(n, k):
+
+    # Implementation uses the Miller-Rabin Primality Test
+    # The optimal number of rounds for this test is 40
+    # See http://stackoverflow.com/questions/6325576/how-many-iterations-of-rabin-miller-should-i-use-for-cryptographic-safe-primes
+    # for justification
+
+    # If number is even, it's a composite number
+
+    if n == 2:
+        return True
+
+    if n % 2 == 0:
+        return False
+
+    r, s = 0, n - 1
+    while s % 2 == 0:
+        r += 1
+        s //= 2
+    for _ in range(k):
+        a = random.randrange(2, n - 1)
+        x = pow(a, s, n)
+        if x == 1 or x == n - 1:
+            continue
+        for _ in range(r - 1):
+            x = pow(x, 2, n)
+            if x == n - 1:
+                break
+        else:
+            return False
+            
+    return True
+```
 
 We placed it in a new Python script named "primes.py", which can be found [here](etc/primes.py). In addition, we also created a simple function which, given an integer, returns the next prime number.
+
+```python
+def nextPrime(num):
+    num += 1 if num % 2 == 0 else 2
+
+    while not miller_rabin(num, 40):
+        num += 2
+    
+    return num
+```
 
 ## Preparing the Script
 
@@ -140,7 +184,7 @@ Firstly, we assigned `p` and `q` the closest primes to $2^{512}$ and $2^{513}$, 
 d = pow(e, -1, (p - 1) * (q - 1))
 ```
 
-5. Decrypt the ciphertext using the **private key** - tuple $(n, d)$. Then, print it.
+5. Decrypt the ciphertext using the **private key** - the tuple $(n, d)$. Then, print it.
 
 ```python
 # decrypt the message
@@ -150,4 +194,14 @@ msg = dec(unhexlify(ciphertext), d, n).decode()
 print(msg)
 ```
 
+**Note:** Unlike in the previous CTF, we did not have to rely on <ins>regular expressions</ins> to figure out whether the decrypted message corresponded to the flag, because finding the prime numbers - `p` and `q` - sufficed.
+
 The finalized script can be found [here](etc/exploit-CTF11.py).
+
+## Attack!
+
+It was finally time to attack. Upon running our script, we obtained the following output:
+
+![Alt text](images/11-2.png)
+
+We got the flag: `flag{6272e91117b4bf55bfba6bc22a783f29}`!

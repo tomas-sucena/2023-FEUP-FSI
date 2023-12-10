@@ -78,7 +78,7 @@ The finalized script can be found [here](etc/exploit-CTF10.py).
 
 ## Attack!
 
-Armed with our attack script, we were finally ready to discover the flag. Running "attack.py", we got the following output after waiting a bit:
+Armed with our attack script, we were finally ready to discover the flag. Running "exploit-CTF10.py", we got the following output after waiting a bit:
 
 ![Alt text](images/10-2.png)
 
