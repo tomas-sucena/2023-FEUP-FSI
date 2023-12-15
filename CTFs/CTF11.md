@@ -75,7 +75,7 @@ We swiftly realized that, if we could discover the **primes** `p` and `q` used t
 
 As seen in the section above, the key to solving this challenge was the computation of **prime numbers**. Since we would be working with very big integers, we would need an algorithm that could quickly yet reliably determine whether a number is prime.
 
-For that purpose, the guide recommended the [Miller-Rabin algorithm](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test). Upon searching online, we found the following [Python implementation](https://www.geeksforgeeks.org/primality-test-set-3-miller-rabin/) of said algorithm:
+For that purpose, the guide recommended the [Miller-Rabin algorithm](https://en.wikipedia.org/wiki/Miller%E2%80%93Rabin_primality_test). Upon searching online, we found the following [Python implementation](https://gist.github.com/Ayrx/5884790) of said algorithm:
 
 ```python
 def miller_rabin(n, k):
