@@ -34,3 +34,50 @@ After setting up the containers, we ran `ifconfig`. The guide specified that the
 
 We found the name of our network interface: **br-a0c2e1a6c461**. With that, we could move on the tasks.
 
+**Note:** Throughout this entire lab, we relied on <ins>Scapy</ins>.
+
+> **Scapy** is a network analysis tool that can be also used as a building block to construct other tools.
+
+## Task 1.1: Sniffing Packets
+
+Our first task was to sniff the packets on our network interface. To that end, we used the following Python program provided by the guide:
+
+```Python
+#!/usr/bin/env python3
+from scapy.all import *
+
+def print_pkt(pkt):
+    pkt.show()
+
+pkt = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=print_pkt)
+```
+
+The `iface` parameter establishes the network interface we wanted to sniff, so we filled it with the name we [previously](#setup) discovered.
+
+**Note:** In the above program, for each packet, the callback function <ins>"print_pkt()"</ins> was invoked, meaning we did not have to explicitly call it.
+
+### 1.1A: Changing the Priviliges
+
+We were tasked with running this script twice: one with the **root** privilege and one without it. As such, we placed the script in a new file - "sniffer.py" - and made it executable so we could reuse it.
+
+```bash
+$ chmod a+x sniffer.py
+```
+
+To test if we could sniff packets, we had to first send some through the network. To that end, we used the `ping` command.
+
+> `ping` is a Linux command used to check the **network connectivity** between two systems, which can be two hosts or a host and a server.
+
+We opted to send the `ping` command in host A to communicate with host B like so:
+
+```bash
+$ ping 10.9.0.6
+```
+
+The results of our experiment can be found below:
+
+| Root privilege? | Results          | Conclusion |
+|-----------------|------------------|------------|
+| Yes | ![Alt text](images/13-3.png) | The packets were sniffed. |
+| No  | ![Alt text](images/13-4.png) | The packets were <ins>not</ins> sniffed, because this operation requires **elevated privileges**. |
+
