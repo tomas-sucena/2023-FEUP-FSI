@@ -49,10 +49,10 @@ from scapy.all import *
 def print_pkt(pkt):
     pkt.show()
 
-pkt = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=print_pkt)
+pkt = sniff(iface='br-a0c2e1a6c461', prn=print_pkt)
 ```
 
-The `iface` parameter establishes the network interface we wanted to sniff, so we filled it with the name we [previously](#setup) discovered.
+The "iface" parameter established the network interface we wanted to sniff, so we filled it with the name we [previously](#setup) discovered.
 
 **Note:** In the above program, for each packet, the callback function <ins>"print_pkt()"</ins> was invoked, meaning we did not have to explicitly call it.
 
@@ -81,3 +81,74 @@ The results of our experiment can be found below:
 | Yes | ![Alt text](images/13-3.png) | The packets were sniffed. |
 | No  | ![Alt text](images/13-4.png) | The packets were <ins>not</ins> sniffed, because this operation requires **elevated privileges**. |
 
+### 1.1B: Filtering Packets
+
+Next, we had to alter our Python script to only capture specific types of packets. In short, we had to filters the packets we sniffed.
+
+Analysing our current script, we realized there was a parameter - `filter` - designed specifically to filter the packets.
+
+```python
+#                            here ----v
+pkt = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=print_pkt)
+```
+
+According to the guide, Scapy's filter used the **BFP** (Berkeley Packet Filter) syntax, so we had to learn it before proceeding. Luckily, we found a [webpage](https://biot.com/capstats/bpf.html) detailing it, so we searched for the specific commands as we kept going.
+
+Below are the results of our filtering experiences, as well as the filters we used. 
+
+**Note:** Because screenshots would not be able to properly convey the results we obtained, we created a text file for each prompt and placed the output there.
+
+* **Capture only the ICMP packet**
+
+For the first prompt, we used the following command:
+
+```python
+filter = 'icmp'
+pkt = sniff(iface='br-a0c2e1a6c461', filter=filter, prn=print_pkt)
+```
+
+The filter `icmp` made it so only the packets with the **ICMP** protocol were captured. The proof can be found [here](etc/13-1.1B-1.txt).
+
+* **Capture any TCP packet that comes from a particular IP and with a destination port number 23.**
+
+To complete the second prompt, we used the command below:
+
+```python
+filter = 'tcp and src host 10.9.0.5 and dst port 23'
+pkt = sniff(iface='br-a0c2e1a6c461', filter=filter, prn=print_pkt)
+```
+
+The `tcp` in the filter forced Scapy to only capture **TCP** packets. The `src host 10.9.0.5` part ensured only packets coming from IP 10.9.0.5 - host A - were sniffed. Finally, the `dst port 23` specified that we were only interested in packets whose destination port was 23.
+
+Upon running the script, we switched to host A and sent a message to port 23 like so:
+
+```bash
+$ echo "YOUR_MESSAGE" > /dev/tcp/10.9.0.6/23
+```
+
+Then, after switching back to the attacker container, we copied the sniffed packets and placed them [here](etc/13-1.1B-2.txt).
+
+As an additional proof of correctness, the image below depicts part of our output. We have highlighted the destination port - `telnet` - since that service is usually located at port 23, thus proving we were successful.
+
+![Alt text](images/13-5.png)
+
+* **Capture packets that come from or to go to a particular subnet.**
+
+For our final challenge, we had to sniff all the packets that came or went to a specific **subnet**.
+
+> A **subnet** is a logical subdivision of an IP network. Computers that belong to the same subnet are addressed with an identical group of its <ins>most-significant bits</ins> of their IP addresses.
+
+![Alt text](images/13-6.png)
+
+The guide instructed us to not pick the subnet that our virtual machine was attached to, so we ran `ifconfig` again to discover another we could use. There were many to choose from, but ultimately we decided on sniffing packets circulating in "enp0s3"'s subnet.
+
+![Alt text](images/13-7.png)
+
+The subnet was calculated by applying the netmask - 255.255.255.0 - to the network interface - 10.0.2.15 - giving us **10.0.2.0/24**. To that end, we modified "sniffer.py" as shown below:
+
+```python
+filter = 'net 10.0.2.0/24'
+pkt = sniff(iface='enp0s3', filter=filter, prn=print_pkt)
+```
+
+The filter `net` specifies the subnet Scapy will sniff. The results can be found [here](etc/13-1.1B-3.txt).

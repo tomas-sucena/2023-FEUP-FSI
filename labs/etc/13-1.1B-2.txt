@@ -1,0 +1,156 @@
+###[ Ethernet ]### 
+  dst       = 02:42:0a:09:00:06
+  src       = 02:42:0a:09:00:05
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 60
+     id        = 30440
+     flags     = DF
+     frag      = 0
+     ttl       = 64
+     proto     = tcp
+     chksum    = 0xafb7
+     src       = 10.9.0.5
+     dst       = 10.9.0.6
+     \options   \
+###[ TCP ]### 
+        sport     = 35430
+        dport     = telnet
+        seq       = 4279188183
+        ack       = 0
+        dataofs   = 10
+        reserved  = 0
+        flags     = S
+        window    = 64240
+        chksum    = 0x144b
+        urgptr    = 0
+        options   = [('MSS', 1460), ('SAckOK', b''), ('Timestamp', (3538349436, 0)), ('NOP', None), ('WScale', 7)]
+
+###[ Ethernet ]### 
+  dst       = 02:42:0a:09:00:06
+  src       = 02:42:0a:09:00:05
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 52
+     id        = 30441
+     flags     = DF
+     frag      = 0
+     ttl       = 64
+     proto     = tcp
+     chksum    = 0xafbe
+     src       = 10.9.0.5
+     dst       = 10.9.0.6
+     \options   \
+###[ TCP ]### 
+        sport     = 35430
+        dport     = telnet
+        seq       = 4279188184
+        ack       = 1293029807
+        dataofs   = 8
+        reserved  = 0
+        flags     = A
+        window    = 502
+        chksum    = 0x1443
+        urgptr    = 0
+        options   = [('NOP', None), ('NOP', None), ('Timestamp', (3538349436, 2736378515))]
+
+###[ Ethernet ]### 
+  dst       = 02:42:0a:09:00:06
+  src       = 02:42:0a:09:00:05
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 65
+     id        = 30442
+     flags     = DF
+     frag      = 0
+     ttl       = 64
+     proto     = tcp
+     chksum    = 0xafb0
+     src       = 10.9.0.5
+     dst       = 10.9.0.6
+     \options   \
+###[ TCP ]### 
+        sport     = 35430
+        dport     = telnet
+        seq       = 4279188184
+        ack       = 1293029807
+        dataofs   = 8
+        reserved  = 0
+        flags     = PA
+        window    = 502
+        chksum    = 0x1450
+        urgptr    = 0
+        options   = [('NOP', None), ('NOP', None), ('Timestamp', (3538349438, 2736378515))]
+###[ Raw ]### 
+           load      = 'YOUR_MESSAGE\n'
+
+###[ Ethernet ]### 
+  dst       = 02:42:0a:09:00:06
+  src       = 02:42:0a:09:00:05
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x0
+     len       = 52
+     id        = 30443
+     flags     = DF
+     frag      = 0
+     ttl       = 64
+     proto     = tcp
+     chksum    = 0xafbc
+     src       = 10.9.0.5
+     dst       = 10.9.0.6
+     \options   \
+###[ TCP ]### 
+        sport     = 35430
+        dport     = telnet
+        seq       = 4279188197
+        ack       = 1293029807
+        dataofs   = 8
+        reserved  = 0
+        flags     = FA
+        window    = 502
+        chksum    = 0x1443
+        urgptr    = 0
+        options   = [('NOP', None), ('NOP', None), ('Timestamp', (3538349439, 2736378518))]
+
+###[ Ethernet ]### 
+  dst       = 02:42:0a:09:00:06
+  src       = 02:42:0a:09:00:05
+  type      = IPv4
+###[ IP ]### 
+     version   = 4
+     ihl       = 5
+     tos       = 0x10
+     len       = 40
+     id        = 0
+     flags     = DF
+     frag      = 0
+     ttl       = 64
+     proto     = tcp
+     chksum    = 0x26a4
+     src       = 10.9.0.5
+     dst       = 10.9.0.6
+     \options   \
+###[ TCP ]### 
+        sport     = 35430
+        dport     = telnet
+        seq       = 4279188198
+        ack       = 0
+        dataofs   = 5
+        reserved  = 0
+        flags     = R
+        window    = 0
+        chksum    = 0xd750
+        urgptr    = 0
+        options   = []
