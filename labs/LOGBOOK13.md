@@ -144,7 +144,7 @@ The guide instructed us to not pick the subnet that our virtual machine was atta
 
 ![Alt text](images/13-7.png)
 
-The subnet was calculated by applying the netmask - 255.255.255.0 - to the network interface - 10.0.2.15 - giving us **10.0.2.0/24**. To that end, we modified "sniffer.py" as shown below:
+The subnet was calculated by applying the netmask - 255.255.255.0 - to the network interface - 10.0.2.15 - giving us **10.0.2.0/24**. So, we modified "sniffer.py" as shown below:
 
 ```python
 filter = 'net 10.0.2.0/24'
@@ -152,3 +152,56 @@ pkt = sniff(iface='enp0s3', filter=filter, prn=print_pkt)
 ```
 
 The filter `net` specifies the subnet Scapy will sniff. The results can be found [here](etc/13-1.1B-3.txt).
+
+## Task 1.2: Spoofing ICMP Packets
+
+Our next task had a very specific objective: use Scapy to spoof **ICMP** packets with an arbitrary source IP address. In addition, they had to be **echo request** packets.
+
+The guide mentioned that, if our request was accepted by the receiver, an **echo reply packet** would be sent to the spoofed IP address. Bearing that information in mind, we created a new Python script - "spoofer.py" - and followed the steps listed below:
+
+1. Create an object from the **IP** class.
+
+```python
+from scapy.all import *
+
+ip = IP()
+```
+
+**Note:** Beforehand, we ran the commands below to view the list of attributes of the <ins>IP class</ins>.
+
+![Alt text](images/13-8.png)
+
+2. Change the source and the destination of IP object.
+
+```python
+ip.src = '10.9.0.5' # host A
+ip.dst = '10.9.0.6' # host B
+```
+
+For convenience, we decided that our arbitrary IP address would be host A's, since it would be easy to recognize.
+
+3. Stack the IP object together with an **ICMP** class object to form a **packet**.
+
+```python
+packet = ip/ICMP()
+```
+
+Since the default type of an ICMP object is **echo request**, which was what we wanted, we did not need to instantiate it and modify it, so instead we just called the constructor.
+
+**Note:** The division operator - '/'- was overloaded by the IP class, meaning that it no longer represented division. In our case, it meant adding the <ins>ICMP</ins> object as the payload field of the <ins>IP</ins> object and modifying its fields accordingly.
+
+4. Send the **packet**.
+
+```python
+send(packet)
+```
+
+After that, all we had to do was run the script.
+
+![Alt text](images/13-9.png)
+
+To verify whether our attack had worked, we decided to sniff the packets circulating on the network interface using **Wireshark**. We obtained the logs below:
+
+![Alt text](images/13-10.png)
+
+Since we immediately identified the request packet - **line 3** - as well as the corresponding reply - **line 4** - that meant our attack was successful. As such, thanks to spoofing, we successfully impersonated host A.
