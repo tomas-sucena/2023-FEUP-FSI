@@ -49,7 +49,7 @@ from scapy.all import *
 def print_pkt(pkt):
     pkt.show()
 
-pkt = sniff(iface='br-a0c2e1a6c461', prn=print_pkt)
+pkt = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=print_pkt)
 ```
 
 The "iface" parameter established the network interface we wanted to sniff, so we filled it with the name we [previously](#setup) discovered.
@@ -212,21 +212,26 @@ In this task, we had to implement our own version of the `traceroute` command us
 
 > `traceroute` is a Linux command that traces the path of an **IP packet** until it reaches its destination.
 
-### ICMP Packets
+### Learning about Scapy and ICMP
 
-We had a rough idea of how to go about this task, which will become clear in the [next section](#preparing-the-script). Before proceeding, though, we had to learn how to receive packets.
+We had a rough idea of how to go about this task, which will become clear in the [next section](#preparing-the-script). Before proceeding, though, we had to learn how to receive a **response packet** - packets sent as a direct response to the packets we would send. 
 
-We were certain Scapy would have functions for this particular purpose. Sure enough, after a bit of research online, we discovered the `sr()` and `sr1()` functions.
+We could attempt to use sniffing like we did in the [first task](#task-11-sniffing-packets), but that would require us to define a very specific filter, which would certainly be tedious. We were certain Scapy would have functions for this particular purpose. Sure enough, after a bit of research online, we discovered the `sr()` and `sr1()` functions.
 
-> TODO
+> The `sr()` Scapy function is used to **send** packets and **receive** their respective answers. The `sr1()` is similar, but it only returns one packet that answered the packet (or the packet set) sent.
 
-Since `sr1()` was exactly what we were looking for, that problem was solved. However, just as we were ready to begin writing the script, we realized that, despite now knowing how to receive answers, we still had no idea how to parse the **ICMP** packets we were expecting.
+Since `sr1()` was exactly what we were looking for, that problem was solved. 
 
-Once again, we relied on the Internet and found a [website] containing ICMP documentation. We learned that ICMP packets have a **type** and a **code**, which are attributes used to identify it.
+However, just as we were ready to begin writing the script, we realized that, despite now knowing how to receive answers, we still had no idea how to parse the **ICMP** packets we were expecting. Once again, we relied on the Internet and found a [website] containing ICMP documentation. There, we learned that ICMP packets have two important attributes:
+
+* **Type -** Identifies the message they transmit.
+* **Code -** For a given <ins>type</ins>, specifies the message even further.
+
+So, we had found the solution to our new problem: to properly parse an ICMP packet, we just had to analyze its **type** and **code**. So, with both problems taken care of, we could finally start writing our script.
 
 ### Preparing the Script
 
-Thankfully, the guide explained in great detail how to achieve this, so we used it to write a new script, which we appropriately named "traceroute.py". Its behaviour can be described like so:
+By following the tutorial provided by the guide, we created a new script - "traceroute.py". Its behaviour can be summarized like so:
 
 1. Create an **IP** object, such that its destination is the desired IP address and its **TTL** value is 1.
 
@@ -268,3 +273,24 @@ while True:
 
     break
 ```
+
+**Note:** We found the <ins>type</ins> and the <ins>code</ins> of the ICMP packets in the [documentation website](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types) we [previously](#learning-about-scapy-and-icmp) visited. For reference, we took a picture of the extract we consulted:
+
+![Alt text](images/13-11.png)
+
+5. Print the value of the **TTL** that let the packet reach its destination - our **distance**.
+
+```python
+print("Distance: ", a.ttl)
+```
+
+### Testing
+
+We decided to submit our new script to a few tests. For comparison, we also ran the `traceroute` commands for the same test cases. Below are the results:
+
+| Destination | Our script | Linux's command |
+|-------------|------------|-----------------|
+| 10.9.0.5 (host A) || |
+| 8.8.8.8 (Google's DNS) || |
+
+Considering the results were identical, that meant we had successfully completed this task.
