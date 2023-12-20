@@ -205,3 +205,53 @@ To verify whether our attack had worked, we decided to sniff the packets circula
 ![Alt text](images/13-10.png)
 
 Since we immediately identified the request packet - **line 3** - as well as the corresponding reply - **line 4** - that meant our attack was successful. As such, thanks to spoofing, we successfully impersonated host A.
+
+## Task 3: Traceroute
+
+In this task, we had to implement our own version of the `traceroute` command using Scapy.
+
+> `traceroute` is a Linux command that traces the path of an **IP packet** until it reaches its destination.
+
+Thankfully, the guide explained in great detail how to achieve this, so we used it to write a new script, which we appropriately named "traceroute.py". Its behaviour can be described like so:
+
+1. Create an **IP** object, such that its destination is the desired IP address and its **TTL** value is 1.
+
+```python
+import sys
+from scapy.all import *
+
+a = IP(dst=sys.argv[1], ttl=1)
+# NOTE: sys.argv[0] -> program name
+#       sys.argv[1] -> first argument
+```
+
+**Note:** To avoid having to change the script everytime we wanted to test it with a new destination, we opted to use Python's command line support to pass the <ins>destination IP address</ins> to our program. That is why the variable `sys.argv`, which contains the command line arguments, is used.
+
+2. Create an infinite loop, which will be used to increment the **TTL**. In it, create the packet to be sent.
+
+```python
+while True:
+    packet = a / ICMP()
+    ...
+```
+
+3. Send the packet using the `sr1()` function, which is a Scapy function that sends a packet and returns the first answer that was sent to it.
+
+```python
+reply = sr1(packet, timeout=1)
+```
+
+4. Verify if the ICMP error message was received. If it was, increment the **TTL** and try again, else leave the loop.
+
+```python
+while True:
+    ...
+
+    if reply.type == 11 and reply.code == 0: # TTL exceeded
+        a.ttl += 1
+        continue
+
+    break
+```
+
+![Alt text](image.png)
