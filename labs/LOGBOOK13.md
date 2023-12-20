@@ -212,6 +212,20 @@ In this task, we had to implement our own version of the `traceroute` command us
 
 > `traceroute` is a Linux command that traces the path of an **IP packet** until it reaches its destination.
 
+### ICMP Packets
+
+We had a rough idea of how to go about this task, which will become clear in the [next section](#preparing-the-script). Before proceeding, though, we had to learn how to receive packets.
+
+We were certain Scapy would have functions for this particular purpose. Sure enough, after a bit of research online, we discovered the `sr()` and `sr1()` functions.
+
+> TODO
+
+Since `sr1()` was exactly what we were looking for, that problem was solved. However, just as we were ready to begin writing the script, we realized that, despite now knowing how to receive answers, we still had no idea how to parse the **ICMP** packets we were expecting.
+
+Once again, we relied on the Internet and found a [website] containing ICMP documentation. We learned that ICMP packets have a **type** and a **code**, which are attributes used to identify it.
+
+### Preparing the Script
+
 Thankfully, the guide explained in great detail how to achieve this, so we used it to write a new script, which we appropriately named "traceroute.py". Its behaviour can be described like so:
 
 1. Create an **IP** object, such that its destination is the desired IP address and its **TTL** value is 1.
@@ -247,11 +261,10 @@ reply = sr1(packet, timeout=1)
 while True:
     ...
 
-    if reply.type == 11 and reply.code == 0: # TTL exceeded
+    # verify if the TTL was exceeded
+    if reply == None or (reply.type == 11 and reply.code == 0):
         a.ttl += 1
         continue
 
     break
 ```
-
-![Alt text](image.png)
