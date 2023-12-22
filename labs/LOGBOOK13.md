@@ -206,7 +206,7 @@ To verify whether our attack had worked, we decided to sniff the packets circula
 
 Since we immediately identified the request packet - **line 3** - as well as the corresponding reply - **line 4** - that meant our attack was successful. As such, thanks to spoofing, we successfully impersonated host A.
 
-## Task 3: Traceroute
+## Task 1.3: Traceroute
 
 In this task, we had to implement our own version of the `traceroute` command using Scapy.
 
@@ -214,11 +214,11 @@ In this task, we had to implement our own version of the `traceroute` command us
 
 ### Learning about Scapy and ICMP
 
-We had a rough idea of how to go about this task, which will become clear in the [next section](#preparing-the-script). Before proceeding, though, we had to learn how to receive a **response packet** - packets sent as a direct response to the packets we would send. 
+We had a rough idea of how to go about this task, which will become clear in the [next section](#preparing-the-script). Before proceeding, though, we had to learn how to receive a **reply packet** - packets sent as a direct response to the packets we would send. 
 
 We could attempt to use sniffing like we did in the [first task](#task-11-sniffing-packets), but that would require us to define a very specific filter, which would certainly be tedious. We were certain Scapy would have functions for this particular purpose. Sure enough, after a bit of research online, we discovered the `sr()` and `sr1()` functions.
 
-> The `sr()` Scapy function is used to **send** packets and **receive** their respective answers. The `sr1()` function is similar, but it only returns the <ins>first</ins> response packet that answered the packet sent.
+> The `sr()` Scapy function is used to **send** packets and **receive** their respective answers. The `sr1()` function is similar, but it only returns the <ins>first</ins> reply packet that answered the packet sent.
 
 Since `sr1()` was exactly what we were looking for, that problem was solved. 
 
@@ -254,10 +254,10 @@ while True:
     ...
 ```
 
-3. Using `sr1()`, send the packet and receive the first packet that is sent as a response.
+3. Using `sr1()`, send the packet and receive the first packet that is sent as a reply.
 
 ```python
-response = sr1(packet, timeout=1, verbose=0)
+reply = sr1(packet, timeout=1, verbose=0)
 ```
 
 4. Verify if the ICMP error message was received. If it was, increment the **TTL** and try again, else leave the loop.
@@ -267,7 +267,7 @@ while True:
     ...
 
     # verify if the TTL was exceeded
-    if response == None or (response.type == 11 and response.code == 0):
+    if reply == None or (reply[ICMP].type == 11 and reply[ICMP].code == 0):
         a.ttl += 1
         continue
 
@@ -295,3 +295,75 @@ We decided to submit our new script to a few tests. For comparison, we also ran 
 | 1.1.1.1 (Cloudfare's DNS) | ![Alt text](images/13-16.png) | ![Alt text](images/13-17.png) |
 
 Considering the distances were identical, our program was working as expected.
+
+## Task 1.4: Sniffing and then Spoofing
+
+Our final task consisted in creating a program which combined the sniffing and spoofing techniques. The objective was simple: sniff all ICMP packets and, if the packet was an **ICMP echo request**, reply with an appropriate **ICMP echo reply** packet.
+
+### Preparing the Script
+
+To that end, we created our final script - "sniff_and_spoof.py". Its behaviour is succintly presented below:
+
+1. Create a function that will be executed for every sniffed packet. We called it "send_reply()".
+
+```python
+def send_reply(packet):
+    ...
+```
+
+2. Verify if the packet is an **ICMP echo request**. If it isn't, leave the function, as we are not interested in them.
+
+```python
+if packet[ICMP].type != 8:
+    return
+```
+
+**Note:** We discovered the <ins>ICMP type</ins> corresponding to <ins>echo requests</ins> by browsing the [documentation site](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types) from the [previous task](#learning-about-scapy-and-icmp). The extract we consulted was the following:
+
+![Alt text](images/13-18.png)
+
+3. Prepare the **IP** layer of the reply packet by creating an IP object.
+
+```python
+# create the IP object
+ip = IP(src = packet[IP].dst, dst = packet[IP].src)
+```
+
+Since we were impersonating the destination of the original packet, we had to switch the **source** and the **destination** IP addresses.
+
+4. Prepare the **ICMP** layer of the reply packet by creating an ICMP object.
+
+```python
+# create the ICMP object
+icmp = ICMP(type = 0, id = packet[ICMP].id, seq = packet[ICMP].seq)
+```
+
+It was necessary to copy both the `id` and the `seq` parameters of the original packet so that our spoofed packet would not raise suspicion. In particular, ensuring the **sequence number** - `seq` - was equal to the original packet's was vital, because a mismatch in the sequence number could trigger security measures or be detected by the system.
+
+**Note:** One last time, we searched for the adequate <ins>type</ins> in the aforementioned [ICMP documentation](https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml#icmp-parameters-types), which led us to the extract below:
+
+![Alt text](images/13-19.png)
+
+5. Prepare the **data** which will be sent in the packet. To avoid issues that could arise if we made data up, we opted to simply copy the original packet's data.
+
+```python
+# fetch the data
+data = packet[Raw].load	
+```
+
+6. Create the **reply packet** by merging the **IP**, **ICMP** and **data** objects. Then, send it.
+
+```python
+# create and send the reply		
+reply = ip / icmp / data
+send(reply, verbose = 0)
+```
+
+This denotes the end of the "send_reply()" function.
+
+7. Sniff the **ICMP** packets on the LAN and redirect them to "send_reply()".
+
+```python
+packet = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=send_reply)
+```
+
