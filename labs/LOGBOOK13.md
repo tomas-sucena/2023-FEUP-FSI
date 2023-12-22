@@ -289,7 +289,7 @@ print("Distance: ", a.ttl)
 We decided to submit our new script to a few tests. For comparison, we also ran the `traceroute` commands for the same test cases. Below are the results:
 
 | Destination | Our script | Linux's command |
-|-------------|------------|-----------------|
+|:-----------:|:----------:|:---------------:|
 | 10.9.0.5 (host A) | ![Alt text](images/13-12.png) | ![Alt text](images/13-13.png) |
 | 8.8.8.8 (Google's DNS) | ![Alt text](images/13-14.png) | ![Alt text](images/13-15.png)|
 | 1.1.1.1 (Cloudfare's DNS) | ![Alt text](images/13-16.png) | ![Alt text](images/13-17.png) |
@@ -360,25 +360,62 @@ send(reply, verbose = 0)
 
 ### Testing
 
-To test our program, the guide recomended we use one of the user machines - host A or host B - to send `ping` commands to a few IP addresses. Regardless of whether the pinged host existed or not, the user should receive a **reply** - our spoofed packets.
+To test our program, the guide recomended we use one of the user machines - host A (our choice) or host B - to send `ping` commands to a few IP addresses. Regardless of whether the pinged host existed or not, the user should receive a **reply** - our spoofed packets.
 
 The guide also provided some tests cases, which we decided to use. For each of them, we pinged the IP address twice: one where our program wasn't running and one where it was. The results were the following:
 
-| IP address | Results w/o Program | Results w/ Program  |
-|------------|---------------------|---------------------|
-| 1.2.3.4 | ![Alt text](images/13-20.png) | ![Alt text](images/13-21.png) |
-| 10.9.0.99 | ![Alt text](images/13-22.png) |  |
-| 8.8.8.8 | ![Alt text](images/13-24.png) | ![Alt text](images/13-25.png) |
-
-
+| IP address | Results w/o Program | Results w/ Program  | Success? |
+|:----------:|:-------------------:|:-------------------:|:--------:|
+| 1.2.3.4 | ![Alt text](images/13-20.png) | ![Alt text](images/13-21.png) | Yes |
+| 10.9.0.99 | ![Alt text](images/13-22.png) | ![Alt text](image-6.png) | No |
+| 8.8.8.8 | ![Alt text](images/13-24.png) | ![Alt text](images/13-25.png) | Yes |
 
 ### Explanation
 
+In order to fully understand the results from the experience, it was important to review the **ARP** protocol.
+
+> The Address Resolution Protocol (or **ARP**, for short) is a communication protocol used for mapping an ever-changing **IP** address to a fixed physical machine address - a **MAC** address.
+
+When a machine attempts to send packets to another, it first looks up the destination's MAC address in the **ARP table**. 
+
+> The **ARP table** is a table containing entries of **IP** addresses and their respective **MAC** addresses.
+
+If it cannot find it, though, it will send an **ARP broadcast packet** - a packet directed to every device on a network - to discover the receiver's MAC address.
+
+With that in mind, below are very succint explanations for the outcome of each test case:
+
 * **1.2.3.4**
 
-The first IP, **1.2.3.4**, is a non-existing host on the Internet. In fact, when pinged, none of the packets sent are received.
+**1.2.3.4** was the IP address of a non-existing **Internet** host. The route from the user machine to it was the following:
 
-![Alt text](images/13-20.png)
+![Alt text](image-1.png)
 
-Behind the scenes, an **ARP broadcast packet** was sent out
+That meant that, in order for packets sent by host A to reach the Internet, they had to go through **10.9.0.1** - the attacker - first. In fact, by analyzing the Wireshark logs, we noticed that a **broadcast packet** was sent out to obtain the MAC address of the attacker's machine.
 
+![Alt text](image.png)
+
+So, since the attacker would redirect the **reply** packets from the host, we were able to spoof them.
+
+* **10.9.0.99**
+
+**10.9.0.99** was a non-existing host that belonged to the same **LAN** as host A, as can be deduced from its IP address. The route that linked them was as follows:
+
+![Alt text](image-2.png)
+
+Unlike what happened with **1.2.3.4**, since this host would be located in the same local network, packets sent from host A did not go through the attacker's machine. In fact, the **broadcast packet** that was sent this time did not ask for the attacker's MAC address - they requested the MAC address of **10.9.0.99** instead.
+
+![Alt text](image-3.png)
+
+As such, considering we could not intersect this connection, our program was rendered useless.
+
+* **8.8.8.8**
+
+The final IP address corresponded to Google's DNS server - a real host on the **Internet**. Expectedly, the route from host A to **8.8.8.8** passed through the attacker once again, as can be seen below:
+
+![Alt text](image-4.png)
+
+Similarly to pinging **1.2.3.4**, a **broadcast packet** requesting the attacker's MAC address was sent out, which meant we would be able to spoof the packets. However, this time, because the destination truly existed, host A received double the amount of responses, which is evident by looking at the logs:
+
+![Alt text](image-5.png)
+
+Thus, our program worked, but it could not stop the real host from replying to host A's ping.
