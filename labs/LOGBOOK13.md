@@ -304,11 +304,10 @@ Our final task consisted in creating a program which combined the sniffing and s
 
 To that end, we created our final script - "sniff_and_spoof.py". Its behaviour is succintly presented below:
 
-1. Create a function that will be executed for every sniffed packet. We called it "send_reply()".
+1. Sniff the **ICMP** packets on the LAN and redirect them to "send_reply()".
 
 ```python
-def send_reply(packet):
-    ...
+packet = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=send_reply)
 ```
 
 2. Verify if the packet is an **ICMP echo request**. If it isn't, leave the function, as we are not interested in them.
@@ -359,11 +358,27 @@ reply = ip / icmp / data
 send(reply, verbose = 0)
 ```
 
-This denotes the end of the "send_reply()" function.
+### Testing
 
-7. Sniff the **ICMP** packets on the LAN and redirect them to "send_reply()".
+To test our program, the guide recomended we use one of the user machines - host A or host B - to send `ping` commands to a few IP addresses. Regardless of whether the pinged host existed or not, the user should receive a **reply** - our spoofed packets.
 
-```python
-packet = sniff(iface='br-a0c2e1a6c461', filter='icmp', prn=send_reply)
-```
+The guide also provided some tests cases, which we decided to use. For each of them, we pinged the IP address twice: one where our program wasn't running and one where it was. The results were the following:
+
+| IP address | Results w/o Program | Results w/ Program  |
+|------------|---------------------|---------------------|
+| 1.2.3.4 | ![Alt text](images/13-20.png) | ![Alt text](images/13-21.png) |
+| 10.9.0.99 | ![Alt text](images/13-22.png) |  |
+| 8.8.8.8 | ![Alt text](images/13-24.png) | ![Alt text](images/13-25.png) |
+
+
+
+### Explanation
+
+* **1.2.3.4**
+
+The first IP, **1.2.3.4**, is a non-existing host on the Internet. In fact, when pinged, none of the packets sent are received.
+
+![Alt text](images/13-20.png)
+
+Behind the scenes, an **ARP broadcast packet** was sent out
 
