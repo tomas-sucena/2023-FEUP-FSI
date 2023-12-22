@@ -218,7 +218,7 @@ We had a rough idea of how to go about this task, which will become clear in the
 
 We could attempt to use sniffing like we did in the [first task](#task-11-sniffing-packets), but that would require us to define a very specific filter, which would certainly be tedious. We were certain Scapy would have functions for this particular purpose. Sure enough, after a bit of research online, we discovered the `sr()` and `sr1()` functions.
 
-> The `sr()` Scapy function is used to **send** packets and **receive** their respective answers. The `sr1()` is similar, but it only returns one packet that answered the packet (or the packet set) sent.
+> The `sr()` Scapy function is used to **send** packets and **receive** their respective answers. The `sr1()` function is similar, but it only returns the <ins>first</ins> response packet that answered the packet sent.
 
 Since `sr1()` was exactly what we were looking for, that problem was solved. 
 
@@ -227,7 +227,7 @@ However, just as we were ready to begin writing the script, we realized that, de
 * **Type -** Identifies the message they transmit.
 * **Code -** For a given <ins>type</ins>, specifies the message even further.
 
-So, we had found the solution to our new problem: to properly parse an ICMP packet, we just had to analyze its **type** and **code**. So, with both problems taken care of, we could finally start writing our script.
+So, we had found the solution to our new problem: to properly parse an ICMP packet, we just had to analyze its **type** and **code**. With both problems taken care of, we could finally start writing our script.
 
 ### Preparing the Script
 
@@ -254,10 +254,10 @@ while True:
     ...
 ```
 
-3. Send the packet using the `sr1()` function, which is a Scapy function that sends a packet and returns the first answer that was sent to it.
+3. Using `sr1()`, send the packet and receive the first packet that is sent as a response.
 
 ```python
-reply = sr1(packet, timeout=1)
+response = sr1(packet, timeout=1, verbose=0)
 ```
 
 4. Verify if the ICMP error message was received. If it was, increment the **TTL** and try again, else leave the loop.
@@ -267,7 +267,7 @@ while True:
     ...
 
     # verify if the TTL was exceeded
-    if reply == None or (reply.type == 11 and reply.code == 0):
+    if response == None or (response.type == 11 and response.code == 0):
         a.ttl += 1
         continue
 
@@ -290,7 +290,8 @@ We decided to submit our new script to a few tests. For comparison, we also ran 
 
 | Destination | Our script | Linux's command |
 |-------------|------------|-----------------|
-| 10.9.0.5 (host A) || |
-| 8.8.8.8 (Google's DNS) || |
+| 10.9.0.5 (host A) | ![Alt text](images/13-12.png) | ![Alt text](images/13-13.png) |
+| 8.8.8.8 (Google's DNS) | ![Alt text](images/13-14.png) | ![Alt text](images/13-15.png)|
+| 1.1.1.1 (Cloudfare's DNS) | ![Alt text](images/13-16.png) | ![Alt text](images/13-17.png) |
 
-Considering the results were identical, that meant we had successfully completed this task.
+Considering the distances were identical, our program was working as expected.
