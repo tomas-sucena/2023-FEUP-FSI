@@ -33,7 +33,7 @@ So, as long as we know the language of the original message, we can search the m
 
 ### 1st Paragraph
 
-The message we had to decrypt was in a file named "ciphertext.txt", which we can be found [here](etc/ciphertext.txt).
+The message we had to decrypt was in a file named "ciphertext.txt", which can be found [here](etc/ciphertext.txt).
 
 Since analyzing the whole file at once would be exhausting and fruitless, we opted to decipher it one paragraph at a time, starting with the first:
 

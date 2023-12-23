@@ -284,6 +284,8 @@ while True:
 print("Distance: ", a.ttl)
 ```
 
+The finalized script can be found [here](etc/traceroute.py).
+
 ### Testing
 
 We decided to submit our new script to a few tests. For comparison, we also ran the `traceroute` commands for the same test cases. Below are the results:
@@ -302,7 +304,7 @@ Our final task consisted in creating a program which combined the sniffing and s
 
 ### Preparing the Script
 
-To that end, we created our final script - "sniff_and_spoof.py". Its behaviour is succintly presented below:
+To that end, we created our final script - "sniff-and-spoof.py" - which can be viewed [here](etc/sniff-and-spoof.py). Its behaviour is succintly presented below:
 
 1. Sniff the **ICMP** packets on the LAN and redirect them to "send_reply()".
 
