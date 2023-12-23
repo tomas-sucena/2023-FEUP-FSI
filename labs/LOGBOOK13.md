@@ -235,6 +235,8 @@ By following the tutorial provided by the guide, we created a new script - "trac
 
 1. Create an **IP** object, such that its destination is the desired IP address and its **TTL** value is 1.
 
+> Time-to-live (or **TTL** for short) is a numerical value that stands for the amount of <ins>time</ins> or <ins>"hops"</ins> a packet is set to exist before being discarded by the router.
+
 ```python
 import sys
 from scapy.all import *
