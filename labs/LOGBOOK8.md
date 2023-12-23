@@ -60,7 +60,7 @@ The payload we decided to use was the following:
 admin' #
 ```
 
-**Note:** The <u>semicolon</u> which terminates the SQL statement is optional. That is why our payload works even though we commented the rest of the query. However, if we were to include it, it would still perform the attack as expected.
+**Note:** The <ins>semicolon</ins> which terminates the SQL statement is optional. That is why our payload works even though we commented the rest of the query. However, if we were to include it, it would still perform the attack as expected.
 
 We input it on the "Username" text field, which made the server execute the query below:
 

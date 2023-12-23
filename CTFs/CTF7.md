@@ -116,7 +116,7 @@ p.sendline(payload)
 p.interactive()
 ```
 
-**Note:** The 'b' before the string means the characters will be encoded as <u>octets</u> (integers ranging from 0 to 255), which is the format C uses for character encoding.
+**Note:** The 'b' before the string means the characters will be encoded as <ins>octets</ins> (integers ranging from 0 to 255), which is the format C uses for character encoding.
 
 Upon running the script, we obtained the following output:
 
@@ -126,7 +126,7 @@ Much to our dismay, the first value that was printed from memory was our input. 
 
 While at first we were quite surprised by this, after giving it some more thought, it made sense: it had to do with the layout of the **stack**. 
 
-> The **stack frame** of a function is laid out as follows, in ascending order of memory addresses: <u>local variables</u>, <u>frame pointer</u>, <u>return address</u> and <u>function parameters</u>.
+> The **stack frame** of a function is laid out as follows, in ascending order of memory addresses: <ins>local variables</ins>, <ins>frame pointer</ins>, <ins>return address</ins> and <ins>function parameters</ins>.
 
 In fact, the stack frame of the `printf()` function would be located below the stack frame of the `main()` function. Since local variables are stored in the lower addresses, the value above `printf()` was none other than the only local variable `main()` declared - "buffer", the array used to store our input.
 

@@ -374,7 +374,7 @@ The guide also provided some tests cases, which we decided to use. For each of t
 
 In order to fully understand the results from this task, we first had to review the **ARP** protocol.
 
-> The Address Resolution Protocol (or **ARP** for short) is a communication protocol used for mapping an ever-changing **IP** address to a fixed physical machine address - a **MAC** address.
+> The Address Resolution Protocol (or **ARP** for short) is a communication protocol used for mapping an ever-changing <ins>IP address</ins> to a fixed physical machine address - a <ins>MAC address</ins>.
 
 When a machine attempts to send packets to another, it first looks up the destination's MAC address. If it cannot find it, though, it will send a **broadcast packet** to discover the receiver's MAC address.
 
@@ -400,7 +400,7 @@ So, since the attacker would redirect the **reply** packets from the host, we we
 
 ![Alt text](images/13-28.png)
 
-Unlike what happened with **1.2.3.4**, since this host would be located in the same local network, packets sent from host A did not go through the attacker's machine. In fact, the **broadcast packet** that was sent this time did not ask for the attacker's MAC address - they requested the MAC address of **10.9.0.99** instead.
+Unlike what happened with **1.2.3.4**, since this host would be located in the same local network, packets sent from host A did not go through the attacker's machine. In fact, the **broadcast packet** that was sent this time did not ask for the attacker's MAC address - they requested the non-existing host's instead.
 
 ![Alt text](images/13-29.png)
 

@@ -106,7 +106,7 @@ With our payload ready, we modified the Python script so that it would send it t
 r.sendline(b"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaflag.txt")
 ```
 
-**Note:** The 'b' before the string means the characters will be encoded as <u>octets</u> (integers ranging from 0 to 255), which is the format C uses for character encoding.
+**Note:** The 'b' before the string means the characters will be encoded as <ins>octets</ins> (integers ranging from 0 to 255), which is the format C uses for character encoding.
 
 Finally, we were ready to attack. Running our script, we got the following output:
 
@@ -197,7 +197,7 @@ Yet again, we had to create the string we would use as a payload. The restrictio
 string[32:36] = "\x24\x23\xfc\xfe"
 ```
 
-**Note:** Since this program is a <u>little-endian</u> system, the content of "val" was overwritten from its least significant bytes to its most significant. As such, we had to write the hexadecimal characters in <u>reverse</u>.
+**Note:** Since this program is a <ins>little-endian</ins> system, the content of "val" was overwritten from its least significant bytes to its most significant. As such, we had to write the hexadecimal characters in <ins>reverse</ins>.
 
 * The string had to contain the name of the file we wanted to access, "flag.txt", immediately after its 36th character. In Python, this could be represented as follows:
 

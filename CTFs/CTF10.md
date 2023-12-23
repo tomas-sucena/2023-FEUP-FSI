@@ -16,8 +16,8 @@ def gen():
 	return bytes(key)
 ```
 
-* **enc() -** A function which, given a <u>key</u>, a <u>message</u> and a <u>nonce</u>, encrypts the message using the AES cipher.
-* **dec() -** A function which, given a <u>key</u>, a <u>ciphertext</u> and a <u>nonce</u>, decrypts the ciphertext according to the AES cipher.
+* **enc() -** A function which, given a <ins>key</ins>, a <ins>message</ins> and a <ins>nonce</ins>, encrypts the message using the AES cipher.
+* **dec() -** A function which, given a <ins>key</ins>, a <ins>ciphertext</ins> and a <ins>nonce</ins>, decrypts the ciphertext according to the AES cipher.
 
 We opted to not include the source code for the last two functions, seeing as they do not possess any vulnerabilities. In fact, the problem lies in the key generation function.
 
@@ -64,7 +64,7 @@ for i in range(2**24):
 msg = str(dec(key, unhexlify(ciphertext), unhexlify(nonce)))
 ```
 
-**Note:** As recommended by the guide, we used the `unhexlify()` function to convert the <u>ciphertext</u> and the <u>nonce</u> to bytes.
+**Note:** As recommended by the guide, we used the `unhexlify()` function to convert the <ins>ciphertext</ins> and the <ins>nonce</ins> to bytes.
 
 4. Verify if the decrypted message is the flag using a **regular expression**.
 

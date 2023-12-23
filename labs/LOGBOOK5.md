@@ -24,7 +24,7 @@ Considering we would be exploiting a `Set-UID` program using `/bin/sh`, we had t
 $ sudo ln -sf /bin/zsh /bin/sh
 ```
 
-**Note:** <u>StackGuard</u> and <u>Non-Executable Stack</u> are additional countermeasures that will be turned off during compilation.
+**Note:** <ins>StackGuard</ins> and <ins>Non-Executable Stack</ins> are additional countermeasures that will be turned off during compilation.
 
 ## Task 1: Understanding Shellcode
 
@@ -185,7 +185,7 @@ shellcode= (
 content = bytearray(0x90 for i in range(517)) # 0x90 is the bytecode for NOP
 ```
 
-**Note:** `NOP` is an instruction that does nothing. Despite that, filling the payload with `NOP`'s is extremely important, because it will guarantee that, given we incorrectly guess an address, the program will keep executing until it finds it, thereby increasing our chances of executing the shellcode. This technique is called a <u>`NOP` slide</u>.
+**Note:** `NOP` is an instruction that does nothing. Despite that, filling the payload with `NOP`'s is extremely important, because it will guarantee that, given we incorrectly guess an address, the program will keep executing until it finds it, thereby increasing our chances of executing the shellcode. This technique is called a <ins>`NOP` slide</ins>.
 
 3. Inserts the shellcode in the payload.
 
@@ -239,7 +239,7 @@ start = len(content) - len(shellcode)
 content[start:] = shellcode
 ```
 
-**Note:** The "start" variable can be interpreted as the relative address of the <u>shellcode</u>, because it specifies the starting position of the shellcode relative to the base of "buffer", which will be the address of our payload.
+**Note:** The "start" variable can be interpreted as the relative address of the <ins>shellcode</ins>, because it specifies the starting position of the shellcode relative to the base of "buffer", which will be the address of our payload.
 
 * Change the "ret" variable, which represents the return address, so that it points to the shellcode.
 
@@ -256,7 +256,7 @@ L = 4     # Use 4 for 32-bit address and 8 for 64-bit address
 content[offset:offset + L] = (ret).to_bytes(L,byteorder='little') 
 ```
 
-**Note:** Just like "start", "offset" is also a relative address, because it points to the starting position of the <u>return address</u> relative to the base of "buffer".
+**Note:** Just like "start", "offset" is also a relative address, because it points to the starting position of the <ins>return address</ins> relative to the base of "buffer".
 
 After running the modified script, our payload was written into "badfile":
 
