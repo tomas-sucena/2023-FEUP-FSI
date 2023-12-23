@@ -72,6 +72,8 @@ To our surprise, two ciphersuites were present. That meant we would have to keep
 
 The next packet revealed the answer: the ciphersuite was **TLS_RSA_WITH_AES_128_CBC_SHA256**.
 
+**Note:** After researching the topic a bit on the Internet, we realized why the <ins>Client Hello</ins> message contained numerous <ins>ciphersuites</ins> - it had to do with the fact that, in that message, the client specifies which ciphersuits it supports. It is up to the server to choose which one to use, hence why that information is transmitted in the next message - the <ins>Server Hello</ins>.
+
 * ***total_encrypted_appdata_exchanged***
 
 This value was obtained by adding the amount of data bytes sent in each **data packet**.
