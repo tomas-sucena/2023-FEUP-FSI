@@ -1,5 +1,44 @@
 # Notes
 
+## Introduction
+
+### Basic concepts
+
+#### Security
+
+> **Cybersecurity** is the protection of computer systems and networks from information disclosure, theft of or damage to their <ins>hardware</ins>, <ins>software</ins> or <ins>electronic data</ins>, as well as from the disruption or misdirection of the services they provide.
+
+Security is:
+
+* **Context-dependent -** everything, including the definition/terminology, depends on the concrete application (software, systems, web, etc.)
+* **Defensive -** it is defined in the negative: bad things can't happen
+
+Security is defined in terms of 3 essential security axes (**CIA**):
+
+* **Confidentiality** (secrecy, privacy)
+* **Integrity** (non-tampering, reliable data, authenticity of origin)
+* **Availability** (existence, liveness)
+
+**Note:** CIA is always a compromise.
+
+#### Actors
+
+> **Actors** are <ins>entities</ins> that intervene in the system, such as people, organisations, companies, machines, ...
+
+Security is defined from the perspective of the **actors**.
+
+#### Attackers
+
+> **Attackers** are <ins>actors</ins> with explicit intention of using the system/resources in a wrong way and/or to inhibit its usage.
+
+**Ex:**
+
+![Alt text](images/1-1.png)
+
+In order to better develop security measures, it is important to possess **adversarial thinking**.
+
+> **Adversarial thinking** is the ability to embody the technological capabilities, the unconventional perspectives, and the strategic reasoning of <ins>hackers</ins>. Basically, it is to question the <ins>security assumptions</ins> and understand how to break them.
+
 ## Week 12 - Network Security Protocols
 
 ### SSL/TLS
