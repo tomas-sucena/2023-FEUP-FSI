@@ -31,7 +31,7 @@ Security is defined from the perspective of the **actors**.
 
 By measuring the potential impact on an **asset** and the probability of a **threat**, we can build a **risk analysis matrix**.
 
-![Alt text](images/2-3.png)
+![Alt text](images/1-4.png)
 
 ### Vulnerability
 
@@ -75,7 +75,7 @@ There are two **security models**:
 | Typical of **cryptography** and **dependable systems**. | Typical of **software engineering** and security of **real-world systems**. |
 | Formally define the capabilities of **attackers X** and the **security goals Y**. | Minimine risk with respect to the more **likely threats**. |
 | No attacker limited to X can break security Y. | Optimize the cost of **security measures** vs **eventual losses**. |
-| ![Alt text](images/2-1.png) | ![Alt text](images/2-2.png) |
+| ![Alt text](images/1-2.png) | ![Alt text](images/1-3.png) |
 | **Terminology:** security proof, secure by design | **Terminology:** resilience, mitigation, risk, security engineering |
 
 ### Limitations
