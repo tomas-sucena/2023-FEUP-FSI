@@ -63,7 +63,7 @@ This is achieved by storing "**canaries**", which are dynamically generated in t
 
 #### How to bypass this?
 
-* Read the canary using other vulnerability, then use exploit a **stack overflow** to put it back.
+* Read the canary using other vulnerability, then exploit a **stack overflow** to put it back.
 * Circumvent the canary using existing **pointers**.
     * If the code has a pointer in the stack and writes to that address the value of another local variable, a stack overflow may change both and write an arbitrary memory position.
 
